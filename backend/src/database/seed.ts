@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { config } from 'dotenv';
 import { hash } from 'bcryptjs';
-import { AppDataSource } from './data-source.js';
-import { Business } from '../business/entities/business.entity.js';
-import { User } from '../users/entities/user.entity.js';
+import { AppDataSource } from './data-source';
+import { Business } from '../business/entities/business.entity';
+import { User } from '../users/entities/user.entity';
 
 config();
 

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { Business } from './business/entities/business.entity.js';
-import { BusinessModule } from './business/business.module.js';
-import { AuthModule } from './auth/auth.module.js';
-import { ServicesModule } from './services/services.module.js';
-import { PackagesModule } from './packages/packages.module.js';
-import { CustomersModule } from './customers/customers.module.js';
-import { ProposalsModule } from './proposals/proposals.module.js';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { Business } from './business/entities/business.entity';
+import { BusinessModule } from './business/business.module';
+import { AuthModule } from './auth/auth.module';
+import { ServicesModule } from './services/services.module';
+import { PackagesModule } from './packages/packages.module';
+import { CustomersModule } from './customers/customers.module';
+import { ProposalsModule } from './proposals/proposals.module';
 
 @Module({
   imports: [

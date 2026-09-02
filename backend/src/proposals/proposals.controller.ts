@@ -13,17 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { CurrentUser } from '../auth/current-user.decorator.js';
-import type { JwtPayload } from '../auth/jwt-payload.interface.js';
-import { BusinessService } from '../business/business.service.js';
-import { PdfService } from '../pdf/pdf.service.js';
-import { ProposalsService } from './proposals.service.js';
-import { CreateProposalDto } from './dto/create-proposal.dto.js';
-import { UpdateProposalDto } from './dto/update-proposal.dto.js';
-import { CalculateProposalDto } from './dto/calculate-proposal.dto.js';
-import { ListProposalsQueryDto } from './dto/list-proposals-query.dto.js';
-import { UpdateProposalStatusDto } from './dto/update-proposal-status.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import type { JwtPayload } from '../auth/jwt-payload.interface';
+import { BusinessService } from '../business/business.service';
+import { PdfService } from '../pdf/pdf.service';
+import { ProposalsService } from './proposals.service';
+import { CreateProposalDto } from './dto/create-proposal.dto';
+import { UpdateProposalDto } from './dto/update-proposal.dto';
+import { CalculateProposalDto } from './dto/calculate-proposal.dto';
+import { ListProposalsQueryDto } from './dto/list-proposals-query.dto';
+import { UpdateProposalStatusDto } from './dto/update-proposal-status.dto';
 
 @Controller('proposals')
 @UseGuards(JwtAuthGuard)

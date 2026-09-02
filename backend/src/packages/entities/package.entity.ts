@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Service } from '../../services/entities/service.entity.js';
+import { Service } from '../../services/entities/service.entity';
 
 @Entity('packages')
 export class Package {

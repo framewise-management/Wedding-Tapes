@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Customer } from '../../customers/entities/customer.entity.js';
+import { Customer } from '../../customers/entities/customer.entity';
 
 export enum ProposalStatus {
   DRAFT = 'DRAFT',

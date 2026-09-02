@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Min, ValidateNested } from 'class-validator';
-import { DiscountInputDto } from './create-proposal.dto.js';
+import { DiscountInputDto } from './create-proposal.dto';
 
 export class CalculateProposalDto {
   /** Omit to leave the discount untouched; pass `null` to clear it. */

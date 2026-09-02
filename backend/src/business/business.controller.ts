@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { CurrentUser } from '../auth/current-user.decorator.js';
-import type { JwtPayload } from '../auth/jwt-payload.interface.js';
-import { BusinessService } from './business.service.js';
-import { UpdateBusinessDto } from './dto/update-business.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import type { JwtPayload } from '../auth/jwt-payload.interface';
+import { BusinessService } from './business.service';
+import { UpdateBusinessDto } from './dto/update-business.dto';
 
 @Controller('business')
 @UseGuards(JwtAuthGuard)

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Business } from '../business/entities/business.entity.js';
-import { Proposal } from '../proposals/entities/proposal.entity.js';
-import { PDF_GENERATOR } from './pdf-generator.interface.js';
-import type { PdfGenerator } from './pdf-generator.interface.js';
+import { Business } from '../business/entities/business.entity';
+import { Proposal } from '../proposals/entities/proposal.entity';
+import { PDF_GENERATOR } from './pdf-generator.interface';
+import type { PdfGenerator } from './pdf-generator.interface';
 
 @Injectable()
 export class PdfService {

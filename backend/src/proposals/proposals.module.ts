@@ -4,16 +4,16 @@ import {
   Proposal,
   ProposalItem,
   ProposalPackage,
-} from './entities/proposal.entity.js';
-import { ProposalsService } from './proposals.service.js';
-import { ProposalsController } from './proposals.controller.js';
-import { AuthModule } from '../auth/auth.module.js';
-import { PackagesModule } from '../packages/packages.module.js';
-import { ServicesModule } from '../services/services.module.js';
-import { CustomersModule } from '../customers/customers.module.js';
-import { BusinessModule } from '../business/business.module.js';
-import { PricingModule } from '../pricing/pricing.module.js';
-import { PdfModule } from '../pdf/pdf.module.js';
+} from './entities/proposal.entity';
+import { ProposalsService } from './proposals.service';
+import { ProposalsController } from './proposals.controller';
+import { AuthModule } from '../auth/auth.module';
+import { PackagesModule } from '../packages/packages.module';
+import { ServicesModule } from '../services/services.module';
+import { CustomersModule } from '../customers/customers.module';
+import { BusinessModule } from '../business/business.module';
+import { PricingModule } from '../pricing/pricing.module';
+import { PdfModule } from '../pdf/pdf.module';
 
 @Module({
   imports: [

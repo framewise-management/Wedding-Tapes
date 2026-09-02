@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PricingService } from './pricing.service.js';
+import { PricingService } from './pricing.service';
 
 @Module({
   providers: [PricingService],

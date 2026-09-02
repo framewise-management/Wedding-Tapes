@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { Business } from './business/entities/business.entity.js';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { Business } from './business/entities/business.entity';
 
 describe('AppController', () => {
   let appController: AppController;

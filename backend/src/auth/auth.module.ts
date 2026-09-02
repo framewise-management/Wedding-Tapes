@@ -3,10 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../users/entities/user.entity.js';
-import { AuthService } from './auth.service.js';
-import { AuthController } from './auth.controller.js';
-import { JwtStrategy } from './jwt.strategy.js';
+import { User } from '../users/entities/user.entity';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
 
 const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
 

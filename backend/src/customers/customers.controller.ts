@@ -10,13 +10,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { CurrentUser } from '../auth/current-user.decorator.js';
-import type { JwtPayload } from '../auth/jwt-payload.interface.js';
-import { CustomersService } from './customers.service.js';
-import { CreateCustomerDto } from './dto/create-customer.dto.js';
-import { UpdateCustomerDto } from './dto/update-customer.dto.js';
-import { ListCustomersQueryDto } from './dto/list-customers-query.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import type { JwtPayload } from '../auth/jwt-payload.interface';
+import { CustomersService } from './customers.service';
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 
 @Controller('customers')
 @UseGuards(JwtAuthGuard)

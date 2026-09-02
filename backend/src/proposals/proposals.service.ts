@@ -11,20 +11,20 @@ import {
   ProposalItem,
   ProposalPackage,
   ProposalStatus,
-} from './entities/proposal.entity.js';
+} from './entities/proposal.entity';
 import {
   CreateProposalDto,
   ProposalItemInputDto,
   ProposalPackageInputDto,
-} from './dto/create-proposal.dto.js';
-import { UpdateProposalDto } from './dto/update-proposal.dto.js';
-import { CalculateProposalDto } from './dto/calculate-proposal.dto.js';
-import { ListProposalsQueryDto } from './dto/list-proposals-query.dto.js';
-import { PackagesService } from '../packages/packages.service.js';
-import { ServicesService } from '../services/services.service.js';
-import { CustomersService } from '../customers/customers.service.js';
-import { BusinessService } from '../business/business.service.js';
-import { PricingService } from '../pricing/pricing.service.js';
+} from './dto/create-proposal.dto';
+import { UpdateProposalDto } from './dto/update-proposal.dto';
+import { CalculateProposalDto } from './dto/calculate-proposal.dto';
+import { ListProposalsQueryDto } from './dto/list-proposals-query.dto';
+import { PackagesService } from '../packages/packages.service';
+import { ServicesService } from '../services/services.service';
+import { CustomersService } from '../customers/customers.service';
+import { BusinessService } from '../business/business.service';
+import { PricingService } from '../pricing/pricing.service';
 
 const RELATIONS = { customer: true, packages: true, items: true };
 

@@ -1,11 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
-import { Package, PackageService } from './entities/package.entity.js';
-import { CreatePackageDto } from './dto/create-package.dto.js';
-import { UpdatePackageDto } from './dto/update-package.dto.js';
-import { AddPackageServiceDto } from './dto/add-package-service.dto.js';
-import { ServicesService } from '../services/services.service.js';
+import { Package, PackageService } from './entities/package.entity';
+import { CreatePackageDto } from './dto/create-package.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
+import { AddPackageServiceDto } from './dto/add-package-service.dto';
+import { ServicesService } from '../services/services.service';
 
 @Injectable()
 export class PackagesService {

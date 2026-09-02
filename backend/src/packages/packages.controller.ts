@@ -10,14 +10,14 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { CurrentUser } from '../auth/current-user.decorator.js';
-import type { JwtPayload } from '../auth/jwt-payload.interface.js';
-import { PackagesService } from './packages.service.js';
-import { CreatePackageDto } from './dto/create-package.dto.js';
-import { UpdatePackageDto } from './dto/update-package.dto.js';
-import { AddPackageServiceDto } from './dto/add-package-service.dto.js';
-import { ListPackagesQueryDto } from './dto/list-packages-query.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import type { JwtPayload } from '../auth/jwt-payload.interface';
+import { PackagesService } from './packages.service';
+import { CreatePackageDto } from './dto/create-package.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
+import { AddPackageServiceDto } from './dto/add-package-service.dto';
+import { ListPackagesQueryDto } from './dto/list-packages-query.dto';
 
 @Controller('packages')
 @UseGuards(JwtAuthGuard)

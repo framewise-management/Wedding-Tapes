@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import PDFDocument from 'pdfkit';
-import { Business } from '../business/entities/business.entity.js';
-import { DiscountType, Proposal } from '../proposals/entities/proposal.entity.js';
-import { PdfGenerator } from './pdf-generator.interface.js';
+import { Business } from '../business/entities/business.entity';
+import { DiscountType, Proposal } from '../proposals/entities/proposal.entity';
+import { PdfGenerator } from './pdf-generator.interface';
 
 const PAGE_MARGIN = 50;
 const CONTENT_WIDTH = 495;
@@ -10,7 +10,7 @@ const AMOUNT_X = 410;
 const AMOUNT_WIDTH = 135;
 const NAME_WIDTH = 345;
 
-// ponytail: pdfkit's standard fonts (Helvetica) only cover WinAnsi, which has no ₹ glyph —
+// ponytail: pdfkit's standard fonts (Helvetica) only cover WinAnsi, which has no â‚¹ glyph â€”
 // embedding a Unicode font just for the rupee sign isn't worth it yet, so the PDF spells it out.
 function money(value: number): string {
   return `Rs. ${value.toLocaleString('en-IN')}`;
@@ -86,7 +86,7 @@ export class PdfKitProposalPdfGenerator implements PdfGenerator {
         doc.image(logoBuffer, PAGE_MARGIN, startY, { width: 50, height: 50 });
         textX = PAGE_MARGIN + 62;
       } catch {
-        // ponytail: an unsupported/corrupt logo shouldn't fail the whole PDF — just skip it.
+        // ponytail: an unsupported/corrupt logo shouldn't fail the whole PDF â€” just skip it.
       }
     }
 
@@ -94,7 +94,7 @@ export class PdfKitProposalPdfGenerator implements PdfGenerator {
     doc.fontSize(9.5).font('Helvetica').fillColor('#6b6375');
     const contact = [business.phone, business.email, business.website, business.address]
       .filter(Boolean)
-      .join('  ·  ');
+      .join('  Â·  ');
     if (contact) doc.text(contact, textX, doc.y, { width: 280 });
     doc.fillColor('#08060d');
 
@@ -134,7 +134,7 @@ export class PdfKitProposalPdfGenerator implements PdfGenerator {
     this.sectionHeading(doc, 'Wedding Details');
     doc
       .fontSize(11)
-      .text(`${formatDate(proposal.weddingDate)} — ${proposal.weddingLocation}`, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH });
+      .text(`${formatDate(proposal.weddingDate)} â€” ${proposal.weddingLocation}`, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH });
     if (proposal.numberOfDays != null) {
       doc
         .fontSize(10)

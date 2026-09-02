@@ -1,4 +1,4 @@
-import { PricingService } from './pricing.service.js';
+import { PricingService } from './pricing.service';
 
 describe('PricingService', () => {
   const pricing = new PricingService();
@@ -33,7 +33,7 @@ describe('PricingService', () => {
     expect(result.total).toBe(18000);
   });
 
-  it('applies a percentage discount (SRS §11 example: ₹1,20,000 − 10% → ₹1,08,000)', () => {
+  it('applies a percentage discount (SRS Â§11 example: â‚¹1,20,000 âˆ’ 10% â†’ â‚¹1,08,000)', () => {
     const result = pricing.calculate({
       packages: [{ quantity: 1, unitPrice: 120000 }],
       items: [],
@@ -82,7 +82,7 @@ describe('PricingService', () => {
     expect(result.total).toBe(10000);
   });
 
-  it('applies tax to the post-discount amount (FR-013 example: 1,00,000 − 5,000 discount, 18% tax → 1,12,100)', () => {
+  it('applies tax to the post-discount amount (FR-013 example: 1,00,000 âˆ’ 5,000 discount, 18% tax â†’ 1,12,100)', () => {
     const result = pricing.calculate({
       packages: [{ quantity: 1, unitPrice: 100000 }],
       items: [],

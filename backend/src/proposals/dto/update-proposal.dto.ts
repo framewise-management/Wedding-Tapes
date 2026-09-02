@@ -14,7 +14,7 @@ import {
   DiscountInputDto,
   ProposalItemInputDto,
   ProposalPackageInputDto,
-} from './create-proposal.dto.js';
+} from './create-proposal.dto';
 
 export class UpdateProposalDto {
   @IsOptional()

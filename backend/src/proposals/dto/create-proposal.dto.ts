@@ -13,7 +13,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { DiscountType } from '../entities/proposal.entity.js';
+import { DiscountType } from '../entities/proposal.entity';
 
 export class DiscountInputDto {
   @IsEnum(DiscountType)
