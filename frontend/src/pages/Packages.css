@@ -1,0 +1,265 @@
+.pk-container {
+  max-width: 1080px;
+}
+
+.pk-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.pk-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #08060d;
+  letter-spacing: -0.4px;
+  margin: 0 0 6px;
+}
+
+.pk-subtitle {
+  font-size: 15px;
+  color: #6b6375;
+  margin: 0;
+}
+
+.pk-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #e2661a;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.pk-add-btn:hover {
+  opacity: 0.9;
+}
+
+.pk-error-banner {
+  border: 1px solid #f3c9c5;
+  background: #fbeceb;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  color: #b3423a;
+}
+
+.pk-form {
+  border: 1px solid #e5e4e7;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.pk-form h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #08060d;
+  margin: 0 0 3px;
+}
+
+.pk-form-sub {
+  font-size: 13.5px;
+  color: #8b8590;
+  margin: 0 0 20px;
+}
+
+.pk-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pk-form-row + .pk-form-row {
+  margin-top: 14px;
+}
+
+.pk-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b6375;
+  margin-bottom: 6px;
+}
+
+.pk-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1.5px solid #e5e4e7;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-family: inherit;
+  color: #08060d;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pk-input:focus {
+  border-color: #e2661a;
+  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+}
+
+.pk-input::placeholder {
+  color: #b7b3bd;
+}
+
+.pk-form-actions {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pk-submit-btn {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #08060d;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.pk-submit-btn:hover {
+  opacity: 0.85;
+}
+
+.pk-table {
+  border: 1px solid #e5e4e7;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.pk-table-head,
+.pk-table-row {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr 0.8fr 0.8fr auto;
+  column-gap: 20px;
+  align-items: center;
+}
+
+.pk-table-head {
+  padding: 14px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e4e7;
+}
+
+.pk-table-head span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b8590;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pk-table-row {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0eff2;
+}
+
+.pk-table-row:last-child {
+  border-bottom: none;
+}
+
+.pk-cell-name {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #08060d;
+}
+
+.pk-cell-services {
+  font-size: 14px;
+  color: #6b6375;
+}
+
+.pk-cell-price {
+  font-size: 14px;
+  color: #08060d;
+  font-weight: 500;
+}
+
+.pk-status {
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pk-status-active {
+  background: #eaf7ec;
+  color: #2f6b3c;
+}
+
+.pk-status-inactive {
+  background: #f0eff2;
+  color: #6b6375;
+}
+
+.pk-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pk-manage-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b6375;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pk-manage-link:hover {
+  color: #08060d;
+}
+
+.pk-toggle-btn {
+  padding: 6px 12px;
+  border: 1.5px solid #e5e4e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b6375;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pk-toggle-btn:hover {
+  border-color: #08060d;
+  color: #08060d;
+}
+
+.pk-toggle-btn.pk-danger:hover {
+  border-color: #c23b2e;
+  color: #c23b2e;
+}
+
+.pk-empty {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #8b8590;
+}
