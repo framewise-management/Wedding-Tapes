@@ -19,6 +19,9 @@ import { ProposalsModule } from './proposals/proposals.module.js';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get('DATABASE_URL'),
+        ssl: config.get('DATABASE_CA_CERT')
+          ? { ca: config.get('DATABASE_CA_CERT') }
+          : undefined,
         autoLoadEntities: true,
         synchronize: false,
       }),
