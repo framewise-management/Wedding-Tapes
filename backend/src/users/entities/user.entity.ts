@@ -25,8 +25,8 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ name: 'password_hash' })
-  passwordHash: string;
+  @Column({ name: 'password_hash', type: 'varchar', nullable: true })
+  passwordHash: string | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

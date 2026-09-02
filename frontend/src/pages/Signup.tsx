@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { apiPost } from '../api/client';
-import { setToken } from '../auth/auth';
 
 function MailIcon() {
   return (
@@ -58,22 +57,21 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
     try {
-      const { token } = await apiPost<{ token: string }>('/api/auth/signup', {
+      await apiPost('/api/auth/signup', {
         businessName,
         firstName,
         lastName,
         email,
         password,
       });
-      setToken(token);
-      navigate('/dashboard');
+      setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
       setIsSubmitting(false);
@@ -100,110 +98,120 @@ export default function Signup() {
 
       <section className="login-form-panel">
         <div className="login-card">
-          <div className="login-card-header">
-            <span className="login-mark">WT</span>
-            <h2>Create your workspace</h2>
-            <p>Set up your studio in a minute</p>
-          </div>
-
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="field">
-              <label htmlFor="signup-business-name">Business name</label>
-              <div className="input-shell">
-                <input
-                  id="signup-business-name"
-                  type="text"
-                  autoComplete="organization"
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  required
-                />
-              </div>
+          {submitted ? (
+            <div className="login-card-header">
+              <span className="login-mark">WT</span>
+              <h2>Check your email</h2>
+              <p>We sent a confirmation link to {email}. Verify it, then log in.</p>
             </div>
-
-            <div className="field">
-              <label htmlFor="signup-first-name">First name</label>
-              <div className="input-shell">
-                <input
-                  id="signup-first-name"
-                  type="text"
-                  autoComplete="given-name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
+          ) : (
+            <>
+              <div className="login-card-header">
+                <span className="login-mark">WT</span>
+                <h2>Create your workspace</h2>
+                <p>Set up your studio in a minute</p>
               </div>
-            </div>
 
-            <div className="field">
-              <label htmlFor="signup-last-name">Last name</label>
-              <div className="input-shell">
-                <input
-                  id="signup-last-name"
-                  type="text"
-                  autoComplete="family-name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="field">
+                  <label htmlFor="signup-business-name">Business name</label>
+                  <div className="input-shell">
+                    <input
+                      id="signup-business-name"
+                      type="text"
+                      autoComplete="organization"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div className="field">
-              <label htmlFor="signup-email">Email</label>
-              <div className="input-shell">
-                <MailIcon />
-                <input
-                  id="signup-email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+                <div className="field">
+                  <label htmlFor="signup-first-name">First name</label>
+                  <div className="input-shell">
+                    <input
+                      id="signup-first-name"
+                      type="text"
+                      autoComplete="given-name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
 
-            <div className="field">
-              <label htmlFor="signup-password">Password</label>
-              <div className="input-shell">
-                <LockIcon />
-                <input
-                  id="signup-password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  minLength={8}
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  aria-pressed={showPassword}
-                >
-                  <EyeIcon open={showPassword} />
+                <div className="field">
+                  <label htmlFor="signup-last-name">Last name</label>
+                  <div className="input-shell">
+                    <input
+                      id="signup-last-name"
+                      type="text"
+                      autoComplete="family-name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="signup-email">Email</label>
+                  <div className="input-shell">
+                    <MailIcon />
+                    <input
+                      id="signup-email"
+                      type="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="signup-password">Password</label>
+                  <div className="input-shell">
+                    <LockIcon />
+                    <input
+                      id="signup-password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      minLength={8}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-pressed={showPassword}
+                    >
+                      <EyeIcon open={showPassword} />
+                    </button>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="form-error" role="alert">
+                    {error}
+                  </p>
+                )}
+
+                <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                  {isSubmitting && <Spinner />}
+                  {isSubmitting ? 'Creating workspace…' : 'Create workspace'}
                 </button>
-              </div>
-            </div>
+              </form>
 
-            {error && (
-              <p className="form-error" role="alert">
-                {error}
+              <p>
+                Already have an account? <Link to="/">Log in</Link>
               </p>
-            )}
-
-            <button type="submit" className="submit-btn" disabled={isSubmitting}>
-              {isSubmitting && <Spinner />}
-              {isSubmitting ? 'Creating workspace…' : 'Create workspace'}
-            </button>
-          </form>
-
-          <p>
-            Already have an account? <Link to="/">Log in</Link>
-          </p>
+            </>
+          )}
         </div>
       </section>
     </div>

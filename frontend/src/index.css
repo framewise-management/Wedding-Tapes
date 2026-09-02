@@ -329,6 +329,16 @@ body:has(.app-shell) #root {
   animation: login-shake 0.35s ease;
 }
 
+.form-success {
+  background: #eaf7ee;
+  color: #1e7a34;
+  border: 1px solid #c5e8cf;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
 .submit-btn {
   width: 100%;
   display: flex;
