@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiPost } from '../api/client';
 import { setToken } from '../auth/auth';
 
@@ -55,7 +55,21 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [banner, setBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('verified') === 'true') {
+      setBanner({ type: 'success', text: 'Email confirmed — you can now log in.' });
+      return;
+    }
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const description = hashParams.get('error_description');
+    if (description) {
+      setBanner({ type: 'error', text: description.replace(/\+/g, ' ') });
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -140,6 +154,15 @@ export default function Login() {
               </div>
             </div>
 
+            {banner && (
+              <p
+                className={banner.type === 'success' ? 'form-success' : 'form-error'}
+                role={banner.type === 'success' ? 'status' : 'alert'}
+              >
+                {banner.text}
+              </p>
+            )}
+
             {error && (
               <p className="form-error" role="alert">
                 {error}
@@ -151,6 +174,10 @@ export default function Login() {
               {isSubmitting ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
+
+          <p>
+            New organization? <Link to="/signup">Sign up</Link>
+          </p>
         </div>
       </section>
     </div>
