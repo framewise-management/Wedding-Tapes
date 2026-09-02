@@ -6,7 +6,7 @@
     },
     "backend": {
       "root": "backend",
-      "entrypoint": "src/main.ts"
+      "entrypoint": "Dockerfile.vercel"
     }
   },
   "rewrites": [
