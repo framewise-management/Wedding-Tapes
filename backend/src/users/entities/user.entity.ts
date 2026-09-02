@@ -15,6 +15,12 @@ export class User {
   @Column({ name: 'business_id' })
   businessId: string;
 
+  @Column({ name: 'first_name', type: 'varchar', nullable: true })
+  firstName: string | null;
+
+  @Column({ name: 'last_name', type: 'varchar', nullable: true })
+  lastName: string | null;
+
   @Index({ unique: true })
   @Column()
   email: string;

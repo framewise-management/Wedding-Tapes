@@ -51,6 +51,8 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export default function Signup() {
   const [businessName, setBusinessName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -65,6 +67,8 @@ export default function Signup() {
     try {
       const { token } = await apiPost<{ token: string }>('/api/auth/signup', {
         businessName,
+        firstName,
+        lastName,
         email,
         password,
       });
@@ -112,6 +116,34 @@ export default function Signup() {
                   autoComplete="organization"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="signup-first-name">First name</label>
+              <div className="input-shell">
+                <input
+                  id="signup-first-name"
+                  type="text"
+                  autoComplete="given-name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="signup-last-name">Last name</label>
+              <div className="input-shell">
+                <input
+                  id="signup-last-name"
+                  type="text"
+                  autoComplete="family-name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   required
                 />
               </div>

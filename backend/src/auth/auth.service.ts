@@ -51,6 +51,8 @@ export class AuthService {
         return manager.save(
           manager.create(User, {
             businessId: business.id,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
             email: dto.email,
             passwordHash,
           }),
