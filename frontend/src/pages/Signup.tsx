@@ -49,7 +49,8 @@ function EyeIcon({ open }: { open: boolean }) {
   );
 }
 
-export default function Login() {
+export default function Signup() {
+  const [businessName, setBusinessName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -62,14 +63,15 @@ export default function Login() {
     setError('');
     setIsSubmitting(true);
     try {
-      const { token } = await apiPost<{ token: string }>('/api/auth/login', {
+      const { token } = await apiPost<{ token: string }>('/api/auth/signup', {
+        businessName,
         email,
         password,
       });
       setToken(token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Signup failed');
       setIsSubmitting(false);
     }
   }
@@ -96,17 +98,31 @@ export default function Login() {
         <div className="login-card">
           <div className="login-card-header">
             <span className="login-mark">WT</span>
-            <h2>Welcome back</h2>
-            <p>Sign in to your studio workspace</p>
+            <h2>Create your workspace</h2>
+            <p>Set up your studio in a minute</p>
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="field">
-              <label htmlFor="login-email">Email</label>
+              <label htmlFor="signup-business-name">Business name</label>
+              <div className="input-shell">
+                <input
+                  id="signup-business-name"
+                  type="text"
+                  autoComplete="organization"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="signup-email">Email</label>
               <div className="input-shell">
                 <MailIcon />
                 <input
-                  id="login-email"
+                  id="signup-email"
                   type="email"
                   autoComplete="email"
                   value={email}
@@ -117,15 +133,16 @@ export default function Login() {
             </div>
 
             <div className="field">
-              <label htmlFor="login-password">Password</label>
+              <label htmlFor="signup-password">Password</label>
               <div className="input-shell">
                 <LockIcon />
                 <input
-                  id="login-password"
+                  id="signup-password"
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
                   required
                 />
                 <button
@@ -148,12 +165,12 @@ export default function Login() {
 
             <button type="submit" className="submit-btn" disabled={isSubmitting}>
               {isSubmitting && <Spinner />}
-              {isSubmitting ? 'Signing in…' : 'Sign in'}
+              {isSubmitting ? 'Creating workspace…' : 'Create workspace'}
             </button>
           </form>
 
           <p>
-            New organization? <Link to="/signup">Sign up</Link>
+            Already have an account? <Link to="/">Log in</Link>
           </p>
         </div>
       </section>
