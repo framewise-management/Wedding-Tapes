@@ -5,7 +5,11 @@ import { isPgError } from '../db/pg-error';
 import { BadRequestError, ConflictError, ForbiddenError, UnauthorizedError } from '../lib/http-error';
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
-import type { LoginInput, ResendVerificationInput, SignupInput } from '../schemas/auth';
+import type { GoogleAuthInput, LoginInput, ResendVerificationInput, SignupInput } from '../schemas/auth';
+
+function issueToken(user: { id: string; businessId: string; email: string }) {
+  return { token: signJwt({ sub: user.id, businessId: user.businessId, email: user.email }) };
+}
 
 export async function login(input: LoginInput): Promise<{ token: string }> {
   const { error } = await supabase.auth.signInWithPassword({
@@ -30,7 +34,7 @@ export async function login(input: LoginInput): Promise<{ token: string }> {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  return { token: signJwt({ sub: user.id, businessId: user.businessId, email: user.email }) };
+  return issueToken(user);
 }
 
 export async function signup(input: SignupInput): Promise<{ message: string }> {
@@ -97,4 +101,71 @@ export async function resendVerification(
   }
 
   return { message: 'Verification email resent — check your inbox.' };
+}
+
+function profileFromGoogleMetadata(meta: Record<string, unknown>, email: string) {
+  const given = typeof meta.given_name === 'string' ? meta.given_name.trim() : '';
+  const family = typeof meta.family_name === 'string' ? meta.family_name.trim() : '';
+  const full =
+    (typeof meta.full_name === 'string' && meta.full_name.trim()) ||
+    (typeof meta.name === 'string' && meta.name.trim()) ||
+    '';
+  const parts = full.split(/\s+/).filter(Boolean);
+  const firstName = given || parts[0] || email.split('@')[0];
+  const lastName = family || parts.slice(1).join(' ') || firstName;
+  const businessName = full || firstName;
+  return { firstName, lastName, businessName };
+}
+
+export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: string }> {
+  const { data, error } = await supabase.auth.getUser(input.accessToken);
+  if (error || !data.user) {
+    throw new UnauthorizedError('Google sign-in failed');
+  }
+
+  const authUser = data.user;
+  const email = authUser.email;
+  if (!email) {
+    throw new UnauthorizedError('Google sign-in failed');
+  }
+
+  const existing =
+    (await db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
+    (await db.query.users.findFirst({ where: eq(users.email, email) }));
+  if (existing) {
+    return issueToken(existing);
+  }
+
+  const profile = profileFromGoogleMetadata(authUser.user_metadata ?? {}, email);
+
+  try {
+    const created = await db.transaction(async (tx) => {
+      const [business] = await tx
+        .insert(businesses)
+        .values({ name: profile.businessName, email })
+        .returning();
+      const [user] = await tx
+        .insert(users)
+        .values({
+          id: authUser.id,
+          businessId: business.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email,
+        })
+        .returning();
+      return user;
+    });
+    return issueToken(created);
+  } catch (err) {
+    if (isPgError(err, '23505')) {
+      const raced =
+        (await db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
+        (await db.query.users.findFirst({ where: eq(users.email, email) }));
+      if (raced) {
+        return issueToken(raced);
+      }
+    }
+    throw err;
+  }
 }

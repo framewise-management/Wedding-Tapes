@@ -379,6 +379,68 @@ body:has(.app-shell) #root {
   outline-offset: 2px;
 }
 
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+  color: var(--lg-plum-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ecd9c9;
+}
+
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px;
+  margin-bottom: 20px;
+  border: 1.5px solid #ecd9c9;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--lg-plum);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.google-btn:hover {
+  border-color: var(--lg-coral);
+  background: #fffaf7;
+}
+
+.google-btn:focus-visible {
+  outline: 2px solid var(--lg-plum);
+  outline-offset: 2px;
+}
+
+.google-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.google-btn:disabled:hover {
+  border-color: #ecd9c9;
+  background: #fff;
+}
+
+.google-btn .spinner {
+  border-color: rgba(46, 31, 46, 0.2);
+  border-top-color: var(--lg-plum);
+}
+
 .spinner {
   width: 16px;
   height: 16px;

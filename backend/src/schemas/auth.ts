@@ -19,3 +19,8 @@ export const resendVerificationSchema = z.object({
   email: z.string().email('email must be an email'),
 });
 export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
+
+export const googleAuthSchema = z.object({
+  accessToken: z.string().min(1, 'accessToken should not be empty'),
+});
+export type GoogleAuthInput = z.infer<typeof googleAuthSchema>;
