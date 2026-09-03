@@ -13,6 +13,14 @@ function money(value: number): string {
   return `Rs. ${value.toLocaleString('en-IN')}`;
 }
 
+// proposalNumber is server-generated (WP-{year}-{seq}), never user input, but the
+// header value is still built from it — strip CR/LF/quotes/backslash defensively
+// so a future format change can't turn into header injection.
+export function proposalPdfContentDisposition(proposalNumber: string): string {
+  const safeName = proposalNumber.replace(/[\r\n"\\]/g, '_');
+  return `attachment; filename="${safeName}.pdf"; filename*=UTF-8''${encodeURIComponent(safeName)}.pdf`;
+}
+
 function formatDate(value: string | Date): string {
   return new Date(value).toLocaleDateString('en-IN', {
     day: 'numeric',

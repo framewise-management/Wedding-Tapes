@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
+import { notifySetupStatusChanged } from '../lib/setupStatus';
 import type { Service } from '../types/catalog';
 import './Services.css';
 
@@ -81,6 +82,7 @@ export default function Services() {
       setEditingId(null);
       setForm(EMPTY_FORM);
       load();
+      notifySetupStatusChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save service');
     }
@@ -92,6 +94,7 @@ export default function Services() {
     try {
       await apiDelete(`/api/services/${service.id}`);
       load();
+      notifySetupStatusChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete service');
     }

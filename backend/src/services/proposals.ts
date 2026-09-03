@@ -57,6 +57,22 @@ export async function findOneProposal(businessId: string, id: string) {
   return proposal;
 }
 
+export async function findProposalById(id: string) {
+  const proposal = await db.query.proposals.findFirst({
+    where: eq(proposals.id, id),
+    with: RELATIONS,
+  });
+  if (!proposal) throw new NotFoundError('Proposal not found');
+  return proposal;
+}
+
+export async function incrementShareViewCount(id: string) {
+  await db
+    .update(proposals)
+    .set({ shareViewCount: sql`${proposals.shareViewCount} + 1` })
+    .where(eq(proposals.id, id));
+}
+
 export async function removeProposal(businessId: string, id: string) {
   await findOneProposal(businessId, id);
   await db.delete(proposals).where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));

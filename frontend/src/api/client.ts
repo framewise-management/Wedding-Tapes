@@ -45,3 +45,12 @@ export async function apiPostFile(path: string): Promise<Blob> {
   }
   return res.blob();
 }
+
+export async function apiGetFile(path: string): Promise<Blob> {
+  const res = await fetch(`${API_URL}${path}`);
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error?.message ?? `GET ${path} failed: ${res.status}`);
+  }
+  return res.blob();
+}

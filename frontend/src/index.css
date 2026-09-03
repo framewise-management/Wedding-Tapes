@@ -114,7 +114,8 @@ code {
    app's dark-mode-aware --bg/--text tokens above, and breaks out of the
    app-wide #root width constraint for a full-bleed split layout. */
 body:has(.login-screen) #root,
-body:has(.app-shell) #root {
+body:has(.app-shell) #root,
+body:has(.pp-page) #root {
   width: 100%;
   border-inline: none;
   text-align: left;

@@ -42,6 +42,7 @@ export interface Proposal {
   total: number;
   validUntil: string | null;
   notes: string | null;
+  shareViewCount: number;
   packages: ProposalPackage[];
   items: ProposalItem[];
   createdAt: string;

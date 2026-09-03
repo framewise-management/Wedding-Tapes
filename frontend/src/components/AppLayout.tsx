@@ -1,5 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { apiGet } from '../api/client';
 import { clearToken } from '../auth/auth';
+import { onSetupStatusChanged } from '../lib/setupStatus';
+import type { Business } from '../types/business';
+import type { Service } from '../types/catalog';
 import './AppLayout.css';
 
 const NAV_ITEMS = [
@@ -29,9 +34,51 @@ function LogoutIcon() {
   );
 }
 
+function CollapseIcon({ collapsed }: { collapsed: boolean }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d={collapsed ? 'm9 6 6 6-6 6' : 'm15 6-6 6 6 6'}
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed';
+
 export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [needsBusiness, setNeedsBusiness] = useState(false);
+  const [needsServices, setNeedsServices] = useState(false);
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true',
+  );
+
+  function toggleCollapsed() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
+      return next;
+    });
+  }
+
+  useEffect(() => {
+    function refreshSetupStatus() {
+      apiGet<Business>('/api/business')
+        .then((business) => setNeedsBusiness(!business.phone))
+        .catch(() => setNeedsBusiness(false));
+      apiGet<Service[]>('/api/services')
+        .then((services) => setNeedsServices(services.length === 0))
+        .catch(() => setNeedsServices(false));
+    }
+    refreshSetupStatus();
+    return onSetupStatusChanged(refreshSetupStatus);
+  }, []);
 
   function handleLogout() {
     clearToken();
@@ -40,10 +87,10 @@ export default function AppLayout() {
 
   return (
     <div className="app-shell">
-      <aside className="app-sidebar">
+      <aside className={'app-sidebar' + (collapsed ? ' collapsed' : '')}>
         <div className="app-brand">
           <span className="app-brand-mark">WT</span>
-          <span className="app-brand-name">Wedding Tapes</span>
+          {!collapsed && <span className="app-brand-name">Wedding Tapes</span>}
         </div>
 
         <nav className="app-nav">
@@ -51,6 +98,7 @@ export default function AppLayout() {
             <Link
               key={item.to}
               to={item.to}
+              title={collapsed ? item.label : undefined}
               className={
                 'app-nav-item' +
                 (location.pathname.startsWith(item.to) ? ' active' : '')
@@ -59,20 +107,47 @@ export default function AppLayout() {
               <span className="app-nav-icon">
                 <NavIcon path={item.icon} />
               </span>
-              {item.label}
+              {!collapsed && item.label}
             </Link>
           ))}
         </nav>
 
         <div className="app-logout-wrap">
-          <button type="button" className="app-logout-btn" onClick={handleLogout}>
+          <button
+            type="button"
+            className="app-collapse-btn"
+            onClick={toggleCollapsed}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <CollapseIcon collapsed={collapsed} />
+            {!collapsed && 'Collapse'}
+          </button>
+          <button
+            type="button"
+            className="app-logout-btn"
+            onClick={handleLogout}
+            title={collapsed ? 'Logout' : undefined}
+          >
             <LogoutIcon />
-            Logout
+            {!collapsed && 'Logout'}
           </button>
         </div>
       </aside>
 
       <main className="app-main">
+        {needsBusiness && (
+          <p className="app-setup-notice">
+            Your business profile isn&apos;t set up —{' '}
+            <Link to="/business">complete your organization profile</Link> to start sending
+            proposals.
+          </p>
+        )}
+        {needsServices && (
+          <p className="app-setup-notice">
+            You have no services yet — <Link to="/services">add a service</Link> to start sending
+            proposals.
+          </p>
+        )}
         <Outlet />
       </main>
     </div>
