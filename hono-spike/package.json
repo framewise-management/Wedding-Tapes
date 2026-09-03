@@ -1,7 +1,0 @@
-{
-  "name": "hono-spike",
-  "private": true,
-  "dependencies": {
-    "hono": "^4.6.14"
-  }
-}
