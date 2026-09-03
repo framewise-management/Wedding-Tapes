@@ -9,7 +9,8 @@
       "entrypoint": "Dockerfile.vercel"
     },
     "hono-spike": {
-      "root": "hono-spike"
+      "root": "hono-spike",
+      "entrypoint": "index.ts"
     }
   },
   "rewrites": [
