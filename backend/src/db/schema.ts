@@ -176,6 +176,7 @@ export const proposals = pgTable(
     total: integer().default(0).notNull(),
     validUntil: date('valid_until', { mode: 'string' }),
     notes: text(),
+    shareViewCount: integer('share_view_count').default(0).notNull(),
     createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string' })
       .defaultNow()

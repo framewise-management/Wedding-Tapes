@@ -1,0 +1,27 @@
+.pp-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #fafafa;
+  padding: 48px 20px;
+  box-sizing: border-box;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.pp-page .pv-container {
+  margin: 0 auto;
+}
+
+.pp-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.pp-notice {
+  padding: 48px 20px;
+  text-align: center;
+  color: #6b6375;
+  font-size: 15px;
+}

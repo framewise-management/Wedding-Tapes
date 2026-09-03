@@ -19,7 +19,7 @@ import {
   updateProposalStatus,
 } from '../services/proposals';
 import { getBusiness } from '../services/business';
-import { generateProposalPdf } from '../pdf';
+import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
 
 export const proposalsRoutes = new Hono<{ Variables: AuthedVariables }>();
 
@@ -81,6 +81,6 @@ proposalsRoutes.post('/:id/generate-pdf', async (c) => {
   const pdf = await generateProposalPdf(proposal, business);
   return c.body(new Uint8Array(pdf), 200, {
     'Content-Type': 'application/pdf',
-    'Content-Disposition': `attachment; filename="${proposal.proposalNumber}.pdf"`,
+    'Content-Disposition': proposalPdfContentDisposition(proposal.proposalNumber),
   });
 });

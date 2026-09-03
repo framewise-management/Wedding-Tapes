@@ -86,6 +86,7 @@ export default function ProposalHistory() {
           <span>Wedding date</span>
           <span>Total</span>
           <span>Status</span>
+          <span>Views</span>
           <span>Updated</span>
           <span></span>
         </div>
@@ -109,6 +110,7 @@ export default function ProposalHistory() {
               <span className="ph-cell-date">{formatDate(p.weddingDate)}</span>
               <span className="ph-cell-total">{money(p.total)}</span>
               <span className={`ph-status ph-status-${p.status.toLowerCase()}`}>{p.status}</span>
+              <span className="ph-cell-date">{p.shareViewCount || '—'}</span>
               <span className="ph-cell-date">{formatDate(p.updatedAt)}</span>
               <button
                 type="button"

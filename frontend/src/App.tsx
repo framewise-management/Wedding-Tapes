@@ -11,6 +11,7 @@ import CreateProposal from './pages/CreateProposal';
 import PackageServiceSelection from './pages/PackageServiceSelection';
 import ProposalPreview from './pages/ProposalPreview';
 import ProposalHistory from './pages/ProposalHistory';
+import PublicProposal from './pages/PublicProposal';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AppLayout from './components/AppLayout';
 
@@ -19,6 +20,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/p/:id" element={<PublicProposal />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />

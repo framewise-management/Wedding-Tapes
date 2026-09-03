@@ -1,23 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiDelete, apiGet, apiPatch, apiPostFile } from '../api/client';
+import ProposalSheet from '../components/ProposalSheet';
 import type { Proposal, ProposalStatus } from '../types/proposal';
 import type { Business } from '../types/business';
 import './ProposalPreview.css';
 
 const STATUSES: ProposalStatus[] = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'];
-
-function money(value: number): string {
-  return `₹${value.toLocaleString('en-IN')}`;
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 export default function ProposalPreview() {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +18,20 @@ export default function ProposalPreview() {
   const [downloadError, setDownloadError] = useState('');
   const [statusError, setStatusError] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const [shareOpen, setShareOpen] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const shareRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!shareOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (shareRef.current && !shareRef.current.contains(e.target as Node)) {
+        setShareOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [shareOpen]);
 
   async function handleStatusChange(newStatus: ProposalStatus) {
     if (!id) return;
@@ -36,8 +39,25 @@ export default function ProposalPreview() {
     try {
       const updated = await apiPatch<Proposal>(`/api/proposals/${id}/status`, { status: newStatus });
       setProposal(updated);
+      setShareOpen(false);
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : 'Failed to update status');
+    }
+  }
+
+  async function handleCopyLink() {
+    if (!id) return;
+    setStatusError('');
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/p/${id}`);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+      if (proposal?.status === 'DRAFT') {
+        const updated = await apiPatch<Proposal>(`/api/proposals/${id}/status`, { status: 'SENT' });
+        setProposal(updated);
+      }
+    } catch (err) {
+      setStatusError(err instanceof Error ? err.message : 'Failed to copy link');
     }
   }
 
@@ -88,140 +108,67 @@ export default function ProposalPreview() {
   if (error) return <p className="pv-error">{error}</p>;
   if (!proposal || !business) return <p>Loading…</p>;
 
-  const includedItems = proposal.items.filter((i) => !i.isOptional);
-  const optionalItems = proposal.items.filter((i) => i.isOptional);
-
   return (
     <div className="pv-container">
       <div className="pv-page-header">
         <Link to="/proposals" className="pv-back-link">← Back to proposals</Link>
         <div className="pv-header-actions">
           {statusError && <span className="pv-error">{statusError}</span>}
-          {downloadError && <span className="pv-error">{downloadError}</span>}
           {deleteError && <span className="pv-error">{deleteError}</span>}
+          <span className={`pv-status-badge pv-status-${proposal.status.toLowerCase()}`}>
+            {proposal.status}
+          </span>
+          {proposal.shareViewCount > 0 && (
+            <span className="pv-view-count">
+              Viewed {proposal.shareViewCount} time{proposal.shareViewCount === 1 ? '' : 's'}
+            </span>
+          )}
           {proposal.status === 'DRAFT' && (
             <Link to={`/proposals/${proposal.id}/edit`} className="pv-edit-link">Edit</Link>
           )}
           <button type="button" className="pv-edit-link pv-danger" onClick={handleDelete}>
             Delete
           </button>
-          <button type="button" className="pv-download-btn" onClick={handleDownloadPdf} disabled={downloading}>
-            {downloading ? 'Generating…' : 'Download PDF'}
-          </button>
-          <select
-            className={`pv-status-select pv-status-${proposal.status.toLowerCase()}`}
-            value={proposal.status}
-            onChange={(e) => handleStatusChange(e.target.value as ProposalStatus)}
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="pv-sheet">
-        <div className="pv-business-row">
-          <div className="pv-business-identity">
-            {business.logo && <img className="pv-logo" src={business.logo} alt="" />}
-            <div>
-              <p className="pv-business-name">{business.name}</p>
-              <div className="pv-business-contact">
-                {business.phone && <span>{business.phone}</span>}
-                {business.email && <span>{business.email}</span>}
-                {business.website && <span>{business.website}</span>}
+          <div className="pv-share-wrap" ref={shareRef}>
+            <button type="button" className="pv-download-btn" onClick={() => setShareOpen((v) => !v)}>
+              Share
+            </button>
+            {shareOpen && (
+              <div className="pv-share-menu">
+                <button type="button" className="pv-share-menu-item" onClick={handleCopyLink}>
+                  {linkCopied ? 'Link copied!' : 'Copy shareable link'}
+                </button>
+                <button
+                  type="button"
+                  className="pv-share-menu-item"
+                  onClick={() => {
+                    setShareOpen(false);
+                    handleDownloadPdf();
+                  }}
+                  disabled={downloading}
+                >
+                  {downloading ? 'Generating…' : 'Download PDF'}
+                </button>
+                {downloadError && <p className="pv-error pv-share-error">{downloadError}</p>}
+                <div className="pv-share-divider" />
+                <p className="pv-share-label">Mark as</p>
+                {STATUSES.filter((s) => s !== proposal.status).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className="pv-share-menu-item"
+                    onClick={() => handleStatusChange(s)}
+                  >
+                    {s.charAt(0) + s.slice(1).toLowerCase()}
+                  </button>
+                ))}
               </div>
-              {business.address && <p className="pv-business-address">{business.address}</p>}
-            </div>
-          </div>
-          <div className="pv-proposal-meta">
-            <p className="pv-proposal-number">{proposal.proposalNumber}</p>
-            {proposal.validUntil && (
-              <p className="pv-valid-until">Valid until {formatDate(proposal.validUntil)}</p>
             )}
           </div>
         </div>
-
-        <section className="pv-section">
-          <h2>Customer</h2>
-          <p className="pv-line">{proposal.customer.name}</p>
-          <p className="pv-line pv-muted">{proposal.customer.phone}</p>
-          {proposal.customer.email && <p className="pv-line pv-muted">{proposal.customer.email}</p>}
-        </section>
-
-        <section className="pv-section">
-          <h2>Wedding details</h2>
-          <p className="pv-line">{formatDate(proposal.weddingDate)} — {proposal.weddingLocation}</p>
-          {proposal.numberOfDays != null && (
-            <p className="pv-line pv-muted">{proposal.numberOfDays} day{proposal.numberOfDays === 1 ? '' : 's'}</p>
-          )}
-        </section>
-
-        {proposal.packages.length > 0 && (
-          <section className="pv-section">
-            <h2>Selected packages</h2>
-            {proposal.packages.map((p) => (
-              <div className="pv-line-item" key={p.id}>
-                <div>
-                  <p className="pv-line-item-name">{p.packageName}{p.quantity > 1 ? ` × ${p.quantity}` : ''}</p>
-                  {p.packageDescription && <p className="pv-line-item-desc">{p.packageDescription}</p>}
-                </div>
-                <span className="pv-line-item-total">{money(p.total)}</span>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {includedItems.length > 0 && (
-          <section className="pv-section">
-            <h2>Selected services</h2>
-            {includedItems.map((i) => (
-              <div className="pv-line-item" key={i.id}>
-                <div>
-                  <p className="pv-line-item-name">{i.serviceName}{i.quantity > 1 ? ` × ${i.quantity}` : ''}</p>
-                  {i.description && <p className="pv-line-item-desc">{i.description}</p>}
-                </div>
-                <span className="pv-line-item-total">{money(i.total)}</span>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {optionalItems.length > 0 && (
-          <section className="pv-section">
-            <h2>Optional services</h2>
-            <p className="pv-section-sub">Not included in the total unless added.</p>
-            {optionalItems.map((i) => (
-              <div className="pv-line-item" key={i.id}>
-                <div>
-                  <p className="pv-line-item-name">{i.serviceName}{i.quantity > 1 ? ` × ${i.quantity}` : ''}</p>
-                  {i.description && <p className="pv-line-item-desc">{i.description}</p>}
-                </div>
-                <span className="pv-line-item-total">{money(i.total)}</span>
-              </div>
-            ))}
-          </section>
-        )}
-
-        <section className="pv-section">
-          <h2>Pricing</h2>
-          <div className="pv-pricing-row"><span>Subtotal</span><span>{money(proposal.subtotal)}</span></div>
-          {proposal.discountAmount > 0 && (
-            <div className="pv-pricing-row"><span>Discount</span><span>−{money(proposal.discountAmount)}</span></div>
-          )}
-          {proposal.taxAmount > 0 && (
-            <div className="pv-pricing-row"><span>Tax ({proposal.taxRate}%)</span><span>+{money(proposal.taxAmount)}</span></div>
-          )}
-          <div className="pv-pricing-row pv-total"><span>Final total</span><span>{money(proposal.total)}</span></div>
-        </section>
-
-        {business.defaultTerms && (
-          <section className="pv-section">
-            <h2>Terms &amp; conditions</h2>
-            <p className="pv-terms">{business.defaultTerms}</p>
-          </section>
-        )}
       </div>
+
+      <ProposalSheet proposal={proposal} business={business} />
     </div>
   );
 }
