@@ -172,7 +172,7 @@ export default function Login() {
       <section className="login-visual" aria-hidden="true">
         <div className="visual-grain" />
         <div className="login-visual-content">
-          <span className="login-eyebrow">Wedding Tapes Studio</span>
+          <span className="login-eyebrow">Framewise</span>
           <h1 className="login-visual-title">
             Every proposal,
             <br />
@@ -188,7 +188,7 @@ export default function Login() {
       <section className="login-form-panel">
         <div className="login-card">
           <div className="login-card-header">
-            <span className="login-mark">WT</span>
+            <span className="login-mark">FW</span>
             <h2>Welcome back</h2>
             <p>Sign in to your studio workspace</p>
           </div>

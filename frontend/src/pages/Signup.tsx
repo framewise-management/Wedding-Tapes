@@ -139,7 +139,7 @@ export default function Signup() {
       <section className="login-visual" aria-hidden="true">
         <div className="visual-grain" />
         <div className="login-visual-content">
-          <span className="login-eyebrow">Wedding Tapes Studio</span>
+          <span className="login-eyebrow">Framewise</span>
           <h1 className="login-visual-title">
             Every proposal,
             <br />
@@ -157,7 +157,7 @@ export default function Signup() {
           {submitted ? (
             <>
               <div className="login-card-header">
-                <span className="login-mark">WT</span>
+                <span className="login-mark">FW</span>
                 <h2>Check your email</h2>
                 <p>We sent a confirmation link to {email}. Verify it, then log in.</p>
               </div>
@@ -188,7 +188,7 @@ export default function Signup() {
           ) : (
             <>
               <div className="login-card-header">
-                <span className="login-mark">WT</span>
+                <span className="login-mark">FW</span>
                 <h2>Create your workspace</h2>
                 <p>Set up your studio in a minute</p>
               </div>

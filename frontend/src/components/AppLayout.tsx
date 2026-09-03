@@ -89,8 +89,8 @@ export default function AppLayout() {
     <div className="app-shell">
       <aside className={'app-sidebar' + (collapsed ? ' collapsed' : '')}>
         <div className="app-brand">
-          <span className="app-brand-mark">WT</span>
-          {!collapsed && <span className="app-brand-name">Wedding Tapes</span>}
+          <span className="app-brand-mark">FW</span>
+          {!collapsed && <span className="app-brand-name">Framewise</span>}
         </div>
 
         <nav className="app-nav">
