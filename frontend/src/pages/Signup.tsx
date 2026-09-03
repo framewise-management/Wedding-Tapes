@@ -58,6 +58,10 @@ export default function Signup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
+    null,
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -75,6 +79,22 @@ export default function Signup() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleResend() {
+    setResendMessage(null);
+    setIsResending(true);
+    try {
+      const { message } = await apiPost<{ message: string }>('/api/auth/resend', { email });
+      setResendMessage({ type: 'success', text: message });
+    } catch (err) {
+      setResendMessage({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Could not resend the email',
+      });
+    } finally {
+      setIsResending(false);
     }
   }
 
@@ -99,11 +119,36 @@ export default function Signup() {
       <section className="login-form-panel">
         <div className="login-card">
           {submitted ? (
-            <div className="login-card-header">
-              <span className="login-mark">WT</span>
-              <h2>Check your email</h2>
-              <p>We sent a confirmation link to {email}. Verify it, then log in.</p>
-            </div>
+            <>
+              <div className="login-card-header">
+                <span className="login-mark">WT</span>
+                <h2>Check your email</h2>
+                <p>We sent a confirmation link to {email}. Verify it, then log in.</p>
+              </div>
+
+              {resendMessage && (
+                <p
+                  className={resendMessage.type === 'success' ? 'form-success' : 'form-error'}
+                  role={resendMessage.type === 'success' ? 'status' : 'alert'}
+                >
+                  {resendMessage.text}
+                </p>
+              )}
+
+              <button
+                type="button"
+                className="submit-btn"
+                onClick={handleResend}
+                disabled={isResending}
+              >
+                {isResending && <Spinner />}
+                {isResending ? 'Resending…' : 'Resend email'}
+              </button>
+
+              <p>
+                Already have an account? <Link to="/">Log in</Link>
+              </p>
+            </>
           ) : (
             <>
               <div className="login-card-header">

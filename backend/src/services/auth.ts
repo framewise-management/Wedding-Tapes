@@ -5,7 +5,7 @@ import { isPgError } from '../db/pg-error';
 import { BadRequestError, ConflictError, ForbiddenError, UnauthorizedError } from '../lib/http-error';
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
-import type { LoginInput, SignupInput } from '../schemas/auth';
+import type { LoginInput, ResendVerificationInput, SignupInput } from '../schemas/auth';
 
 export async function login(input: LoginInput): Promise<{ token: string }> {
   const { error } = await supabase.auth.signInWithPassword({
@@ -80,4 +80,21 @@ export async function signup(input: SignupInput): Promise<{ message: string }> {
   return {
     message: 'Account created — check your email to verify your address before logging in.',
   };
+}
+
+export async function resendVerification(
+  input: ResendVerificationInput,
+): Promise<{ message: string }> {
+  const frontendUrl = process.env.FRONTEND_URL!;
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: input.email,
+    options: { emailRedirectTo: `${frontendUrl}/?verified=true` },
+  });
+
+  if (error) {
+    throw new BadRequestError(error.message);
+  }
+
+  return { message: 'Verification email resent — check your inbox.' };
 }

@@ -14,3 +14,8 @@ export const signupSchema = z.object({
   password: z.string().min(8, 'password must be longer than or equal to 8 characters'),
 });
 export type SignupInput = z.infer<typeof signupSchema>;
+
+export const resendVerificationSchema = z.object({
+  email: z.string().email('email must be an email'),
+});
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
