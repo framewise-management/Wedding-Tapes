@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiGet, apiPut } from '../api/client';
+import { notifySetupStatusChanged } from '../lib/setupStatus';
 import type { Business } from '../types/business';
 import './BusinessProfile.css';
 
@@ -63,6 +64,7 @@ export default function BusinessProfile() {
       });
       setBusiness(updated);
       setStatus('Saved');
+      notifySetupStatusChanged();
     } catch (err) {
       setStatus(err instanceof Error ? err.message : 'Failed to save');
     } finally {

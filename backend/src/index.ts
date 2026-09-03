@@ -10,6 +10,7 @@ import { servicesRoutes } from './routes/services';
 import { packagesRoutes } from './routes/packages';
 import { customersRoutes } from './routes/customers';
 import { proposalsRoutes } from './routes/proposals';
+import { publicProposalsRoutes } from './routes/public-proposals';
 
 const app = new Hono();
 
@@ -30,5 +31,6 @@ app.route('/api/services', servicesRoutes);
 app.route('/api/packages', packagesRoutes);
 app.route('/api/customers', customersRoutes);
 app.route('/api/proposals', proposalsRoutes);
+app.route('/api/public/proposals', publicProposalsRoutes);
 
 export default app;

@@ -11,12 +11,29 @@
   flex: none;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   border-right: 1px solid #e5e4e7;
   padding: 28px 20px;
   display: flex;
   flex-direction: column;
   gap: 28px;
   box-sizing: border-box;
+  transition: width 0.18s ease, padding 0.18s ease;
+}
+
+.app-sidebar.collapsed {
+  width: 72px;
+  padding: 28px 12px;
+}
+
+.app-sidebar.collapsed .app-brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.app-sidebar.collapsed .app-nav-item {
+  justify-content: center;
+  padding: 9px;
 }
 
 .app-brand {
@@ -90,8 +107,12 @@
   margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid #e5e4e7;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
+.app-collapse-btn,
 .app-logout-btn {
   display: flex;
   align-items: center;
@@ -106,10 +127,18 @@
   font-weight: 500;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
 }
 
+.app-collapse-btn:hover,
 .app-logout-btn:hover {
   background: #f4f3ec;
+}
+
+.app-sidebar.collapsed .app-collapse-btn,
+.app-sidebar.collapsed .app-logout-btn {
+  justify-content: center;
+  padding: 9px;
 }
 
 .app-main {
@@ -119,4 +148,25 @@
   overflow-y: auto;
   padding: 36px 32px 80px;
   box-sizing: border-box;
+}
+
+.app-setup-notice {
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border: 1px solid rgba(226, 102, 26, 0.25);
+  border-radius: 10px;
+  background: rgba(226, 102, 26, 0.08);
+  color: #6b6375;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.app-setup-notice a {
+  color: #e2661a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-setup-notice a:hover {
+  text-decoration: underline;
 }
