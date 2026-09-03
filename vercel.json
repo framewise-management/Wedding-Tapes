@@ -7,11 +7,15 @@
     "backend": {
       "root": "backend",
       "entrypoint": "Dockerfile.vercel"
+    },
+    "hono-spike": {
+      "root": "hono-spike"
     }
   },
   "rewrites": [
     { "source": "/api(/.*)?", "destination": { "service": "backend" } },
     { "source": "/health", "destination": { "service": "backend" } },
+    { "source": "/spike-health", "destination": { "service": "hono-spike" } },
     { "source": "/(.*)", "destination": { "service": "frontend" } }
   ]
 }
