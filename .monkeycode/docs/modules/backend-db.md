@@ -2,7 +2,7 @@
 
 Drizzle schema + one postgres-js client.
 
-## 结构
+## Structure
 
 ```
 db/

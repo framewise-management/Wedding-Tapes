@@ -1,28 +1,30 @@
 # Developer guide
 
-## 项目目的
+Wiki language: **English only**. Agent replies and new wiki pages must be English.
+
+## Project purpose
 
 Wedding Tapes is the wedding-photography proposal generator (MVP). Contributors implement remaining SRS FRs into `backend/` and `frontend/` without inventing payments, customer portals, WhatsApp, e-sign, CRM, or AI extraction.
 
-**核心职责**:
+**Core responsibilities**:
 - Keep pricing server-authoritative and snapshot catalog data on proposals
 - Scope every query by JWT `businessId`
 - Thin routes, fat services, isolated `pricing.ts` / `pdf.ts`
 
-**相关系统**:
+**Related systems**:
 - Supabase Auth — credentials and email confirmation
 - Supabase Postgres — application tables
 - Vercel — host both services
 
-## 环境搭建
+## Environment setup
 
-### 前置条件
+### Prerequisites
 
 - Node.js compatible with TypeScript 6 / Vite 8
 - pnpm
 - Supabase project (Postgres + Auth) and CA PEM for the pooler
 
-### 安装
+### Install
 
 ```bash
 pnpm install
@@ -32,24 +34,24 @@ cd ../frontend && copy .env.example .env
 
 Fill `backend/.env` from `.env.example`. Never commit secrets.
 
-### 环境变量
+### Environment variables
 
-| 变量 | 必需 | 描述 | 示例 |
-|------|------|------|------|
-| `PORT` | 否 | local Hono listen | `3333` |
-| `DATABASE_URL` | 是 | pooler URL **without** `sslmode` | `postgresql://...@host:6543/postgres` |
-| `DATABASE_CA_CERT` | 是 | PEM of Supabase Root CA | `-----BEGIN CERTIFICATE-----...` |
-| `JWT_SECRET` | 是 | HS256 secret | placeholder |
-| `JWT_EXPIRES_IN` | 否 | jwt expiry | `1d` |
-| `SUPABASE_URL` | 是 | Auth project URL | `https://<ref>.supabase.co` |
-| `SUPABASE_ANON_KEY` | 是 | anon key | placeholder |
-| `SUPABASE_SERVICE_ROLE_KEY` | 是 | service role (signup/seed) | placeholder |
-| `FRONTEND_URL` | 否 | used by auth emails if wired | `http://localhost:5173` |
+| Variable | Required | Description | Example |
+|----------|----------|-------------|---------|
+| `PORT` | no | local Hono listen | `3333` |
+| `DATABASE_URL` | yes | pooler URL **without** `sslmode` | `postgresql://...@host:6543/postgres` |
+| `DATABASE_CA_CERT` | yes | PEM of Supabase Root CA | `-----BEGIN CERTIFICATE-----...` |
+| `JWT_SECRET` | yes | HS256 secret | placeholder |
+| `JWT_EXPIRES_IN` | no | jwt expiry | `1d` |
+| `SUPABASE_URL` | yes | Auth project URL | `https://<ref>.supabase.co` |
+| `SUPABASE_ANON_KEY` | yes | anon key | placeholder |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes | service role (signup/seed) | placeholder |
+| `FRONTEND_URL` | no | used by auth emails if wired | `http://localhost:5173` |
 | `SEED_ADMIN_EMAIL` | seed | | |
 | `SEED_ADMIN_PASSWORD` | seed | | |
 | `VITE_API_URL` | frontend | API origin in local dev | `http://localhost:3333` |
 
-### 运行
+### Run
 
 From repo root:
 
@@ -74,10 +76,10 @@ pnpm --dir frontend build
 
 Backend local must use `dev-server.ts` (`serve()`). Vercel must only load `index.ts` `export default app`.
 
-## 开发工作流
+## Development workflow
 
-| 工具 | 命令 | 目的 |
-|------|------|------|
+| Tool | Command | Purpose |
+|------|---------|---------|
 | tsc | `pnpm --dir backend build` | typecheck (`tsc --noEmit`) |
 | oxlint | `pnpm --dir backend lint` | lint |
 | prettier | `pnpm --dir backend format` | format |
@@ -85,9 +87,9 @@ Backend local must use `dev-server.ts` (`serve()`). Vercel must only load `index
 
 Branch: current git branch is `master`. No documented GitHub Actions in-repo at scan time.
 
-## 常见任务
+## Common tasks
 
-### 添加新 API 端点
+### Add a new API endpoint
 
 1. `backend/src/schemas/<domain>.ts` — Zod, no `.strict()`, no coerce on ints
 2. `backend/src/services/<domain>.ts` — filter by `businessId`
@@ -95,38 +97,39 @@ Branch: current git branch is `master`. No documented GitHub Actions in-repo at 
 4. Mount in `index.ts` if new router
 5. Frontend: `apiGet`/`apiPost` in a page; types in `frontend/src/types/`
 
-### 添加数据库变更
+### Add a database change
 
 1. Edit `backend/src/db/schema.ts` (keep `.$onUpdate(() => sql\`now()\`)` on `updated_at`)
 2. `pnpm --dir backend db:generate` then `db:migrate`
 3. Do not run TypeORM files under `src/database/migrations/`
 
-### 改定价公式
+### Change the pricing formula
 
 Only `backend/src/pricing.ts`. Re-run `pnpm --dir backend test`. All create/update/calculate paths must still go through `persistPricing()`.
 
-### 改 PDF
+### Change the PDF
 
 Only `backend/src/pdf.ts`. Route stays 200 + `Uint8Array`.
 
-## 编码规范
+## Coding conventions
 
 - Routes thin; services own queries
-- Cross-domain: import `findOneService` etc., not another domain’s tables
+- Cross-domain: import `findOneService` etc., not another domain's tables
 - Typed HTTP errors from `lib/http-error.ts`
 - Minimal comments; comment only non-obvious WHY
 - Frontend: do not compute authoritative totals
 - Surgical diffs; no speculative features listed in SRS out-of-scope
+- Wiki and agent-facing docs: English only
 
-### 命名
+### Naming
 
-| 类型 | 约定 | 示例 |
-|------|------|------|
+| Kind | Convention | Example |
+|------|------------|---------|
 | backend files | kebab-case | `catalog-services.ts` |
 | React pages | PascalCase | `CreateProposal.tsx` |
 | functions | camelCase | `findOneProposal` |
 | DB columns | snake_case in PG, camelCase in Drizzle | `proposal_number` / `proposalNumber` |
 
-## 安全起步
+## Safe starting points
 
 Low-risk: copy, lint, frontend layout, docs. High-risk: `services/proposals.ts` snapshot/re-activate rules, auth supabase flags, SSL, pricing.

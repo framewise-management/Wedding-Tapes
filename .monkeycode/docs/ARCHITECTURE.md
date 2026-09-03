@@ -10,33 +10,33 @@ Every domain row is scoped by `business_id`. The API never trusts a client-suppl
 
 Source of truth for product rules: `wedding_photography_proposal_generator_detailed_SRS.md` (authoritative) and `wedding_photography_proposal_generator_small_scope_MVP.md`. Stack notes and port history: `CLAUDE.md`. Phase plan (partially historical — backend is no longer NestJS): `plan.md`.
 
-## 技术栈
+## Tech stack
 
-**语言与运行时**
+**Languages and runtime**
 - TypeScript (backend `typescript` ^6, frontend ~6)
 - Node.js (Vercel Functions / local `@hono/node-server`)
 
-**框架**
+**Frameworks**
 - Hono 4 (API)
 - React 19 + Vite 8 + react-router-dom 7
 - Vitest (backend unit tests: `src/pricing.spec.ts`)
 - oxlint, prettier
 
-**数据存储**
+**Data stores**
 - Supabase Postgres via `drizzle-orm/postgres-js`
 - Transaction pooler port 6543, `prepare: false`
 - SSL CA via `DATABASE_CA_CERT` (do not put `sslmode` in `DATABASE_URL`)
 
-**基础设施**
+**Infrastructure**
 - Vercel multi-service (`vercel.json`): `frontend` (Vite) + `backend` (`entrypoint: src/index.ts`)
 - Rewrites: `/api`, `/health` → backend; everything else → frontend
 - Package manager: pnpm
 
-**外部服务**
+**External services**
 - Supabase Auth (`signInWithPassword`, `signUp`, resend verification)
 - pdfkit for server-side PDF
 
-## 项目结构
+## Project structure
 
 ```
 Wedding Tapes/
@@ -69,52 +69,52 @@ Wedding Tapes/
 └── wedding_photography_proposal_generator_*.md
 ```
 
-**入口点**
+**Entry points**
 - `backend/src/index.ts` — `export default app` (Vercel)
 - `backend/src/dev-server.ts` — local port 3333
 - `frontend/src/main.tsx` — SPA
 - Root `pnpm run dev` — concurrently backend watch + Vite
 
-## 子系统
+## Subsystems
 
 ### HTTP / Hono app
-**目的**: CORS, error envelope, mount domain routers under `/api`.
-**位置**: `backend/src/index.ts`, `backend/src/routes/`
-**关键文件**: `middleware/error.ts`, `middleware/auth.ts`
-**依赖**: services, db
-**被依赖**: Vercel / `@hono/node-server`
+**Purpose**: CORS, error envelope, mount domain routers under `/api`.
+**Location**: `backend/src/index.ts`, `backend/src/routes/`
+**Key files**: `middleware/error.ts`, `middleware/auth.ts`
+**Depends on**: services, db
+**Used by**: Vercel / `@hono/node-server`
 
 ### Domain services
-**目的**: Auth, business profile, catalog, customers, proposals (snapshot + persist pricing).
-**位置**: `backend/src/services/`
-**关键文件**: `proposals.ts`, `auth.ts`, `packages.ts`, `catalog-services.ts`
-**依赖**: `db`, other domain *service functions* (not raw tables of another domain)
-**被依赖**: routes
+**Purpose**: Auth, business profile, catalog, customers, proposals (snapshot + persist pricing).
+**Location**: `backend/src/services/`
+**Key files**: `proposals.ts`, `auth.ts`, `packages.ts`, `catalog-services.ts`
+**Depends on**: `db`, other domain *service functions* (not raw tables of another domain)
+**Used by**: routes
 
 ### Persistence
-**目的**: Drizzle tables + relations; one module-scope postgres client.
-**位置**: `backend/src/db/`
-**关键文件**: `schema.ts`, `client.ts`, `pg-error.ts`
-**依赖**: `DATABASE_URL`, `DATABASE_CA_CERT`
-**被依赖**: services, `/health`
+**Purpose**: Drizzle tables + relations; one module-scope postgres client.
+**Location**: `backend/src/db/`
+**Key files**: `schema.ts`, `client.ts`, `pg-error.ts`
+**Depends on**: `DATABASE_URL`, `DATABASE_CA_CERT`
+**Used by**: services, `/health`
 
 ### Pricing engine
-**目的**: Isolated `calculatePricing` (SRS §17).
-**位置**: `backend/src/pricing.ts`
-**被依赖**: `services/proposals.ts` via `persistPricing()`
-**测试**: `backend/src/pricing.spec.ts`
+**Purpose**: Isolated `calculatePricing` (SRS §17).
+**Location**: `backend/src/pricing.ts`
+**Used by**: `services/proposals.ts` via `persistPricing()`
+**Tests**: `backend/src/pricing.spec.ts`
 
 ### PDF
-**目的**: `(proposal, business) => Promise<Buffer>` — no DB.
-**位置**: `backend/src/pdf.ts`
-**被依赖**: `routes/proposals.ts` `POST /:id/generate-pdf` (HTTP 200)
+**Purpose**: `(proposal, business) => Promise<Buffer>` — no DB.
+**Location**: `backend/src/pdf.ts`
+**Used by**: `routes/proposals.ts` `POST /:id/generate-pdf` (HTTP 200)
 
 ### Frontend SPA
-**目的**: Authenticated internal UI.
-**位置**: `frontend/src/`
-**关键文件**: `api/client.ts`, `pages/CreateProposal.tsx`, `auth/ProtectedRoute.tsx`
+**Purpose**: Authenticated internal UI.
+**Location**: `frontend/src/`
+**Key files**: `api/client.ts`, `pages/CreateProposal.tsx`, `auth/ProtectedRoute.tsx`
 
-## 图表
+## Diagrams
 
 ```mermaid
 flowchart LR
@@ -166,7 +166,7 @@ flowchart TB
     Svc --> Price
 ```
 
-## 设计决策（代码中实际存在）
+## Design decisions (as implemented)
 
 - No Nest DI: plain modules and function exports.
 - JWT: HS256, `sub` / `businessId` / `email`, no per-request user DB lookup.

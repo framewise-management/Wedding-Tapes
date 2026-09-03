@@ -2,7 +2,7 @@
 
 React SPA. Pages under `pages/`; bearer client in `api/client.ts`.
 
-## 结构
+## Structure
 
 ```
 src/
@@ -15,7 +15,7 @@ src/
 └── types/
 ```
 
-## 规范
+## Conventions
 
 - Unwrap `{ error: { message } }` into thrown `Error`
 - `CreateProposal` merges SRS individual + optional services into one list with `isOptional` checkbox

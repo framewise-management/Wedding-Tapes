@@ -2,7 +2,7 @@
 
 Thin Hono apps: parse (Zod helpers), `c.get('user')`, call service, shape status codes.
 
-## 结构
+## Structure
 
 ```
 routes/
@@ -14,6 +14,6 @@ routes/
 └── proposals.ts
 ```
 
-Mounted in `index.ts` under `/api/...`. Auth routers except `auth.ts` call `authMiddleware` for `*`.
+Mounted in `index.ts` under `/api/...`. Routers except `auth.ts` call `authMiddleware` for `*`.
 
 PDF is assembled in `proposals.ts` (fetch proposal + business, `generateProposalPdf`, `c.body(Uint8Array)`).

@@ -1,47 +1,49 @@
 # Wedding Tapes — agent wiki
 
+Language: **English only** for this wiki and for agent communication about it.
+
 Second-brain for AI agents and humans. Grounded in the repo as of this generation: Hono + Drizzle backend, React/Vite frontend, Supabase Auth + Postgres, Vercel.
 
 Authoritative product specs remain at repo root (`wedding_photography_proposal_generator_detailed_SRS.md`). This wiki describes **what the code does now**, including port quirks in `CLAUDE.md`.
 
-**快速链接**: [架构](./ARCHITECTURE.md) | [接口](./INTERFACES.md) | [开发者指南](./DEVELOPER_GUIDE.md)
+**Quick links**: [Architecture](./ARCHITECTURE.md) | [Interfaces](./INTERFACES.md) | [Developer guide](./DEVELOPER_GUIDE.md)
 
 ---
 
-## 核心文档
+## Core docs
 
-### [架构](./ARCHITECTURE.md)
+### [Architecture](./ARCHITECTURE.md)
 Monorepo layout, stack, subsystems, mermaid flows, hard-won deploy/DB constraints.
 
-### [接口](./INTERFACES.md)
+### [Interfaces](./INTERFACES.md)
 HTTP routes, error envelope, JWT, frontend routes.
 
-### [开发者指南](./DEVELOPER_GUIDE.md)
+### [Developer guide](./DEVELOPER_GUIDE.md)
 Env, commands, how to add endpoints/migrations, coding rules.
 
 ---
 
-## 模块
+## Modules
 
-| 模块 | 描述 | README |
-|------|------|--------|
-| `backend/src/services/` | Domain logic | [README](./模块/backend-services.md) |
-| `backend/src/routes/` | Hono routers | [README](./模块/backend-routes.md) |
-| `backend/src/db/` | Drizzle + postgres-js | [README](./模块/backend-db.md) |
-| `frontend/src/` | SPA | [README](./模块/frontend.md) |
+| Module | Description | README |
+|--------|-------------|--------|
+| `backend/src/services/` | Domain logic | [README](./modules/backend-services.md) |
+| `backend/src/routes/` | Hono routers | [README](./modules/backend-routes.md) |
+| `backend/src/db/` | Drizzle + postgres-js | [README](./modules/backend-db.md) |
+| `frontend/src/` | SPA | [README](./modules/frontend.md) |
 
 Also ingest: `backend/src/pricing.ts`, `backend/src/pdf.ts`, `backend/src/lib/*`, `backend/src/middleware/*`, `backend/src/schemas/*`.
 
 ---
 
-## 核心概念
+## Core concepts
 
-| 概念 | 描述 |
-|------|------|
-| [Proposal](./专有概念/Proposal.md) | Quotation, snapshot children, DRAFT edits, PDF |
-| [Price snapshot](./专有概念/PriceSnapshot.md) | Catalog copy-on-attach; server totals |
-| [Business](./专有概念/Business.md) | Tenant + Supabase-linked user |
-| [Catalog](./专有概念/Catalog.md) | Services, packages, deactivate-not-delete |
+| Concept | Description |
+|---------|-------------|
+| [Proposal](./concepts/Proposal.md) | Quotation, snapshot children, DRAFT edits, PDF |
+| [Price snapshot](./concepts/PriceSnapshot.md) | Catalog copy-on-attach; server totals |
+| [Business](./concepts/Business.md) | Tenant + Supabase-linked user |
+| [Catalog](./concepts/Catalog.md) | Services, packages, deactivate-not-delete |
 
 ---
 
@@ -58,14 +60,14 @@ Also ingest: `backend/src/pricing.ts`, `backend/src/pdf.ts`, `backend/src/lib/*`
 
 ---
 
-## 入门指南
+## Getting started
 
-1. [架构](./ARCHITECTURE.md)
-2. [核心概念](#核心概念)
-3. [开发者指南](./DEVELOPER_GUIDE.md)
-4. [接口](./INTERFACES.md)
+1. [Architecture](./ARCHITECTURE.md)
+2. [Core concepts](#core-concepts)
+3. [Developer guide](./DEVELOPER_GUIDE.md)
+4. [Interfaces](./INTERFACES.md)
 
-### 命令
+### Commands
 
 ```bash
 pnpm run dev
@@ -74,10 +76,10 @@ pnpm --dir backend db:migrate
 pnpm --dir backend seed
 ```
 
-### 重要文件
+### Important files
 
-| 文件 | 目的 |
-|------|------|
+| File | Purpose |
+|------|---------|
 | `backend/src/index.ts` | API entry |
 | `backend/src/services/proposals.ts` | hardest domain |
 | `backend/src/pricing.ts` | money formula |
