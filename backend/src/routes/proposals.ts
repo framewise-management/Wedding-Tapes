@@ -15,6 +15,7 @@ import {
   findAllProposals,
   findOneProposal,
   removeProposal,
+  shareProposal,
   updateProposal,
   updateProposalStatus,
 } from '../services/proposals';
@@ -69,6 +70,12 @@ proposalsRoutes.patch('/:id/status', async (c) => {
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, updateProposalStatusSchema);
   return c.json(await updateProposalStatus(user.businessId, id, input.status));
+});
+
+proposalsRoutes.post('/:id/share', async (c) => {
+  const user = c.get('user');
+  const id = parseUuidParam(c, 'id');
+  return c.json(await shareProposal(user.businessId, id));
 });
 
 proposalsRoutes.post('/:id/generate-pdf', async (c) => {

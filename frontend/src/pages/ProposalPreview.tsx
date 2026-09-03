@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { apiDelete, apiGet, apiPatch, apiPostFile } from '../api/client';
+import { apiDelete, apiGet, apiPatch, apiPost, apiPostFile } from '../api/client';
 import ProposalSheet from '../components/ProposalSheet';
 import type { Proposal, ProposalStatus } from '../types/proposal';
 import type { Business } from '../types/business';
@@ -52,10 +52,8 @@ export default function ProposalPreview() {
       await navigator.clipboard.writeText(`${window.location.origin}/p/${id}`);
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
-      if (proposal?.status === 'DRAFT') {
-        const updated = await apiPatch<Proposal>(`/api/proposals/${id}/status`, { status: 'SENT' });
-        setProposal(updated);
-      }
+      const updated = await apiPost<Proposal>(`/api/proposals/${id}/share`);
+      setProposal(updated);
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : 'Failed to copy link');
     }

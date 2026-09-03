@@ -5,6 +5,7 @@ import { isPgError } from '../db/pg-error';
 import { BadRequestError, ConflictError, ForbiddenError, UnauthorizedError } from '../lib/http-error';
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
+import { notifyDiscord } from '../lib/discord';
 import type { GoogleAuthInput, LoginInput, ResendVerificationInput, SignupInput } from '../schemas/auth';
 
 function issueToken(user: { id: string; businessId: string; email: string }) {
@@ -81,6 +82,8 @@ export async function signup(input: SignupInput): Promise<{ message: string }> {
     throw err;
   }
 
+  await notifyDiscord(`🆕 New signup: **${input.businessName}** (${input.email})`);
+
   return {
     message: 'Account created — check your email to verify your address before logging in.',
   };
@@ -156,6 +159,7 @@ export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: 
         .returning();
       return user;
     });
+    await notifyDiscord(`🆕 New signup via Google: **${profile.businessName}** (${email})`);
     return issueToken(created);
   } catch (err) {
     if (isPgError(err, '23505')) {

@@ -8,6 +8,7 @@ import { findOneCustomer } from './customers';
 import { findOnePackage } from './packages';
 import { findOneService } from './catalog-services';
 import { getBusiness } from './business';
+import { notifyDiscord } from '../lib/discord';
 import type {
   CalculateProposalInput,
   CreateProposalInput,
@@ -136,7 +137,11 @@ export async function createProposal(businessId: string, input: CreateProposalIn
     return created.id;
   });
 
-  return findOneProposal(businessId, newId);
+  const created = await findOneProposal(businessId, newId);
+  await notifyDiscord(
+    `📄 New proposal **${created.proposalNumber}** for ${created.customer.name} — ₹${created.total.toLocaleString('en-IN')}`,
+  );
+  return created;
 }
 
 export async function updateProposal(businessId: string, id: string, input: UpdateProposalInput) {
@@ -242,6 +247,18 @@ export async function updateProposalStatus(businessId: string, id: string, statu
     .set({ status })
     .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
   return findOneProposal(businessId, id);
+}
+
+export async function shareProposal(businessId: string, id: string) {
+  const existing = await findOneProposal(businessId, id);
+  if (existing.status === 'DRAFT') {
+    await updateProposalStatus(businessId, id, 'SENT');
+  }
+  const proposal = await findOneProposal(businessId, id);
+  await notifyDiscord(
+    `🔗 Shareable link generated for proposal **${proposal.proposalNumber}** (${proposal.customer.name})`,
+  );
+  return proposal;
 }
 
 async function persistPricing(proposal: Awaited<ReturnType<typeof findOneProposal>>) {
