@@ -9,6 +9,7 @@ import './AppLayout.css';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 11h7v9h-7zM4 14h7v6H4z' },
+  { to: '/calendar', label: 'Calendar', icon: 'M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z' },
   { to: '/business', label: 'Business Profile', icon: 'M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M9 21v-4h6v4M9 8h1M14 8h1M9 12h1M14 12h1' },
   { to: '/customers', label: 'Customers', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
   { to: '/services', label: 'Services', icon: 'M4 6h16M4 12h16M4 18h10' },

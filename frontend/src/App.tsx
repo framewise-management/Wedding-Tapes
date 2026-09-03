@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import Calendar from './pages/Calendar';
 import BusinessProfile from './pages/BusinessProfile';
 import Customers from './pages/Customers';
 import Services from './pages/Services';
@@ -24,6 +25,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/business" element={<BusinessProfile />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/services" element={<Services />} />
