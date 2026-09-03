@@ -1,0 +1,1 @@
+ALTER TABLE "proposals" ADD COLUMN "template" varchar DEFAULT 'DARK_LUXE' NOT NULL;

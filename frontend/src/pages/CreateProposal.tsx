@@ -3,8 +3,13 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiGet, apiPost, apiPut } from '../api/client';
 import type { Customer } from '../types/customer';
 import type { Package, Service } from '../types/catalog';
-import type { Proposal } from '../types/proposal';
+import type { Proposal, ProposalTemplate } from '../types/proposal';
 import './CreateProposal.css';
+
+const TEMPLATE_OPTIONS: { value: ProposalTemplate; label: string; description: string; swatch: string[] }[] = [
+  { value: 'DARK_LUXE', label: 'Dark Luxe', description: 'Moody dark background, gold & crimson accents, serif headings.', swatch: ['#0d0703', '#d4a843', '#c0392b'] },
+  { value: 'BRIGHT_MODERN', label: 'Bright Modern', description: 'Clean white background, vivid indigo accents, sans-serif.', swatch: ['#ffffff', '#5b4fe0', '#e6e5f2'] },
+];
 
 interface SelectedPackage {
   packageId: string;
@@ -55,6 +60,8 @@ export default function CreateProposal() {
   const [selectedPackages, setSelectedPackages] = useState<SelectedPackage[]>([]);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
 
+  const [template, setTemplate] = useState<ProposalTemplate>('DARK_LUXE');
+
   const [discountType, setDiscountType] = useState<'' | 'FIXED' | 'PERCENTAGE'>('');
   const [discountValue, setDiscountValue] = useState('');
   const [taxRate, setTaxRate] = useState('');
@@ -91,6 +98,7 @@ export default function CreateProposal() {
         setDiscountType(p.discountType ?? '');
         setDiscountValue(p.discountValue != null ? String(p.discountValue) : '');
         setTaxRate(String(p.taxRate));
+        setTemplate(p.template);
       })
       .catch((err) => setLoadError(err instanceof Error ? err.message : 'Failed to load proposal'));
   }, [id]);
@@ -154,6 +162,7 @@ export default function CreateProposal() {
     setDiscountType('');
     setDiscountValue('');
     setTaxRate('');
+    setTemplate('DARK_LUXE');
     setError('');
     setSaved(null);
   }
@@ -180,6 +189,7 @@ export default function CreateProposal() {
         notes: notes || undefined,
         packages: selectedPackages,
         items: selectedItems,
+        template,
         discount:
           discountType && discountValue
             ? { type: discountType, value: Number(discountValue) }
@@ -338,6 +348,29 @@ export default function CreateProposal() {
                 placeholder="Anything worth remembering"
               />
             </div>
+          </div>
+        </section>
+
+        <section className="cp-section">
+          <h2>Template</h2>
+          <p className="cp-section-sub">How the proposal looks when shared with the customer.</p>
+          <div className="cp-template-grid">
+            {TEMPLATE_OPTIONS.map((opt) => (
+              <button
+                type="button"
+                key={opt.value}
+                className={`cp-template-card${template === opt.value ? ' cp-template-card-selected' : ''}`}
+                onClick={() => setTemplate(opt.value)}
+              >
+                <div className="cp-template-swatch">
+                  {opt.swatch.map((color, i) => (
+                    <span key={i} style={{ background: color }} />
+                  ))}
+                </div>
+                <div className="cp-template-name">{opt.label}</div>
+                <div className="cp-template-desc">{opt.description}</div>
+              </button>
+            ))}
           </div>
         </section>
 

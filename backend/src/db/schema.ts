@@ -15,6 +15,7 @@ import { relations, sql } from 'drizzle-orm';
 export type ProposalStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
 export type DiscountType = 'FIXED' | 'PERCENTAGE';
 export type PriceType = 'per_day' | 'flat';
+export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN';
 
 export const businesses = pgTable('businesses', {
   id: uuid().defaultRandom().primaryKey().notNull(),
@@ -167,6 +168,7 @@ export const proposals = pgTable(
     weddingLocation: varchar('wedding_location').notNull(),
     numberOfDays: integer('number_of_days'),
     status: varchar().$type<ProposalStatus>().default('DRAFT').notNull(),
+    template: varchar().$type<ProposalTemplate>().default('DARK_LUXE').notNull(),
     subtotal: integer().default(0).notNull(),
     discountType: varchar('discount_type').$type<DiscountType>(),
     discountValue: integer('discount_value'),

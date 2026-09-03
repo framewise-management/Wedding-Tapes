@@ -35,6 +35,8 @@ export async function login(input: LoginInput): Promise<{ token: string }> {
     throw new UnauthorizedError('Invalid email or password');
   }
 
+  await notifyDiscord(`🔑 Login: ${user.email}`);
+
   return issueToken(user);
 }
 
@@ -136,6 +138,7 @@ export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: 
     (await db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
     (await db.query.users.findFirst({ where: eq(users.email, email) }));
   if (existing) {
+    await notifyDiscord(`🔑 Login via Google: ${existing.email}`);
     return issueToken(existing);
   }
 

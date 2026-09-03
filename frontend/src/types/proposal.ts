@@ -23,6 +23,7 @@ export interface ProposalItem {
 }
 
 export type ProposalStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
+export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN';
 
 export interface Proposal {
   id: string;
@@ -33,6 +34,7 @@ export interface Proposal {
   weddingLocation: string;
   numberOfDays: number | null;
   status: ProposalStatus;
+  template: ProposalTemplate;
   subtotal: number;
   discountType: 'FIXED' | 'PERCENTAGE' | null;
   discountValue: number | null;

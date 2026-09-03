@@ -1,0 +1,441 @@
+Content is user-generated and unverified.
+
+
+221
+Learn about artifacts
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Amore-gaatha Weddings · Pune</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#080303;--black-2:#100606;--black-3:#1A0A0A;--crimson:#C0392B;--crimson-d:#8B1A1A;--crimson-l:#E04030;--gold:#D4A843;--gold-l:#ECC96A;--white:#FFFFFF;--off-white:#F2EBE0;--body:#DDD5C8;--muted:#9E8E80;--dim:#5C4E44;--border:rgba(212,168,67,0.28);--border-dim:rgba(212,168,67,0.10);--line:rgba(212,168,67,0.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Raleway',sans-serif;background:var(--black);color:var(--body);max-width:480px;margin:0 auto;overflow-x:hidden;font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* HERO */
+.hero{background:var(--black);position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 90% 50% at 50% 0%,rgba(192,57,43,.22) 0%,transparent 65%),radial-gradient(ellipse 60% 40% at 50% 110%,rgba(139,26,26,.3) 0%,transparent 60%);pointer-events:none;}
+.hero-topbar{height:3px;background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--crimson) 60%,var(--gold) 80%,transparent);position:relative;z-index:2;}
+.hero-body{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:56px 32px 44px;text-align:center;}
+.eyebrow{font-size:9px;font-weight:600;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px;margin-bottom:32px;}
+.eyebrow::before,.eyebrow::after{content:'';width:28px;height:1px;background:var(--gold);opacity:.45;}
+.brand-wrap{margin-bottom:28px;}
+.brand-amore{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;color:var(--white);letter-spacing:.04em;display:block;line-height:1;}
+.brand-hyphen{color:var(--gold);}
+.brand-gaatha{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;font-style:italic;color:var(--gold-l);display:block;line-height:1.05;margin-top:2px;}
+.hero-rule{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 24px;}
+.hero-rule::before,.hero-rule::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(212,168,67,.3));}
+.hero-rule::after{background:linear-gradient(to left,transparent,rgba(212,168,67,.3));}
+.hero-gem{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);}
+.hero-tagline{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:var(--muted);line-height:1.8;}
+.hero-stats{position:relative;z-index:2;display:flex;border-top:1px solid var(--line);background:var(--black-2);}
+.stat{flex:1;padding:18px 6px;text-align:center;border-right:1px solid var(--line);}
+.stat:last-child{border-right:none;}
+.stat-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold-l);display:block;line-height:1;}
+.stat-lbl{font-size:8px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);display:block;margin-top:5px;}
+
+/* QUOTE BAR */
+.quote-bar{background:var(--crimson-d);padding:28px;text-align:center;border-top:2px solid var(--crimson);border-bottom:2px solid var(--crimson-d);position:relative;overflow:hidden;}
+.quote-bar::before{content:'"';position:absolute;top:-24px;left:14px;font-family:'Playfair Display',serif;font-size:140px;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;}
+.quote-bar p{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--off-white);line-height:1.8;position:relative;z-index:1;}
+.quote-bar strong{color:var(--gold-l);font-style:normal;font-weight:700;}
+
+/* SECTIONS */
+.sect{padding:44px 24px 40px;border-bottom:1px solid var(--border-dim);}
+.sect-eye{font-size:9px;font-weight:600;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.sect-eye::after{content:'';flex:1;height:1px;background:var(--border);}
+.sect-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:var(--white);line-height:1.15;}
+.sect-title em{font-style:italic;color:var(--gold-l);}
+.sect-sub{font-size:12.5px;color:var(--muted);margin-top:6px;margin-bottom:28px;}
+
+/* SERVICES */
+.svc-list{display:flex;flex-direction:column;}
+.svc-row{display:flex;align-items:flex-start;gap:16px;padding:18px 0;border-bottom:1px solid var(--border-dim);}
+.svc-row:last-child{border-bottom:none;}
+.svc-ico{width:44px;height:44px;flex-shrink:0;background:var(--black-3);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.svc-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:var(--white);margin-bottom:4px;}
+.svc-desc{font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+/* PACKAGES */
+.pkg-sect{background:var(--black-2);padding:44px 0 52px;border-top:1px solid var(--border-dim);border-bottom:1px solid var(--border-dim);}
+.pkg-sect .sect-eye,.pkg-sect .sect-title,.pkg-sect .sect-sub{padding-left:24px;padding-right:24px;}
+.day-tabs{display:flex;margin:0 24px 28px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.day-tab{flex:1;padding:12px 8px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;background:transparent;color:var(--dim);border:none;cursor:pointer;transition:all .2s;}
+.day-tab.active{background:var(--crimson);color:var(--white);}
+.pkg-panels{padding:0 16px;}
+.pkg-panel{display:none;flex-direction:column;gap:16px;}
+.pkg-panel.active{display:flex;}
+.pkg-card{border-radius:14px;border:1px solid var(--border-dim);background:var(--black-3);overflow:hidden;}
+.pkg-card.hi{border-color:var(--gold);}
+.pkg-top{padding:20px 20px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border-dim);display:flex;justify-content:space-between;align-items:flex-start;}
+.pkg-card.hi .pkg-top{background:rgba(212,168,67,.06);}
+.pkg-tname{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--white);}
+.pkg-card.hi .pkg-tname{color:var(--gold-l);}
+.pkg-pill{display:inline-block;margin-top:7px;font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:var(--gold);color:var(--black);padding:3px 10px;border-radius:20px;}
+.pkg-pblock{text-align:right;}
+.pkg-price{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--white);line-height:1;}
+.pkg-card.hi .pkg-price{color:var(--gold-l);}
+.pkg-psub{font-size:10px;color:var(--dim);margin-top:4px;letter-spacing:.05em;}
+.pkg-body{padding:16px 20px 22px;}
+.pkg-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.pkg-list li{font-size:13px;color:var(--body);display:flex;align-items:center;gap:10px;}
+.pkg-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--crimson);flex-shrink:0;}
+.pkg-card.hi .pkg-list li::before{background:var(--gold);}
+
+/* EXPERIENCE GRID */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.exp-card{background:var(--black-3);border:1px solid var(--border-dim);border-radius:12px;padding:20px 14px;text-align:center;transition:border-color .2s;}
+.exp-card:hover{border-color:var(--crimson);}
+.exp-ico{font-size:26px;margin-bottom:10px;display:block;}
+.exp-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:500;color:var(--white);margin-bottom:5px;}
+.exp-desc{font-size:11px;color:var(--muted);line-height:1.55;}
+
+/* QUOTE BUILDER */
+.qb-sect{background:var(--black-2);padding:44px 0 52px;border-top:1px solid var(--border-dim);border-bottom:1px solid var(--border-dim);}
+.qb-inner{padding:0 24px;}
+.evt-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.evt-tab{flex:1;min-width:0;padding:10px 6px;font-family:'Raleway',sans-serif;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;background:var(--black-3);color:var(--muted);border:1px solid var(--border-dim);border-radius:8px;cursor:pointer;transition:all .2s;}
+.evt-tab.active{background:var(--crimson);color:var(--white);border-color:var(--crimson);}
+.qb-group{margin-bottom:20px;}
+.qb-group-title{font-size:9px;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);padding:10px 0 8px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.qb-row{display:flex;align-items:center;padding:12px 14px;background:var(--black-3);border:1px solid var(--border-dim);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .18s,background .18s;gap:12px;user-select:none;}
+.qb-row.selected{border-color:var(--gold);background:rgba(212,168,67,.06);}
+.qb-check{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:2px solid var(--dim);display:flex;align-items:center;justify-content:center;transition:all .18s;font-size:13px;color:transparent;}
+.qb-row.selected .qb-check{background:var(--gold);border-color:var(--gold);color:var(--black);}
+.qb-label{flex:1;font-size:13px;font-weight:500;color:var(--white);}
+.qb-price{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--gold-l);white-space:nowrap;}
+.qb-qty{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.qty-btn{width:26px;height:26px;border-radius:50%;background:rgba(212,168,67,.1);border:1px solid var(--border);color:var(--gold-l);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;flex-shrink:0;}
+.qty-btn:hover{background:rgba(212,168,67,.2);}
+.qty-val{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);min-width:20px;text-align:center;}
+.qb-total-bar{background:var(--crimson-d);border:1px solid var(--crimson);border-radius:14px;padding:20px;margin-top:24px;position:relative;overflow:hidden;}
+.qb-total-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.qb-total-label{font-size:9px;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:6px;}
+.qb-total-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px;}
+.qb-total-amount{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;}
+.qb-total-note{font-size:11px;color:rgba(242,235,224,.45);text-align:right;max-width:140px;line-height:1.4;}
+.qb-breakdown{border-top:1px solid rgba(212,168,67,.15);padding-top:12px;display:flex;flex-direction:column;gap:5px;max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.qb-breakdown.open{max-height:400px;}
+.qb-bd-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(242,235,224,.6);}
+.qb-bd-row span:last-child{color:var(--gold-l);font-weight:600;}
+.qb-toggle{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--gold);cursor:pointer;text-decoration:underline;text-underline-offset:3px;background:none;border:none;font-family:'Raleway',sans-serif;padding:0;}
+.qb-empty{font-size:13px;color:var(--dim);font-style:italic;text-align:center;padding:8px 0;}
+.qb-wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;background:#25D366;color:#fff;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;padding:14px 20px;border-radius:10px;border:none;cursor:pointer;width:100%;text-decoration:none;transition:background .2s;}
+.qb-wa-btn:hover{background:#1ebe5d;}
+
+/* HOME FUNCTIONS RATE CARD */
+.hf-sect{background:var(--black-3);padding:44px 24px 48px;border-bottom:1px solid var(--border-dim);}
+.hf-note{font-size:12px;color:var(--muted);background:rgba(212,168,67,.07);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:24px;line-height:1.6;}
+.hf-note strong{color:var(--gold-l);}
+.hf-grid{display:flex;flex-direction:column;gap:8px;}
+.hf-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--black-2);border:1px solid var(--border-dim);border-radius:10px;}
+.hf-name{font-size:13px;font-weight:500;color:var(--white);}
+.hf-p{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--gold-l);}
+.hf-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* DELIVERABLES */
+.del-sect{background:var(--black-2);padding:44px 24px 48px;border-top:1px solid var(--border-dim);border-bottom:1px solid var(--border-dim);}
+.del-grid{display:flex;flex-direction:column;gap:10px;margin-top:24px;}
+.del-card{background:var(--black-3);border:1px solid var(--border-dim);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.del-ico{font-size:22px;flex-shrink:0;margin-top:2px;}
+.del-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:500;color:var(--white);margin-bottom:4px;}
+.del-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.del-tag{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:rgba(192,57,43,.2);border:1px solid rgba(192,57,43,.35);color:var(--crimson-l);padding:2px 9px;border-radius:20px;}
+.del-tag.gold{background:rgba(212,168,67,.1);border-color:var(--border);color:var(--gold-l);}
+
+/* TESTIMONIALS */
+.test-sect{background:var(--black-2);padding:44px 24px 48px;border-top:1px solid var(--border-dim);border-bottom:1px solid var(--border-dim);}
+.t-list{display:flex;flex-direction:column;gap:14px;margin-top:26px;}
+.t-card{background:var(--black-3);border:1px solid var(--border-dim);border-left:3px solid var(--crimson);border-radius:0 12px 12px 0;padding:20px 20px 18px;}
+.t-stars{color:var(--gold);font-size:13px;letter-spacing:3px;display:block;margin-bottom:10px;}
+.t-quote{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--body);line-height:1.78;margin-bottom:12px;}
+.t-who{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+
+/* WHY US */
+.why-list{display:flex;flex-direction:column;margin-top:26px;}
+.why-row{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid var(--border-dim);align-items:flex-start;}
+.why-row:last-child{border-bottom:none;}
+.why-n{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--crimson);opacity:.3;line-height:1;flex-shrink:0;width:42px;}
+.why-h{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;color:var(--white);margin-bottom:5px;}
+.why-d{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+/* CTA */
+.cta-sect{background:var(--crimson-d);padding:50px 24px 56px;text-align:center;position:relative;overflow:hidden;}
+.cta-sect::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.cta-sect::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(212,168,67,.07) 0%,transparent 60%);pointer-events:none;}
+.cta-pill{display:inline-block;font-size:9px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;border:1px solid rgba(212,168,67,.45);color:var(--gold-l);padding:6px 20px;border-radius:20px;margin-bottom:22px;position:relative;z-index:1;}
+.cta-h{font-family:'Playfair Display',serif;font-size:38px;font-weight:400;color:var(--white);line-height:1.2;margin-bottom:10px;position:relative;z-index:1;}
+.cta-h em{font-style:italic;color:var(--gold-l);}
+.cta-sub{font-size:13px;color:rgba(242,235,224,.5);margin-bottom:34px;position:relative;z-index:1;}
+.cta-list{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;}
+.cta-row{display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.2);border-radius:12px;padding:14px 18px;text-decoration:none;transition:border-color .2s,background .2s;}
+.cta-row:hover{border-color:var(--gold);background:rgba(0,0,0,.45);}
+.cta-ico{width:42px;height:42px;flex-shrink:0;background:rgba(192,57,43,.45);border:1px solid rgba(212,168,67,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.cta-lbl{font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:2px;}
+.cta-val{font-size:14px;font-weight:500;color:var(--white);}
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid var(--border-dim);padding:26px 28px;text-align:center;}
+.foot-brand{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold-l);display:block;margin-bottom:6px;}
+.foot-sub{font-size:9px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-topbar"></div>
+  <div class="hero-body">
+    <div class="eyebrow">Pune · Since 2016</div>
+    <div class="brand-wrap">
+      <span class="brand-amore">Amore<span class="brand-hyphen">-</span></span>
+      <span class="brand-gaatha">gaatha</span>
+    </div>
+    <div class="hero-rule"><div class="hero-gem"></div></div>
+    <p class="hero-tagline">Emotional. Unforgettable. Authentic.<br>Your love story, told forever.</p>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-val">700+</span><span class="stat-lbl">Weddings</span></div>
+    <div class="stat"><span class="stat-val">9</span><span class="stat-lbl">Years</span></div>
+    <div class="stat"><span class="stat-val">14</span><span class="stat-lbl">Services</span></div>
+    <div class="stat"><span class="stat-val">♥</span><span class="stat-lbl">Pune</span></div>
+  </div>
+</div>
+
+<!-- QUOTE STRIP -->
+<div class="quote-bar">
+  <p>"We blend art &amp; technology to capture moments that <strong>pull at your heartstrings</strong> — the ones that give you all the feels, forever."</p>
+</div>
+
+<!-- SERVICES -->
+<div class="sect">
+  <div class="sect-eye">What We Do</div>
+  <div class="sect-title">Our <em>Services</em></div>
+  <div class="sect-sub">Everything under one team. No outsourcing.</div>
+  <div class="svc-list">
+    <div class="svc-row"><div class="svc-ico">📸</div><div><div class="svc-name">Wide-Angle Candid Photography</div><div class="svc-desc">Grand setups, crowd, ambience — every big moment in natural storytelling style.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🎭</div><div><div class="svc-name">Portrait Candid Photography</div><div class="svc-desc">Close-up emotions, solos, couple portraits &amp; getting-ready moments.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">👨‍👩‍👧</div><div><div class="svc-name">Dedicated Family Photography</div><div class="svc-desc">Every important family member covered — solos, couple &amp; group portraits.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🎬</div><div><div class="svc-name">Cinematic Videography</div><div class="svc-desc">Lead + 2nd + 3rd angle cinematographers for a full cinematic wedding film.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🎥</div><div><div class="svc-name">Traditional Videography</div><div class="svc-desc">Classic continuous coverage — Sangeet, Vidhi, all rituals with original audio.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">📱</div><div><div class="svc-name">Reel Artist</div><div class="svc-desc">Trendy Instagram reels with stylish transitions. Social-ready, fast delivery.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🚁</div><div><div class="svc-name">Drone &amp; FPV Aerial</div><div class="svc-desc">Breathtaking aerial shots — entries, venue, décor. FPV adds cinematic speed.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🥽</div><div><div class="svc-name">VR 360° Videos</div><div class="svc-desc">Fully immersive — relive Varmala, Phera, Sindoor from every direction.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">⚡</div><div><div class="svc-name">Live Editing Display</div><div class="svc-desc">Same-day edits screened live at your reception. Guests absolutely love this.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🤖</div><div><div class="svc-name">AI Instant Photo Sharing</div><div class="svc-desc">Face-recognition delivers event photos to every guest's phone in real time.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🖨️</div><div><div class="svc-name">Live Photo Printing</div><div class="svc-desc">Instant printed keepsakes at the event — a memorable guest experience.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">📺</div><div><div class="svc-name">Live YouTube Broadcast</div><div class="svc-desc">Stream your ceremony — family anywhere in the world watches live.</div></div></div>
+    <div class="svc-row"><div class="svc-ico">🖼️</div><div><div class="svc-name">Premium Albums &amp; Prints</div><div class="svc-desc">Elegant layouts, top-grade materials. Timeless physical memories.</div></div></div>
+  </div>
+</div>
+
+<!-- PACKAGES -->
+<div class="pkg-sect">
+  <div class="sect-eye">Investment</div>
+  <div class="sect-title">Our <em>Packages</em></div>
+  <div class="sect-sub" style="margin-bottom:24px;">No hidden charges. No surprises.</div>
+  <div class="day-tabs">
+    <button class="day-tab active" onclick="sw('d1',this)">1 Day Wedding</button>
+    <button class="day-tab" onclick="sw('d2',this)">2 Day Wedding</button>
+  </div>
+  <div class="pkg-panels">
+    <div id="d1" class="pkg-panel active">
+      <div class="pkg-card"><div class="pkg-top"><div><div class="pkg-tname">Silver</div></div><div class="pkg-pblock"><div class="pkg-price">₹75,000</div><div class="pkg-psub">1-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>1 Candid Photographer</li><li>1 Traditional Photographer</li><li>1 Cinematographer</li><li>1 Traditional Videographer</li><li>1 Premium Album</li></ul></div></div>
+      <div class="pkg-card hi"><div class="pkg-top"><div><div class="pkg-tname">Gold</div><span class="pkg-pill">Most Popular</span></div><div class="pkg-pblock"><div class="pkg-price">₹1,25,000</div><div class="pkg-psub">1-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>2 Candid Photographers</li><li>1 Family Photographer</li><li>2 Cinematographers</li><li>1 Traditional Videographer</li><li>Drone Coverage</li><li>1 Premium Album</li></ul></div></div>
+      <div class="pkg-card"><div class="pkg-top"><div><div class="pkg-tname">Platinum</div></div><div class="pkg-pblock"><div class="pkg-price">₹1,75,000</div><div class="pkg-psub">1-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>2 Candid Photographers</li><li>2 Family Photographers</li><li>2 Cinematographers</li><li>1 Traditional Videographer</li><li>Drone + FPV</li><li>Cine Reel Artist (10+ Reels)</li><li>Cinematic Live Edit Display</li><li>2 Premium Albums</li></ul></div></div>
+    </div>
+    <div id="d2" class="pkg-panel">
+      <div class="pkg-card"><div class="pkg-top"><div><div class="pkg-tname">Silver</div></div><div class="pkg-pblock"><div class="pkg-price">₹1,40,000</div><div class="pkg-psub">2-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>1 Candid Photographer</li><li>1 Traditional Photographer</li><li>1 Cinematographer</li><li>1 Traditional Videographer</li><li>1 Premium Album</li></ul></div></div>
+      <div class="pkg-card hi"><div class="pkg-top"><div><div class="pkg-tname">Gold</div><span class="pkg-pill">Most Popular</span></div><div class="pkg-pblock"><div class="pkg-price">₹2,50,000</div><div class="pkg-psub">2-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>2 Candid Photographers</li><li>1 Family Photographer</li><li>2 Cinematographers</li><li>1 Traditional Videographer</li><li>Drone Coverage</li><li>1 Premium Album</li></ul></div></div>
+      <div class="pkg-card"><div class="pkg-top"><div><div class="pkg-tname">Platinum</div></div><div class="pkg-pblock"><div class="pkg-price">₹3,50,000</div><div class="pkg-psub">2-day wedding</div></div></div><div class="pkg-body"><ul class="pkg-list"><li>2 Candid Photographers</li><li>2 Family Photographers</li><li>2 Cinematographers</li><li>1 Traditional Videographer</li><li>Drone + FPV</li><li>Cine Reel Artist (10+ Reels)</li><li>Cinematic Live Edit Display</li><li>2 Premium Albums</li></ul></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<div class="sect">
+  <div class="sect-eye">The Experience</div>
+  <div class="sect-title">Beyond the <em>Camera</em></div>
+  <div class="sect-sub">Technology that sets us apart.</div>
+  <div class="exp-grid">
+    <div class="exp-card"><span class="exp-ico">🥽</span><div class="exp-name">VR 360° Videos</div><div class="exp-desc">Relive your pheras from every angle, forever.</div></div>
+    <div class="exp-card"><span class="exp-ico">⚡</span><div class="exp-name">Live Edit Display</div><div class="exp-desc">Edited photos screened at your reception.</div></div>
+    <div class="exp-card"><span class="exp-ico">🤖</span><div class="exp-name">AI Photo Sharing</div><div class="exp-desc">Every guest gets their photos instantly.</div></div>
+    <div class="exp-card"><span class="exp-ico">📺</span><div class="exp-name">YouTube Stream</div><div class="exp-desc">Family worldwide watches your ceremony live.</div></div>
+    <div class="exp-card"><span class="exp-ico">🖨️</span><div class="exp-name">Live Printing</div><div class="exp-desc">Printed keepsakes handed out at the event.</div></div>
+    <div class="exp-card"><span class="exp-ico">🚁</span><div class="exp-name">FPV Drone</div><div class="exp-desc">Cinematic aerials no other team delivers.</div></div>
+  </div>
+</div>
+
+<!-- CUSTOM QUOTE BUILDER -->
+<div class="qb-sect">
+  <div class="qb-inner">
+    <div class="sect-eye">Build Your Coverage</div>
+    <div class="sect-title">Custom <em>Quote</em></div>
+    <div class="sect-sub" style="margin-bottom:20px;">Pick exactly what you need. Pay only for that.</div>
+    <div class="evt-tabs">
+      <button class="evt-tab active" onclick="setEvt('wedding',this)">Wedding Day</button>
+      <button class="evt-tab" onclick="setEvt('home',this)">Haldi / Sangeet</button>
+      <button class="evt-tab" onclick="setEvt('pooja',this)">Home Functions</button>
+    </div>
+
+    <!-- WEDDING -->
+    <div id="grp-wedding">
+      <div class="qb-group"><div class="qb-group-title">Photography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="cp" data-price="15000" data-label="Candid Photographer"><div class="qb-check">✓</div><span class="qb-label">Candid Photographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹15,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="fp" data-price="12500" data-label="Family Photographer"><div class="qb-check">✓</div><span class="qb-label">Family Photographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹12,500</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Videography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="tv" data-price="15000" data-label="Traditional Videographer"><div class="qb-check">✓</div><span class="qb-label">Traditional Videographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹15,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="lc" data-price="25000" data-label="Lead Cinematographer"><div class="qb-check">✓</div><span class="qb-label">Lead Cinematographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹25,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="sa" data-price="20000" data-label="2nd Angle Cinematographer"><div class="qb-check">✓</div><span class="qb-label">2nd Angle Cinematographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹20,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Aerial &amp; Speciality</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="dr" data-price="10000" data-label="Drone"><div class="qb-check">✓</div><span class="qb-label">Drone</span><div style="width:70px"></div><span class="qb-price">₹10,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="fpv" data-price="15000" data-label="FPV Drone"><div class="qb-check">✓</div><span class="qb-label">FPV Drone</span><div style="width:70px"></div><span class="qb-price">₹15,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="vr" data-price="15000" data-label="VR 360° Video"><div class="qb-check">✓</div><span class="qb-label">VR 360° Video</span><div style="width:70px"></div><span class="qb-price">₹15,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Reels &amp; Live</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="cr" data-price="17500" data-label="Cinematic Reel Artist"><div class="qb-check">✓</div><span class="qb-label">Cinematic Reel Artist</span><div style="width:70px"></div><span class="qb-price">₹17,500</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="pr" data-price="7500" data-label="Phone Reel"><div class="qb-check">✓</div><span class="qb-label">Phone Reel</span><div style="width:70px"></div><span class="qb-price">₹7,500</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="le" data-price="17500" data-label="Live Edit Display"><div class="qb-check">✓</div><span class="qb-label">Live Edit Display</span><div style="width:70px"></div><span class="qb-price">₹15–20k</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="yt" data-price="10000" data-label="YouTube Live Broadcast"><div class="qb-check">✓</div><span class="qb-label">YouTube Live Broadcast</span><div style="width:70px"></div><span class="qb-price">₹10,000</span></div>
+      </div>
+    </div>
+
+    <!-- HALDI / SANGEET -->
+    <div id="grp-home" style="display:none">
+      <div class="qb-group"><div class="qb-group-title">Photography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="hcp" data-price="15000" data-label="Candid Photographer"><div class="qb-check">✓</div><span class="qb-label">Candid Photographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹15,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Videography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="htv" data-price="15000" data-label="Traditional Videographer"><div class="qb-check">✓</div><span class="qb-label">Traditional Videographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹15,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="hci" data-price="25000" data-label="Cinematographer"><div class="qb-check">✓</div><span class="qb-label">Cinematographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹25,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Add-ons</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="hpr" data-price="7500" data-label="Phone Reel"><div class="qb-check">✓</div><span class="qb-label">Phone Reel</span><div style="width:70px"></div><span class="qb-price">₹7,500</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="hdr" data-price="10000" data-label="Drone"><div class="qb-check">✓</div><span class="qb-label">Drone</span><div style="width:70px"></div><span class="qb-price">₹10,000</span></div>
+      </div>
+    </div>
+
+    <!-- HOME FUNCTIONS / POOJA -->
+    <div id="grp-pooja" style="display:none">
+      <div style="background:rgba(212,168,67,.07);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.6;"><strong style="color:var(--gold-l);">Covers:</strong> Satyanarayan Pooja, Griha Pravesh, Ganpati, Navratri, naming ceremonies &amp; all religious home functions. Rates differ from Haldi/Sangeet.</div>
+      <div class="qb-group"><div class="qb-group-title">Photography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="pjp" data-price="8000" data-label="Candid Photographer (Home Function)"><div class="qb-check">✓</div><span class="qb-label">Candid Photographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹8,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Videography</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="pjtv" data-price="8000" data-label="Traditional Videographer (Home Function)"><div class="qb-check">✓</div><span class="qb-label">Traditional Videographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹8,000</span></div>
+        <div class="qb-row" onclick="toggle(this)" data-key="pjci" data-price="12000" data-label="Cinematographer (Home Function)"><div class="qb-check">✓</div><span class="qb-label">Cinematographer</span><div class="qb-qty" onclick="event.stopPropagation()"><button class="qty-btn" onclick="chQty(this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="chQty(this,1)">+</button></div><span class="qb-price">₹12,000</span></div>
+      </div>
+      <div class="qb-group"><div class="qb-group-title">Add-ons</div>
+        <div class="qb-row" onclick="toggle(this)" data-key="pjr" data-price="7500" data-label="Phone Reel (Home Function)"><div class="qb-check">✓</div><span class="qb-label">Phone Reel</span><div style="width:70px"></div><span class="qb-price">₹7,500</span></div>
+      </div>
+    </div>
+
+    <!-- TOTAL + WA -->
+    <div class="qb-total-bar">
+      <span class="qb-total-label">Your Estimate</span>
+      <div class="qb-total-row">
+        <div class="qb-total-amount" id="qb-total">₹0</div>
+        <div class="qb-total-note">Final quote confirmed on call with Mandar</div>
+      </div>
+      <div id="qb-breakdown" class="qb-breakdown"><div class="qb-empty">No services selected yet</div></div>
+      <button class="qb-toggle" onclick="toggleBD()">▾ See breakdown</button>
+    </div>
+    <a class="qb-wa-btn" href="#" onclick="sendWA(event)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Send My Quote on WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- HOME FUNCTIONS RATE CARD -->
+<div class="hf-sect">
+  <div class="sect-eye">Home Functions</div>
+  <div class="sect-title">Haldi · Sangeet · <em>Mehendi</em></div>
+  <div class="sect-sub">Per-function rates for pre-wedding celebrations.</div>
+  <div class="hf-note"><strong>Haldi, Mehendi, Sangeet, Engagement, Ring Ceremony, Tilak</strong> — all at the same rates. Pooja &amp; religious home functions are quoted separately — contact us directly.</div>
+  <div class="hf-grid">
+    <div class="hf-item"><div><div class="hf-name">Candid Photographer</div><div class="hf-sub">Per function</div></div><div class="hf-p">₹15,000</div></div>
+    <div class="hf-item"><div><div class="hf-name">Traditional Videographer</div><div class="hf-sub">Per function</div></div><div class="hf-p">₹15,000</div></div>
+    <div class="hf-item"><div><div class="hf-name">Cinematographer</div><div class="hf-sub">Per function · Cinematic reel included</div></div><div class="hf-p">₹25,000</div></div>
+    <div class="hf-item"><div><div class="hf-name">Phone Reel</div><div class="hf-sub">Per function</div></div><div class="hf-p">₹7,500</div></div>
+    <div class="hf-item"><div><div class="hf-name">Drone</div><div class="hf-sub">Per function</div></div><div class="hf-p">₹10,000</div></div>
+  </div>
+</div>
+
+<!-- DELIVERABLES -->
+<div class="del-sect">
+  <div class="sect-eye">What You Receive</div>
+  <div class="sect-title">Your <em>Deliverables</em></div>
+  <div class="sect-sub">Everything you get after your wedding.</div>
+  <div class="del-grid">
+    <div class="del-card"><div class="del-ico">📸</div><div><div class="del-title">All Raw Photos — No Limit</div><div class="del-desc">Every photo captured is delivered to you — no culling, no holding back. Unlimited raw photos from every photographer on the team.</div><span class="del-tag gold">Unlimited</span></div></div>
+    <div class="del-card"><div class="del-ico">✏️</div><div><div class="del-title">Edited Photos — No Limit</div><div class="del-desc">All colour-graded edited photos delivered. No cap on edited images — you get everything, curated and polished.</div><span class="del-tag gold">No Limit</span></div></div>
+    <div class="del-card"><div class="del-ico">🎬</div><div><div class="del-title">Cinematic Wedding Film</div><div class="del-desc">A beautifully edited cinematic film — 4 to 6 minutes. Premium colour grading, curated music, and storytelling that captures the soul of your day.</div><span class="del-tag gold">4–6 Minutes</span></div></div>
+    <div class="del-card"><div class="del-ico">📱</div><div><div class="del-title">Cinematic Reel — Per Function</div><div class="del-desc">One short-form cinematic reel per function covered. Instagram-ready, stylish edits — shareable immediately after the event.</div><span class="del-tag gold">Per Function</span></div></div>
+    <div class="del-card"><div class="del-ico">🎥</div><div><div class="del-title">Traditional Video</div><div class="del-desc">Complete uncut documentation — Sangeet, Vidhi, all rituals with original audio. Full length.</div><span class="del-tag">Full Coverage</span></div></div>
+    <div class="del-card"><div class="del-ico">🖼️</div><div><div class="del-title">Premium Album</div><div class="del-desc">Coffee-table album with top-grade print quality. Included in Gold &amp; Platinum (2 albums in Platinum).</div><span class="del-tag gold">Package Dependent</span></div></div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="test-sect">
+  <div class="sect-eye">Love Notes</div>
+  <div class="sect-title">What Couples <em>Say</em></div>
+  <div class="t-list">
+    <div class="t-card"><span class="t-stars">★★★★★</span><div class="t-quote">"We booked Amore-gaatha for our 2-day wedding and genuinely couldn't have made a better choice. The cinematic team was invisible during the ceremony — but somehow caught every single moment. When we watched the film two weeks later, my mother cried. That says it all."</div><div class="t-who">— Priya &amp; Rohan S., Pune · Jan 2026</div></div>
+    <div class="t-card"><span class="t-stars">★★★★★</span><div class="t-quote">"The live edit display at our reception was the highlight of the evening — guests were crowding around the screen watching photos from just two hours earlier. Nobody else we met offered that. Completely worth it."</div><div class="t-who">— Sneha &amp; Abhishek M., Pune · Dec 2025</div></div>
+    <div class="t-card"><span class="t-stars">★★★★★</span><div class="t-quote">"We were nervous about the budget but Mandar helped us build a custom package that fit perfectly. No pressure, no upselling. The output was stunning. Really appreciated that approach."</div><div class="t-who">— Ananya &amp; Vikram P., Pune · Nov 2025</div></div>
+    <div class="t-card"><span class="t-stars">★★★★★</span><div class="t-quote">"Our Sangeet and Haldi photos are the most liked posts on our Instagram. The candid team blended in so naturally — I forgot they were even there until I saw the results. Absolutely recommend for home functions too."</div><div class="t-who">— Ishaan &amp; Meghna T., Pune · Oct 2025</div></div>
+    <div class="t-card"><span class="t-stars">★★★★★</span><div class="t-quote">"The drone footage of our baraat entry was something else — guests watching the YouTube stream from Delhi couldn't believe it was a local photographer. Professional, punctual, and genuinely passionate about the work."</div><div class="t-who">— Karan &amp; Nidhi J., Pune · Feb 2026</div></div>
+  </div>
+</div>
+
+<!-- WHY US -->
+<div class="sect">
+  <div class="sect-eye">Why Amore-gaatha</div>
+  <div class="sect-title">What Makes Us <em>Different</em></div>
+  <div class="why-list">
+    <div class="why-row"><div class="why-n">01</div><div><div class="why-h">9 Years, 700+ Weddings</div><div class="why-d">Since 2016, we've perfected every moment — from Haldi chaos to Phera silence. Experience shows in every frame.</div></div></div>
+    <div class="why-row"><div class="why-n">02</div><div><div class="why-h">You Know Who Shows Up</div><div class="why-d">Our own team covers your wedding — not unknown freelancers. Same faces, same quality you saw.</div></div></div>
+    <div class="why-row"><div class="why-n">03</div><div><div class="why-h">Technology Others Don't Offer</div><div class="why-d">VR 360°, AI face-recognition sharing, FPV drone, live streaming — most photographers don't even know these exist.</div></div></div>
+    <div class="why-row"><div class="why-n">04</div><div><div class="why-h">Emotions First, Always</div><div class="why-d">We capture the laugh your mother tried to hide, the tear your father didn't.</div></div></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-sect">
+  <div class="cta-pill">Ready to Book?</div>
+  <div class="cta-h">Let's Tell Your<br><em>Love Story</em></div>
+  <p class="cta-sub">Dates fill fast — reach out to check availability</p>
+  <div class="cta-list">
+    <a class="cta-row" href="tel:+918999337595"><div class="cta-ico">📞</div><div><span class="cta-lbl">Call / WhatsApp</span><span class="cta-val">+91 89993 37595</span></div></a>
+    <a class="cta-row" href="https://instagram.com/amoregaatha" target="_blank"><div class="cta-ico">📷</div><div><span class="cta-lbl">Instagram</span><span class="cta-val">@amoregaatha</span></div></a>
+    <a class="cta-row" href="mailto:amoregaatha@gmail.com"><div class="cta-ico">✉️</div><div><span class="cta-lbl">Email</span><span class="cta-val">amoregaatha@gmail.com</span></div></a>
+    <a class="cta-row" href="https://www.amoregaatha.com" target="_blank"><div class="cta-ico">🌐</div><div><span class="cta-lbl">Website</span><span class="cta-val">www.amoregaatha.com</span></div></a>
+  </div>
+</div>
+
+<footer>
+  <span class="foot-brand">Amore-gaatha Weddings</span>
+  <span class="foot-sub">Pune · Since 2016 · 700+ Weddings</span>
+</footer>
+
+<script>
+function sw(id,btn){document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');}
+function setEvt(type,btn){document.querySelectorAll('.evt-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('grp-wedding').style.display=type==='wedding'?'':'none';document.getElementById('grp-home').style.display=type==='home'?'':'none';document.getElementById('grp-pooja').style.display=type==='pooja'?'':'none';document.querySelectorAll('.qb-row.selected').forEach(r=>r.classList.remove('selected'));updateTotal();}
+function toggle(row){row.classList.toggle('selected');updateTotal();}
+function chQty(btn,delta){const row=btn.closest('.qb-row');const el=row.querySelector('.qty-val');let v=parseInt(el.textContent)+delta;if(v<1)v=1;if(v>5)v=5;el.textContent=v;if(row.classList.contains('selected'))updateTotal();}
+function updateTotal(){const rows=document.querySelectorAll('.qb-row.selected');let total=0;const lines=[];rows.forEach(r=>{const price=parseInt(r.dataset.price)||0;const label=r.dataset.label;const qtyEl=r.querySelector('.qty-val');const qty=qtyEl?parseInt(qtyEl.textContent):1;const sub=price*qty;total+=sub;lines.push({label:qty>1?label+' ×'+qty:label,amt:sub});});document.getElementById('qb-total').textContent=total>0?'₹'+total.toLocaleString('en-IN'):'₹0';const bd=document.getElementById('qb-breakdown');bd.innerHTML='';if(lines.length===0){const e=document.createElement('div');e.className='qb-empty';e.textContent='No services selected yet';bd.appendChild(e);}else{lines.forEach(l=>{const d=document.createElement('div');d.className='qb-bd-row';d.innerHTML=`<span>${l.label}</span><span>₹${l.amt.toLocaleString('en-IN')}</span>`;bd.appendChild(d);});const hr=document.createElement('div');hr.style='height:1px;background:rgba(212,168,67,.15);margin:4px 0';bd.appendChild(hr);const tot=document.createElement('div');tot.className='qb-bd-row';tot.style.fontWeight='700';tot.innerHTML=`<span style="color:var(--white)">Total</span><span style="color:var(--gold-l)">₹${total.toLocaleString('en-IN')}</span>`;bd.appendChild(tot);}}
+function toggleBD(){document.getElementById('qb-breakdown').classList.toggle('open');}
+function sendWA(e){e.preventDefault();const rows=document.querySelectorAll('.qb-row.selected');if(rows.length===0){alert('Please select at least one service first.');return;}const evtType=document.querySelector('.evt-tab.active').textContent.trim();let lines=['🎊 *Amore-gaatha — Quote Request*','─────────────────────',`📅 Event Type: *${evtType}*`,'','📋 *Selected Team & Services:*'];let total=0;rows.forEach(r=>{const price=parseInt(r.dataset.price)||0;const label=r.dataset.label.replace(/\s*\(.*?\)\s*/g,'').trim();const qtyEl=r.querySelector('.qty-val');const qty=qtyEl?parseInt(qtyEl.textContent):1;const sub=price*qty;total+=sub;lines.push(`  ✅ ${qty>1?label+' ×'+qty:label} — ₹${sub.toLocaleString('en-IN')}`);});lines.push('','─────────────────────',`💰 *Estimated Total: ₹${total.toLocaleString('en-IN')}*`,'','Please confirm availability and share final quote. 🙏');window.open(`https://wa.me/918999337595?text=${encodeURIComponent(lines.join('\n'))}`,'_blank');}
+</script>
+</body>
+</html>

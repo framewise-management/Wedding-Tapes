@@ -116,6 +116,7 @@ export async function createProposal(businessId: string, input: CreateProposalIn
         notes: input.notes ?? null,
         validUntil,
         status: 'DRAFT',
+        template: input.template ?? 'DARK_LUXE',
         discountType: input.discount?.type ?? null,
         discountValue: input.discount?.value ?? null,
         taxRate,
@@ -165,6 +166,7 @@ export async function updateProposal(businessId: string, id: string, input: Upda
     patch.discountValue = input.discount?.value ?? null;
   }
   if (input.taxRate !== undefined) patch.taxRate = input.taxRate;
+  if (input.template !== undefined) patch.template = input.template;
 
   if (Object.keys(patch).length > 0) {
     await db
@@ -255,8 +257,9 @@ export async function shareProposal(businessId: string, id: string) {
     await updateProposalStatus(businessId, id, 'SENT');
   }
   const proposal = await findOneProposal(businessId, id);
+  const link = `${process.env.FRONTEND_URL}/p/${proposal.id}`;
   await notifyDiscord(
-    `🔗 Shareable link generated for proposal **${proposal.proposalNumber}** (${proposal.customer.name})`,
+    `🔗 **Shareable link generated**\nProposal **${proposal.proposalNumber}** (${proposal.customer.name})\n<${link}>`,
   );
   return proposal;
 }

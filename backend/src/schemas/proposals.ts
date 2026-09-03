@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const proposalStatuses = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'] as const;
 export const discountTypes = ['FIXED', 'PERCENTAGE'] as const;
+export const proposalTemplates = ['DARK_LUXE', 'BRIGHT_MODERN'] as const;
 
 export const discountInputSchema = z.object({
   type: z.enum(discountTypes),
@@ -31,6 +32,7 @@ export const createProposalSchema = z.object({
   items: z.array(proposalItemInputSchema).optional(),
   discount: discountInputSchema.optional(),
   taxRate: z.number().int().min(0).optional(),
+  template: z.enum(proposalTemplates).optional(),
 });
 export type CreateProposalInput = z.infer<typeof createProposalSchema>;
 
@@ -46,6 +48,7 @@ export const updateProposalSchema = z.object({
   // Omit to leave the discount untouched; pass `null` to clear it.
   discount: discountInputSchema.nullish(),
   taxRate: z.number().int().min(0).optional(),
+  template: z.enum(proposalTemplates).optional(),
 });
 export type UpdateProposalInput = z.infer<typeof updateProposalSchema>;
 
