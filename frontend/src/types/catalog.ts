@@ -3,7 +3,6 @@ export interface Service {
   name: string;
   category: string | null;
   description: string | null;
-  perDayPrice: number | null;
   flatPrice: number | null;
   active: boolean;
 }

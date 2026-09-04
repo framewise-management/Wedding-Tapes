@@ -14,14 +14,14 @@
 .pk-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .pk-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -32,7 +32,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -67,13 +67,13 @@
 .pk-form h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 3px;
 }
 
 .pk-form-sub {
   font-size: 13.5px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 0 0 20px;
 }
 
@@ -91,7 +91,7 @@
   display: block;
   font-size: 12.5px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   margin-bottom: 6px;
 }
 
@@ -103,14 +103,14 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .pk-input:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .pk-input::placeholder {
@@ -128,7 +128,7 @@
   padding: 11px 20px;
   border: none;
   border-radius: 10px;
-  background: #08060d;
+  background: #1a1a20;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -165,7 +165,7 @@
 .pk-table-head span {
   font-size: 12px;
   font-weight: 600;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -182,17 +182,17 @@
 .pk-cell-name {
   font-size: 14.5px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pk-cell-services {
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pk-cell-price {
   font-size: 14px;
-  color: #08060d;
+  color: #1a1a20;
   font-weight: 500;
 }
 
@@ -213,7 +213,7 @@
 
 .pk-status-inactive {
   background: #f0eff2;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pk-row-actions {
@@ -225,13 +225,13 @@
 .pk-manage-link {
   font-size: 13px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .pk-manage-link:hover {
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pk-toggle-btn {
@@ -239,7 +239,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   font-size: 12.5px;
   font-weight: 600;
   font-family: inherit;
@@ -248,8 +248,8 @@
 }
 
 .pk-toggle-btn:hover {
-  border-color: #08060d;
-  color: #08060d;
+  border-color: #1a1a20;
+  color: #1a1a20;
 }
 
 .pk-toggle-btn.pk-danger:hover {
@@ -261,5 +261,5 @@
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #8b8590;
+  color: #6b6b74;
 }

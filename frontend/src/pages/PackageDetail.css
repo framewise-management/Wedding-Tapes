@@ -6,13 +6,13 @@
   display: inline-block;
   font-size: 13.5px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   text-decoration: none;
   margin-bottom: 20px;
 }
 
 .pd-back-link:hover {
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pd-page-header {
@@ -26,14 +26,14 @@
 .pd-title {
   font-size: 26px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 4px;
 }
 
 .pd-price {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -60,7 +60,7 @@
 
 .pd-status-inactive {
   background: #f0eff2;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pd-toggle-btn {
@@ -68,7 +68,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
@@ -77,8 +77,8 @@
 }
 
 .pd-toggle-btn:hover {
-  border-color: #08060d;
-  color: #08060d;
+  border-color: #1a1a20;
+  color: #1a1a20;
 }
 
 .pd-toggle-btn.pd-danger:hover {
@@ -105,13 +105,13 @@
 .pd-section h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 16px;
 }
 
 .pd-empty {
   font-size: 13.5px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 0 0 16px;
 }
 
@@ -135,12 +135,12 @@
   flex: 1;
   font-size: 14px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pd-list-qty {
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pd-remove-btn {
@@ -148,7 +148,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   font-size: 12.5px;
   font-weight: 600;
   font-family: inherit;
@@ -173,7 +173,7 @@
   border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
 }
 
@@ -190,8 +190,8 @@
 
 .pd-select:focus,
 .pd-qty-input:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
   outline: none;
 }
 
@@ -200,7 +200,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #08060d;
+  background: #1a1a20;
   color: #fff;
   font-size: 13.5px;
   font-weight: 600;

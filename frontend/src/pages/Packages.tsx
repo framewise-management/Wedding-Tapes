@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
+import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import type { Package } from '../types/catalog';
 import './Packages.css';
 
@@ -106,14 +107,12 @@ export default function Packages() {
             </div>
             <div>
               <label className="pk-label" htmlFor="pk-price">Price (₹)</label>
-              <input
+              <GroupedNumberInput
                 id="pk-price"
-                type="number"
-                min="0"
                 className="pk-input"
                 value={form.price}
-                onChange={(e) => updateField('price', e.target.value)}
-                placeholder="125000"
+                onDigitsChange={(digits) => updateField('price', digits)}
+                placeholder="1,25,000"
                 required
               />
             </div>

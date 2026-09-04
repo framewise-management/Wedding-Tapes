@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
+import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import type { Package, Service } from '../types/catalog';
 import './PackageDetail.css';
 
@@ -135,12 +136,10 @@ export default function PackageDetail() {
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
-          <input
-            type="number"
-            min="1"
+          <GroupedNumberInput
             className="pd-qty-input"
             value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
+            onDigitsChange={setQuantity}
           />
           <button type="submit" className="pd-add-btn" disabled={!availableServices.length}>
             Add to package

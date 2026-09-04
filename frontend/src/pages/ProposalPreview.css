@@ -12,12 +12,12 @@
 .pv-back-link {
   font-size: 13.5px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   text-decoration: none;
 }
 
 .pv-back-link:hover {
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pv-header-actions {
@@ -30,7 +30,7 @@
   padding: 9px 18px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 13.5px;
   font-weight: 600;
@@ -51,7 +51,7 @@
   font-size: 13.5px;
   font-weight: 600;
   font-family: inherit;
-  color: #6b6375;
+  color: #54545c;
   text-decoration: none;
   padding: 9px 14px;
   border: 1.5px solid #e5e4e7;
@@ -61,8 +61,8 @@
 }
 
 .pv-edit-link:hover {
-  border-color: #08060d;
-  color: #08060d;
+  border-color: #1a1a20;
+  color: #1a1a20;
 }
 
 .pv-edit-link.pv-danger:hover {
@@ -78,12 +78,12 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: #f0eff2;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pv-view-count {
   font-size: 12.5px;
-  color: #8b8590;
+  color: #6b6b74;
   white-space: nowrap;
 }
 
@@ -111,7 +111,7 @@
   border: none;
   border-radius: 7px;
   background: none;
-  color: #08060d;
+  color: #1a1a20;
   font-size: 13.5px;
   font-weight: 500;
   font-family: inherit;
@@ -138,7 +138,7 @@
   padding: 4px 10px 2px;
   font-size: 11px;
   font-weight: 700;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0;
@@ -201,7 +201,7 @@
 .pv-business-name {
   font-size: 17px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 4px;
 }
 
@@ -210,12 +210,12 @@
   flex-wrap: wrap;
   gap: 4px 10px;
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pv-business-address {
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
   margin: 4px 0 0;
 }
 
@@ -227,13 +227,13 @@
 .pv-proposal-number {
   font-size: 15px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0;
 }
 
 .pv-valid-until {
   font-size: 12.5px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 4px 0 0;
 }
 
@@ -248,7 +248,7 @@
 .pv-section h2 {
   font-size: 13px;
   font-weight: 700;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 12px;
@@ -256,18 +256,18 @@
 
 .pv-section-sub {
   font-size: 13px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: -8px 0 12px;
 }
 
 .pv-line {
   font-size: 14.5px;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 2px;
 }
 
 .pv-muted {
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pv-line-item {
@@ -286,20 +286,20 @@
 .pv-line-item-name {
   font-size: 14.5px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0;
 }
 
 .pv-line-item-desc {
   font-size: 13px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 3px 0 0;
 }
 
 .pv-line-item-total {
   font-size: 14.5px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   white-space: nowrap;
 }
 
@@ -309,7 +309,7 @@
   justify-content: space-between;
   padding: 6px 0;
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .pv-pricing-row.pv-total {
@@ -318,12 +318,12 @@
   padding-top: 14px;
   font-size: 18px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .pv-terms {
   font-size: 13.5px;
-  color: #6b6375;
+  color: #54545c;
   white-space: pre-wrap;
   margin: 0;
 }

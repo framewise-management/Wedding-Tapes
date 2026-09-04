@@ -14,14 +14,14 @@
 .cal-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .cal-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -35,7 +35,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .cal-dot {
@@ -46,7 +46,7 @@
 }
 
 .cal-dot-sent {
-  background: #29579c;
+  background: #c24e0e;
 }
 
 .cal-dot-accepted {
@@ -79,18 +79,18 @@
   background: #fff;
   font-size: 16px;
   cursor: pointer;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cal-nav button:hover {
-  border-color: #e2661a;
-  color: #e2661a;
+  border-color: #0f766e;
+  color: #0f766e;
 }
 
 .cal-month-label {
   font-size: 16px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   min-width: 160px;
   text-align: center;
 }
@@ -111,7 +111,7 @@
   text-align: center;
   font-size: 11px;
   font-weight: 600;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -141,13 +141,39 @@
   color: #c7c4cb;
 }
 
+.cal-day-inquiry {
+  background: #fff1e6;
+}
+
+.cal-day-inquiry:hover {
+  background: #ffe6d4;
+}
+
+.cal-day-booked,
+.cal-day-booked.cal-day-inquiry {
+  background: #f3faf4;
+}
+
+.cal-day-booked:hover,
+.cal-day-booked.cal-day-inquiry:hover {
+  background: #e5f3e8;
+}
+
 .cal-day-selected {
   background: #fdf1e4;
 }
 
+.cal-day-inquiry.cal-day-selected:not(.cal-day-booked) {
+  background: #ffdcc4;
+}
+
+.cal-day-booked.cal-day-selected {
+  background: #dcefdc;
+}
+
 .cal-day-number {
   font-size: 13.5px;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cal-day-dots {
@@ -165,7 +191,7 @@
 .cal-detail-title {
   font-size: 15px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 12px;
 }
 
@@ -191,17 +217,17 @@
 .cal-detail-number {
   font-size: 14px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cal-detail-customer {
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .cal-detail-total {
   font-size: 14px;
-  color: #08060d;
+  color: #1a1a20;
   font-weight: 500;
 }
 
@@ -217,8 +243,8 @@
 }
 
 .cal-status-sent {
-  background: #e6eefc;
-  color: #29579c;
+  background: #fde8d8;
+  color: #c24e0e;
 }
 
 .cal-status-accepted {

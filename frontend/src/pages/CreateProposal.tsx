@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiGet, apiPost, apiPut } from '../api/client';
+import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import type { Customer } from '../types/customer';
 import type { Package, Service } from '../types/catalog';
 import type { Proposal, ProposalTemplate } from '../types/proposal';
@@ -18,7 +19,6 @@ interface SelectedPackage {
 
 interface SelectedItem {
   serviceId: string;
-  priceType: 'per_day' | 'flat';
   quantity: number;
   isOptional: boolean;
 }
@@ -27,15 +27,8 @@ function priceLabel(pkg: Package): string {
   return `₹${pkg.price.toLocaleString('en-IN')}`;
 }
 
-function servicePriceOptions(service: Service): { value: 'per_day' | 'flat'; label: string }[] {
-  const options: { value: 'per_day' | 'flat'; label: string }[] = [];
-  if (service.perDayPrice != null) {
-    options.push({ value: 'per_day', label: `₹${service.perDayPrice.toLocaleString('en-IN')} / day` });
-  }
-  if (service.flatPrice != null) {
-    options.push({ value: 'flat', label: `₹${service.flatPrice.toLocaleString('en-IN')} flat` });
-  }
-  return options;
+function servicePriceLabel(service: Service): string {
+  return service.flatPrice != null ? `₹${service.flatPrice.toLocaleString('en-IN')}` : '—';
 }
 
 export default function CreateProposal() {
@@ -90,7 +83,6 @@ export default function CreateProposal() {
         setSelectedItems(
           p.items.map((item) => ({
             serviceId: item.serviceId,
-            priceType: item.priceType,
             quantity: item.quantity,
             isOptional: item.isOptional,
           })),
@@ -133,10 +125,9 @@ export default function CreateProposal() {
 
   function addService(service: Service) {
     if (selectedItems.some((i) => i.serviceId === service.id)) return;
-    const priceType = service.perDayPrice != null ? 'per_day' : 'flat';
     setSelectedItems((prev) => [
       ...prev,
-      { serviceId: service.id, priceType, quantity: 1, isOptional: false },
+      { serviceId: service.id, quantity: 1, isOptional: false },
     ]);
   }
 
@@ -328,13 +319,11 @@ export default function CreateProposal() {
           <div className="cp-row">
             <div>
               <label className="cp-label" htmlFor="cp-days">Number of days</label>
-              <input
+              <GroupedNumberInput
                 id="cp-days"
-                type="number"
-                min="1"
                 className="cp-input"
                 value={numberOfDays}
-                onChange={(e) => setNumberOfDays(e.target.value)}
+                onDigitsChange={setNumberOfDays}
                 placeholder="1"
               />
             </div>
@@ -398,13 +387,11 @@ export default function CreateProposal() {
                 return (
                   <div className="cp-selected-row" key={sp.packageId}>
                     <span className="cp-selected-name">{pkg.name}</span>
-                    <input
-                      type="number"
-                      min="1"
+                    <GroupedNumberInput
                       className="cp-qty-input"
                       value={sp.quantity}
-                      onChange={(e) =>
-                        updatePackageQuantity(sp.packageId, Math.max(1, Number(e.target.value)))
+                      onDigitsChange={(digits) =>
+                        updatePackageQuantity(sp.packageId, Math.max(1, Number(digits) || 1))
                       }
                     />
                     <span className="cp-selected-total">
@@ -435,9 +422,7 @@ export default function CreateProposal() {
               <div className="cp-catalog-row" key={s.id}>
                 <div className="cp-catalog-info">
                   <div className="cp-catalog-name">{s.name}</div>
-                  <div className="cp-catalog-price">
-                    {servicePriceOptions(s).map((o) => o.label).join(' · ')}
-                  </div>
+                  <div className="cp-catalog-price">{servicePriceLabel(s)}</div>
                 </div>
                 <button type="button" className="cp-add-btn" onClick={() => addService(s)}>Add</button>
               </div>
@@ -450,31 +435,15 @@ export default function CreateProposal() {
                 {includedItems.map((item) => {
                   const service = services.find((s) => s.id === item.serviceId);
                   if (!service) return null;
-                  const options = servicePriceOptions(service);
-                  const unitPrice = item.priceType === 'per_day' ? service.perDayPrice! : service.flatPrice!;
+                  const unitPrice = service.flatPrice!;
                   return (
                     <div className="cp-selected-row" key={item.serviceId}>
                       <span className="cp-selected-name">{service.name}</span>
-                      {options.length > 1 && (
-                        <select
-                          className="cp-price-type-select"
-                          value={item.priceType}
-                          onChange={(e) =>
-                            updateItem(item.serviceId, { priceType: e.target.value as 'per_day' | 'flat' })
-                          }
-                        >
-                          {options.map((o) => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
-                          ))}
-                        </select>
-                      )}
-                      <input
-                        type="number"
-                        min="1"
+                      <GroupedNumberInput
                         className="cp-qty-input"
                         value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(item.serviceId, { quantity: Math.max(1, Number(e.target.value)) })
+                        onDigitsChange={(digits) =>
+                          updateItem(item.serviceId, { quantity: Math.max(1, Number(digits) || 1) })
                         }
                       />
                       <label className="cp-checkbox-label">
@@ -510,31 +479,15 @@ export default function CreateProposal() {
                 {optionalItems.map((item) => {
                   const service = services.find((s) => s.id === item.serviceId);
                   if (!service) return null;
-                  const options = servicePriceOptions(service);
-                  const unitPrice = item.priceType === 'per_day' ? service.perDayPrice! : service.flatPrice!;
+                  const unitPrice = service.flatPrice!;
                   return (
                     <div className="cp-selected-row" key={item.serviceId}>
                       <span className="cp-selected-name">{service.name}</span>
-                      {options.length > 1 && (
-                        <select
-                          className="cp-price-type-select"
-                          value={item.priceType}
-                          onChange={(e) =>
-                            updateItem(item.serviceId, { priceType: e.target.value as 'per_day' | 'flat' })
-                          }
-                        >
-                          {options.map((o) => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
-                          ))}
-                        </select>
-                      )}
-                      <input
-                        type="number"
-                        min="1"
+                      <GroupedNumberInput
                         className="cp-qty-input"
                         value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(item.serviceId, { quantity: Math.max(1, Number(e.target.value)) })
+                        onDigitsChange={(digits) =>
+                          updateItem(item.serviceId, { quantity: Math.max(1, Number(digits) || 1) })
                         }
                       />
                       <label className="cp-checkbox-label">
@@ -591,15 +544,13 @@ export default function CreateProposal() {
                 <label className="cp-label" htmlFor="cp-discount-value">
                   {discountType === 'PERCENTAGE' ? 'Discount %' : 'Discount amount (₹)'}
                 </label>
-                <input
+                <GroupedNumberInput
                   id="cp-discount-value"
-                  type="number"
-                  min="0"
                   className="cp-input"
                   value={discountValue}
-                  onChange={(e) => setDiscountValue(e.target.value)}
+                  onDigitsChange={setDiscountValue}
                   disabled={!discountType}
-                  placeholder={discountType === 'PERCENTAGE' ? '10' : '5000'}
+                  placeholder={discountType === 'PERCENTAGE' ? '10' : '5,000'}
                 />
               </div>
             </div>
@@ -608,13 +559,11 @@ export default function CreateProposal() {
             <div className="cp-row">
               <div>
                 <label className="cp-label" htmlFor="cp-tax-rate">Tax rate (%)</label>
-                <input
+                <GroupedNumberInput
                   id="cp-tax-rate"
-                  type="number"
-                  min="0"
                   className="cp-input"
                   value={taxRate}
-                  onChange={(e) => setTaxRate(e.target.value)}
+                  onDigitsChange={setTaxRate}
                   placeholder="0"
                 />
               </div>

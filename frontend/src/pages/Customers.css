@@ -14,14 +14,14 @@
 .cu-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .cu-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -32,7 +32,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -67,13 +67,13 @@
 .cu-form h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 3px;
 }
 
 .cu-form-sub {
   font-size: 13.5px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 0 0 20px;
 }
 
@@ -96,7 +96,7 @@
   display: block;
   font-size: 12.5px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   margin-bottom: 6px;
 }
 
@@ -109,7 +109,7 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -120,8 +120,8 @@
 
 .cu-input:focus,
 .cu-textarea:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .cu-input::placeholder,
@@ -133,7 +133,7 @@
   padding: 11px 20px;
   border: none;
   border-radius: 10px;
-  background: #08060d;
+  background: #1a1a20;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -160,14 +160,14 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .cu-search input:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .cu-table {
@@ -193,7 +193,7 @@
 .cu-table-head span {
   font-size: 12px;
   font-weight: 600;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -210,14 +210,14 @@
 .cu-cell-name {
   font-size: 14.5px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cu-cell-phone,
 .cu-cell-email,
 .cu-cell-address {
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -237,13 +237,13 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   cursor: pointer;
 }
 
 .cu-icon-btn:hover {
-  border-color: #08060d;
-  color: #08060d;
+  border-color: #1a1a20;
+  color: #1a1a20;
 }
 
 .cu-icon-btn.cu-danger:hover {
@@ -255,5 +255,5 @@
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #8b8590;
+  color: #6b6b74;
 }

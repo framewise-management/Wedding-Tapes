@@ -104,6 +104,8 @@ export default function Calendar() {
               className={
                 'cal-day' +
                 (inMonth ? '' : ' cal-day-outside') +
+                (inquiry ? ' cal-day-inquiry' : '') +
+                (booked ? ' cal-day-booked' : '') +
                 (selectedKey === key ? ' cal-day-selected' : '')
               }
               onClick={() => setSelectedKey(dayProposals.length ? key : null)}

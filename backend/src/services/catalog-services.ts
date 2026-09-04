@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '../db/client';
 import { services } from '../db/schema';
 import { isPgError } from '../db/pg-error';
-import { BadRequestError, ConflictError, NotFoundError } from '../lib/http-error';
+import { ConflictError, NotFoundError } from '../lib/http-error';
 import type { CreateServiceInput, UpdateServiceInput } from '../schemas/services';
 
 export function findAllServices(businessId: string, active?: boolean) {
@@ -23,9 +23,6 @@ export async function findOneService(businessId: string, id: string) {
 }
 
 export async function createService(businessId: string, input: CreateServiceInput) {
-  if (input.perDayPrice === undefined && input.flatPrice === undefined) {
-    throw new BadRequestError('Set a per-day price, a flat price, or both');
-  }
   const [service] = await db
     .insert(services)
     .values({ ...input, businessId })

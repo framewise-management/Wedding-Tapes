@@ -14,14 +14,14 @@
 .db-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .db-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -32,7 +32,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -52,7 +52,7 @@
 .db-section h2 {
   font-size: 13px;
   font-weight: 700;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 14px;
@@ -76,14 +76,14 @@
 .db-stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.5px;
 }
 
 .db-stat-label {
   font-size: 13px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .db-stat-draft .db-stat-value { color: #b3651a; }
@@ -119,20 +119,20 @@
 .db-recent-number {
   font-size: 14.5px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0;
 }
 
 .db-recent-customer {
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
   margin: 2px 0 0;
 }
 
 .db-recent-total {
   font-size: 14.5px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   flex: none;
 }
 
@@ -145,7 +145,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: #f0eff2;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .db-recent-status-draft {
@@ -172,7 +172,7 @@
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #8b8590;
+  color: #6b6b74;
   border: 1px solid #e5e4e7;
   border-radius: 14px;
 }

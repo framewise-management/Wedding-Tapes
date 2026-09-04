@@ -9,14 +9,14 @@
 .cp-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .cp-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -30,13 +30,13 @@
 .cp-section h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   margin: 0 0 3px;
 }
 
 .cp-section-sub {
   font-size: 13.5px;
-  color: #8b8590;
+  color: #6b6b74;
   margin: 0 0 18px;
 }
 
@@ -44,7 +44,7 @@
   display: block;
   font-size: 12.5px;
   font-weight: 600;
-  color: #6b6375;
+  color: #54545c;
   margin-bottom: 6px;
 }
 
@@ -58,7 +58,7 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -66,8 +66,8 @@
 .cp-input:focus,
 .cp-select:focus,
 .cp-textarea:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .cp-row {
@@ -96,7 +96,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 10px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   font-size: 13.5px;
   font-weight: 600;
   font-family: inherit;
@@ -105,8 +105,8 @@
 }
 
 .cp-link-btn:hover {
-  border-color: #08060d;
-  color: #08060d;
+  border-color: #1a1a20;
+  color: #1a1a20;
 }
 
 .cp-new-customer {
@@ -137,12 +137,12 @@
 .cp-catalog-name {
   font-size: 14.5px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cp-catalog-price {
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
   margin-top: 2px;
 }
 
@@ -151,7 +151,7 @@
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  background: #08060d;
+  background: #1a1a20;
   color: #fff;
   font-size: 13.5px;
   font-weight: 600;
@@ -178,7 +178,7 @@
 .cp-selected-heading {
   font-size: 12px;
   font-weight: 600;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 20px 0 10px;
@@ -202,7 +202,7 @@
   min-width: 0;
   font-size: 14px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cp-qty-input {
@@ -216,28 +216,19 @@
   text-align: center;
 }
 
-.cp-price-type-select {
-  padding: 7px 9px;
-  border: 1.5px solid #e5e4e7;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  color: #6b6375;
-}
-
 .cp-checkbox-label {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #6b6375;
+  color: #54545c;
   white-space: nowrap;
 }
 
 .cp-selected-total {
   font-size: 14px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   white-space: nowrap;
 }
 
@@ -251,7 +242,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   cursor: pointer;
 }
 
@@ -262,7 +253,7 @@
 
 .cp-empty-note {
   font-size: 13.5px;
-  color: #8b8590;
+  color: #6b6b74;
 }
 
 .cp-pricing-row {
@@ -271,7 +262,7 @@
   justify-content: space-between;
   padding: 6px 0;
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .cp-pricing-row.cp-total {
@@ -280,7 +271,7 @@
   padding-top: 14px;
   font-size: 17px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cp-actions {
@@ -294,7 +285,7 @@
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -316,14 +307,14 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 10px;
   background: #fff;
-  color: #08060d;
+  color: #1a1a20;
   font-size: 14.5px;
   font-weight: 600;
   text-decoration: none;
 }
 
 .cp-preview-link:hover {
-  border-color: #08060d;
+  border-color: #1a1a20;
 }
 
 .cp-template-grid {
@@ -348,12 +339,12 @@
 }
 
 .cp-template-card:hover {
-  border-color: #08060d;
+  border-color: #1a1a20;
 }
 
 .cp-template-card-selected {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .cp-template-swatch {
@@ -371,12 +362,12 @@
 .cp-template-name {
   font-size: 14.5px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .cp-template-desc {
   font-size: 12.5px;
-  color: #8b8590;
+  color: #6b6b74;
   line-height: 1.5;
 }
 

@@ -59,6 +59,21 @@ export default function ProposalPreview() {
     }
   }
 
+  async function handleShareWhatsapp() {
+    if (!id || !proposal) return;
+    setStatusError('');
+    try {
+      const link = `${window.location.origin}/p/${id}`;
+      const phone = proposal.customer.phone.replace(/\D/g, '');
+      const text = encodeURIComponent(`Hi ${proposal.customer.name}, here's your proposal ${proposal.proposalNumber}: ${link}`);
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      const updated = await apiPost<Proposal>(`/api/proposals/${id}/share`);
+      setProposal(updated);
+    } catch (err) {
+      setStatusError(err instanceof Error ? err.message : 'Failed to share on WhatsApp');
+    }
+  }
+
   async function handleDelete() {
     if (!id || !proposal) return;
     if (!confirm(`Delete proposal ${proposal.proposalNumber}? This can't be undone.`)) return;
@@ -135,6 +150,16 @@ export default function ProposalPreview() {
               <div className="pv-share-menu">
                 <button type="button" className="pv-share-menu-item" onClick={handleCopyLink}>
                   {linkCopied ? 'Link copied!' : 'Copy shareable link'}
+                </button>
+                <button
+                  type="button"
+                  className="pv-share-menu-item"
+                  onClick={() => {
+                    setShareOpen(false);
+                    handleShareWhatsapp();
+                  }}
+                >
+                  Share on WhatsApp
                 </button>
                 <button
                   type="button"

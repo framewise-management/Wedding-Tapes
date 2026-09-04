@@ -14,14 +14,14 @@
 .ph-title {
   font-size: 30px;
   font-weight: 600;
-  color: #08060d;
+  color: #1a1a20;
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .ph-subtitle {
   font-size: 15px;
-  color: #6b6375;
+  color: #54545c;
   margin: 0;
 }
 
@@ -32,7 +32,7 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #e2661a;
+  background: #0f766e;
   color: #fff;
   font-size: 14.5px;
   font-weight: 600;
@@ -70,7 +70,7 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -81,15 +81,15 @@
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #08060d;
+  color: #1a1a20;
   outline: none;
   background: #fff;
 }
 
 .ph-search:focus,
 .ph-status-filter:focus {
-  border-color: #e2661a;
-  box-shadow: 0 0 0 4px rgba(226, 102, 26, 0.12);
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
 .ph-table {
@@ -115,7 +115,7 @@
 .ph-table-head span {
   font-size: 12px;
   font-weight: 600;
-  color: #8b8590;
+  color: #6b6b74;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -138,7 +138,7 @@
 .ph-cell-number {
   font-size: 14.5px;
   font-weight: 500;
-  color: #08060d;
+  color: #1a1a20;
 }
 
 .ph-row-link {
@@ -154,7 +154,7 @@
   border: 1.5px solid #e5e4e7;
   border-radius: 8px;
   background: #fff;
-  color: #6b6375;
+  color: #54545c;
   font-size: 12.5px;
   font-weight: 600;
   font-family: inherit;
@@ -171,7 +171,7 @@
 .ph-cell-date,
 .ph-cell-total {
   font-size: 14px;
-  color: #6b6375;
+  color: #54545c;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,7 +186,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: #f0eff2;
-  color: #6b6375;
+  color: #54545c;
 }
 
 .ph-status-draft {
@@ -213,5 +213,5 @@
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #8b8590;
+  color: #6b6b74;
 }

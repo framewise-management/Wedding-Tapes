@@ -16,7 +16,6 @@ export const proposalPackageInputSchema = z.object({
 
 export const proposalItemInputSchema = z.object({
   serviceId: z.uuid(),
-  priceType: z.enum(['per_day', 'flat']).optional(),
   quantity: z.number().int().min(1).default(1),
   isOptional: z.boolean().default(false),
 });

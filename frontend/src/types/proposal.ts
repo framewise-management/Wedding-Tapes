@@ -15,7 +15,6 @@ export interface ProposalItem {
   serviceId: string;
   serviceName: string;
   description: string | null;
-  priceType: 'per_day' | 'flat';
   quantity: number;
   unitPrice: number;
   total: number;

@@ -307,7 +307,6 @@ async function resolveItemSnapshot(
   businessId: string,
   input: {
     serviceId: string;
-    priceType?: 'per_day' | 'flat';
     quantity: number;
     isOptional: boolean;
   },
@@ -317,19 +316,15 @@ async function resolveItemSnapshot(
   if (requireActive && !service.active) {
     throw new BadRequestError(`${service.name} is not active and cannot be added`);
   }
-  const priceType = input.priceType ?? (service.perDayPrice != null ? 'per_day' : 'flat');
-  const unitPrice = priceType === 'per_day' ? service.perDayPrice : service.flatPrice;
+  const unitPrice = service.flatPrice;
   if (unitPrice == null) {
-    throw new BadRequestError(
-      `${service.name} has no ${priceType === 'per_day' ? 'per-day' : 'flat'} price set`,
-    );
+    throw new BadRequestError(`${service.name} has no price set`);
   }
   const quantity = input.quantity ?? 1;
   return {
     serviceId: service.id,
     serviceName: service.name,
     description: service.description,
-    priceType,
     quantity,
     unitPrice,
     total: unitPrice * quantity,

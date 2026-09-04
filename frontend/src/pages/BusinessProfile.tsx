@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiGet, apiPut } from '../api/client';
+import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import { notifySetupStatusChanged } from '../lib/setupStatus';
 import type { Business } from '../types/business';
 import './BusinessProfile.css';
@@ -7,8 +8,8 @@ import './BusinessProfile.css';
 function UploadIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#e2661a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="#8b8590" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#0f766e" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="#6b6b74" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -198,16 +199,12 @@ export default function BusinessProfile() {
                 <label className="bp-label" htmlFor="bp-validity">
                   Default validity (days)
                 </label>
-                <input
+                <GroupedNumberInput
                   id="bp-validity"
-                  type="number"
                   className="bp-input"
-                  value={business.defaultValidityDays ?? ''}
-                  onChange={(e) =>
-                    updateField(
-                      'defaultValidityDays',
-                      e.target.value ? Number(e.target.value) : null,
-                    )
+                  value={business.defaultValidityDays}
+                  onDigitsChange={(digits) =>
+                    updateField('defaultValidityDays', digits ? Number(digits) : null)
                   }
                   placeholder="14"
                 />
