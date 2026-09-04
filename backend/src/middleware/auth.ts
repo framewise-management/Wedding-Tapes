@@ -17,3 +17,4 @@ export async function authMiddleware(c: Context<{ Variables: AuthedVariables }>,
   }
   await next();
 }
+//ok
