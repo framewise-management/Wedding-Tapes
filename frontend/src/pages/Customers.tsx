@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
+import { PhoneInput } from '../components/PhoneInput';
 import type { Customer } from '../types/customer';
 import './Customers.css';
 
@@ -123,7 +124,7 @@ export default function Customers() {
       {error && <div className="cu-error-banner">{error}</div>}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="cu-form">
+        <form onSubmit={handleSubmit} className="cu-form" autoComplete="off">
           <h2>{editingId ? 'Edit customer' : 'New customer'}</h2>
           <p className="cu-form-sub">Name and phone are required.</p>
 
@@ -136,17 +137,16 @@ export default function Customers() {
                 value={form.name}
                 onChange={(e) => updateField('name', e.target.value)}
                 placeholder="Priya & Arjun"
+                autoComplete="off"
                 required
               />
             </div>
             <div>
               <label className="cu-label" htmlFor="cu-phone">Phone</label>
-              <input
+              <PhoneInput
                 id="cu-phone"
-                className="cu-input"
                 value={form.phone}
-                onChange={(e) => updateField('phone', e.target.value)}
-                placeholder="+91 98765 43210"
+                onChange={(v) => updateField('phone', v)}
                 required
               />
             </div>
@@ -162,6 +162,7 @@ export default function Customers() {
                 value={form.email}
                 onChange={(e) => updateField('email', e.target.value)}
                 placeholder="hello@example.com"
+                autoComplete="off"
               />
             </div>
             <div>
@@ -172,6 +173,7 @@ export default function Customers() {
                 value={form.address}
                 onChange={(e) => updateField('address', e.target.value)}
                 placeholder="Customer address"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -203,6 +205,7 @@ export default function Customers() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or phone…"
+          autoComplete="off"
         />
       </div>
 

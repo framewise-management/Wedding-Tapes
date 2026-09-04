@@ -5,6 +5,14 @@ export const createPackageSchema = z.object({
   name: z.string().min(1, 'name should not be empty'),
   description: z.string().optional(),
   price: z.number().int().min(0),
+  services: z
+    .array(
+      z.object({
+        serviceId: z.uuid(),
+        quantity: z.number().int().min(1).default(1),
+      }),
+    )
+    .optional(),
 });
 export type CreatePackageInput = z.infer<typeof createPackageSchema>;
 

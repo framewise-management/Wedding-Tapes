@@ -30,12 +30,15 @@ export async function login(input: LoginInput): Promise<{ token: string }> {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  const user = await db.query.users.findFirst({ where: eq(users.email, input.email) });
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, input.email),
+    with: { business: true },
+  });
   if (!user) {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  await notifyDiscord(`🔑 Login: ${user.email}`);
+  await notifyDiscord(`🔑 Login: ${user.email} (**${user.business.name}**)`);
 
   return issueToken(user);
 }
@@ -135,10 +138,10 @@ export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: 
   }
 
   const existing =
-    (await db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
-    (await db.query.users.findFirst({ where: eq(users.email, email) }));
+    (await db.query.users.findFirst({ where: eq(users.id, authUser.id), with: { business: true } })) ??
+    (await db.query.users.findFirst({ where: eq(users.email, email), with: { business: true } }));
   if (existing) {
-    await notifyDiscord(`🔑 Login via Google: ${existing.email}`);
+    await notifyDiscord(`🔑 Login via Google: ${existing.email} (**${existing.business.name}**)`);
     return issueToken(existing);
   }
 

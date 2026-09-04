@@ -2,19 +2,30 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
-import type { Package } from '../types/catalog';
+import type { Package, Service } from '../types/catalog';
 import './Packages.css';
 
 const EMPTY_FORM = { name: '', description: '', price: '' };
 
+interface DraftService {
+  serviceId: string;
+  quantity: number;
+  name: string;
+}
+
 export default function Packages() {
   const [packages, setPackages] = useState<Package[] | null>(null);
+  const [services, setServices] = useState<Service[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [draftServices, setDraftServices] = useState<DraftService[]>([]);
+  const [serviceId, setServiceId] = useState('');
+  const [quantity, setQuantity] = useState('1');
   const [error, setError] = useState('');
 
   function load() {
     apiGet<Package[]>('/api/packages').then(setPackages);
+    apiGet<Service[]>('/api/services?active=true').then(setServices);
   }
 
   useEffect(load, []);
@@ -22,7 +33,25 @@ export default function Packages() {
   function toggleForm() {
     setShowForm((v) => !v);
     setForm(EMPTY_FORM);
+    setDraftServices([]);
+    setServiceId('');
+    setQuantity('1');
     setError('');
+  }
+
+  function addDraftService() {
+    const service = services.find((s) => s.id === serviceId);
+    if (!service) return;
+    setDraftServices((list) => [
+      ...list,
+      { serviceId: service.id, quantity: Number(quantity) || 1, name: service.name },
+    ]);
+    setServiceId('');
+    setQuantity('1');
+  }
+
+  function removeDraftService(id: string) {
+    setDraftServices((list) => list.filter((s) => s.serviceId !== id));
   }
 
   function updateField<K extends keyof typeof form>(key: K, value: string) {
@@ -37,9 +66,13 @@ export default function Packages() {
         name: form.name,
         description: form.description || undefined,
         price: Number(form.price),
+        services: draftServices.length
+          ? draftServices.map(({ serviceId, quantity }) => ({ serviceId, quantity }))
+          : undefined,
       });
       setShowForm(false);
       setForm(EMPTY_FORM);
+      setDraftServices([]);
       load();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create package');
@@ -92,7 +125,7 @@ export default function Packages() {
       {showForm && (
         <form onSubmit={handleCreate} className="pk-form">
           <h2>New package</h2>
-          <p className="pk-form-sub">Add services to it afterward from the package's detail page.</p>
+          <p className="pk-form-sub">Add services now, or later from the package's detail page.</p>
 
           <div className="pk-form-row">
             <div>
@@ -128,6 +161,51 @@ export default function Packages() {
                 onChange={(e) => updateField('description', e.target.value)}
                 placeholder="What's included, in a sentence"
               />
+            </div>
+          </div>
+
+          <div className="pk-services-section">
+            <label className="pk-label">Services</label>
+
+            {draftServices.length > 0 && (
+              <div className="pk-draft-list">
+                {draftServices.map((s) => (
+                  <div className="pk-draft-row" key={s.serviceId}>
+                    <span className="pk-draft-name">{s.name}</span>
+                    <span className="pk-draft-qty">× {s.quantity}</span>
+                    <button
+                      type="button"
+                      className="pk-draft-remove-btn"
+                      onClick={() => removeDraftService(s.serviceId)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="pk-draft-add-row">
+              <select
+                className="pk-select"
+                value={serviceId}
+                onChange={(e) => setServiceId(e.target.value)}
+              >
+                <option value="">Select a service…</option>
+                {services
+                  .filter((s) => !draftServices.some((d) => d.serviceId === s.id))
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+              </select>
+              <GroupedNumberInput
+                className="pk-qty-input"
+                value={quantity}
+                onDigitsChange={setQuantity}
+              />
+              <button type="button" className="pk-draft-add-btn" disabled={!serviceId} onClick={addDraftService}>
+                Add service
+              </button>
             </div>
           </div>
 

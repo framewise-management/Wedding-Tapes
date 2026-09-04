@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiGet, apiPut } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
+import { PhoneInput } from '../components/PhoneInput';
 import { notifySetupStatusChanged } from '../lib/setupStatus';
 import type { Business } from '../types/business';
 import './BusinessProfile.css';
@@ -92,7 +93,7 @@ export default function BusinessProfile() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bp-form">
+      <form onSubmit={handleSubmit} className="bp-form" autoComplete="off">
         <div className="bp-col-main">
           <section className="bp-section">
             <h2>Identity</h2>
@@ -126,6 +127,7 @@ export default function BusinessProfile() {
                   value={business.name}
                   onChange={(e) => updateField('name', e.target.value)}
                   placeholder="e.g. Wedding Tapes Studio"
+                  autoComplete="off"
                 />
                 <p className="bp-hint">
                   Square image, at least 200×200px, works best.
@@ -143,12 +145,10 @@ export default function BusinessProfile() {
                 <label className="bp-label" htmlFor="bp-phone">
                   Phone
                 </label>
-                <input
+                <PhoneInput
                   id="bp-phone"
-                  className="bp-input"
                   value={business.phone ?? ''}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                  placeholder="+91 98765 43210"
+                  onChange={(v) => updateField('phone', v)}
                 />
               </div>
               <div>
@@ -161,6 +161,7 @@ export default function BusinessProfile() {
                   value={business.email ?? ''}
                   onChange={(e) => updateField('email', e.target.value)}
                   placeholder="hello@studio.com"
+                  autoComplete="off"
                 />
               </div>
               <div>
@@ -173,6 +174,7 @@ export default function BusinessProfile() {
                   value={business.website ?? ''}
                   onChange={(e) => updateField('website', e.target.value)}
                   placeholder="www.studio.com"
+                  autoComplete="off"
                 />
               </div>
               <div>
@@ -185,6 +187,7 @@ export default function BusinessProfile() {
                   value={business.address ?? ''}
                   onChange={(e) => updateField('address', e.target.value)}
                   placeholder="Studio address"
+                  autoComplete="off"
                 />
               </div>
             </div>

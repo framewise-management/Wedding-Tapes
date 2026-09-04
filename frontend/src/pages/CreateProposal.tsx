@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiGet, apiPost, apiPut } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
+import { PhoneInput } from '../components/PhoneInput';
 import type { Customer } from '../types/customer';
 import type { Package, Service } from '../types/catalog';
 import type { Proposal, ProposalTemplate } from '../types/proposal';
@@ -229,7 +230,7 @@ export default function CreateProposal() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} autoComplete="off">
         <section className="cp-section">
           <h2>Customer</h2>
           <p className="cp-section-sub">Who this proposal is for.</p>
@@ -264,16 +265,15 @@ export default function CreateProposal() {
                   value={newCustomerName}
                   onChange={(e) => setNewCustomerName(e.target.value)}
                   placeholder="Priya & Arjun"
+                  autoComplete="off"
                 />
               </div>
               <div>
                 <label className="cp-label" htmlFor="cp-new-phone">Phone</label>
-                <input
+                <PhoneInput
                   id="cp-new-phone"
-                  className="cp-input"
                   value={newCustomerPhone}
-                  onChange={(e) => setNewCustomerPhone(e.target.value)}
-                  placeholder="+91 98765 43210"
+                  onChange={setNewCustomerPhone}
                 />
               </div>
               <button

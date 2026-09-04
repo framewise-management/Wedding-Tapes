@@ -25,15 +25,24 @@ export async function findOnePackage(businessId: string, id: string) {
   return pkg;
 }
 
-// Intentionally returns the raw inserted row without `items` -- this
-// matches the previous behavior (create() never re-fetched with
-// relations, unlike every other package-returning endpoint).
 export async function createPackage(businessId: string, input: CreatePackageInput) {
-  const [pkg] = await db
-    .insert(packages)
-    .values({ ...input, businessId })
-    .returning();
-  return pkg;
+  const serviceInputs = input.services ?? [];
+  await Promise.all(serviceInputs.map((s) => findOneService(businessId, s.serviceId)));
+
+  const newId = await db.transaction(async (tx) => {
+    const [pkg] = await tx
+      .insert(packages)
+      .values({ name: input.name, description: input.description, price: input.price, businessId })
+      .returning();
+    if (serviceInputs.length) {
+      await tx
+        .insert(packageServices)
+        .values(serviceInputs.map((s) => ({ packageId: pkg.id, serviceId: s.serviceId, quantity: s.quantity })));
+    }
+    return pkg.id;
+  });
+
+  return findOnePackage(businessId, newId);
 }
 
 export async function updatePackage(businessId: string, id: string, input: UpdatePackageInput) {

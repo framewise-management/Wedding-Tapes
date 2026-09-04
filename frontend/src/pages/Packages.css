@@ -131,6 +131,113 @@
   color: #b7b3bd;
 }
 
+.pk-services-section {
+  margin-top: 14px;
+}
+
+.pk-draft-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pk-draft-row {
+  display: grid;
+  grid-template-columns: 1fr 48px auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid #e5e4e7;
+  border-radius: 10px;
+}
+
+.pk-draft-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a20;
+}
+
+.pk-draft-qty {
+  font-size: 13px;
+  color: #54545c;
+}
+
+.pk-draft-remove-btn {
+  padding: 6px 12px;
+  border: 1.5px solid #e5e4e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #54545c;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.pk-draft-remove-btn:hover {
+  border-color: #c23b2e;
+  color: #c23b2e;
+}
+
+.pk-draft-add-row {
+  display: flex;
+  gap: 10px;
+}
+
+.pk-select {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1.5px solid #e5e4e7;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a20;
+  outline: none;
+}
+
+.pk-qty-input {
+  width: 70px;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1.5px solid #e5e4e7;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.pk-select:focus,
+.pk-qty-input:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+  outline: none;
+}
+
+.pk-draft-add-btn {
+  flex: none;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #1a1a20;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pk-draft-add-btn:hover {
+  opacity: 0.85;
+}
+
+.pk-draft-add-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .pk-form-actions {
   margin-top: 14px;
   display: flex;
@@ -278,6 +385,14 @@
 
   .pk-form-row {
     grid-template-columns: 1fr;
+  }
+
+  .pk-draft-add-row {
+    flex-wrap: wrap;
+  }
+
+  .pk-select {
+    flex-basis: 100%;
   }
 
   .pk-table-head {
