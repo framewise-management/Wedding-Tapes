@@ -1,5 +1,6 @@
 .ph-container {
   max-width: 1080px;
+  margin: 0 auto;
 }
 
 .ph-page-header {
@@ -214,4 +215,39 @@
   text-align: center;
   font-size: 14px;
   color: #6b6b74;
+}
+
+@media (max-width: 768px) {
+  .ph-title {
+    font-size: 24px;
+  }
+
+  .ph-filters {
+    flex-wrap: wrap;
+  }
+
+  .ph-search {
+    max-width: none;
+  }
+
+  .ph-table-head {
+    display: none;
+  }
+
+  .ph-table-head,
+  .ph-table-row {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+  }
+
+  .ph-status,
+  .ph-delete-btn {
+    justify-self: start;
+  }
+
+  .ph-cell-customer,
+  .ph-cell-date,
+  .ph-cell-total {
+    white-space: normal;
+  }
 }

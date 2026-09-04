@@ -289,7 +289,7 @@ export default function CreateProposal() {
         </section>
 
         <section className="cp-section">
-          <h2>Wedding details</h2>
+          <h2>Event details</h2>
           <p className="cp-section-sub">Date, location, and anything worth noting.</p>
 
           <div className="cp-row">
@@ -385,7 +385,7 @@ export default function CreateProposal() {
                 const pkg = packages.find((p) => p.id === sp.packageId);
                 if (!pkg) return null;
                 return (
-                  <div className="cp-selected-row" key={sp.packageId}>
+                  <div className="cp-selected-row cp-selected-row-package" key={sp.packageId}>
                     <span className="cp-selected-name">{pkg.name}</span>
                     <GroupedNumberInput
                       className="cp-qty-input"
@@ -437,7 +437,7 @@ export default function CreateProposal() {
                   if (!service) return null;
                   const unitPrice = service.flatPrice!;
                   return (
-                    <div className="cp-selected-row" key={item.serviceId}>
+                    <div className="cp-selected-row cp-selected-row-service" key={item.serviceId}>
                       <span className="cp-selected-name">{service.name}</span>
                       <GroupedNumberInput
                         className="cp-qty-input"
@@ -481,7 +481,7 @@ export default function CreateProposal() {
                   if (!service) return null;
                   const unitPrice = service.flatPrice!;
                   return (
-                    <div className="cp-selected-row" key={item.serviceId}>
+                    <div className="cp-selected-row cp-selected-row-service" key={item.serviceId}>
                       <span className="cp-selected-name">{service.name}</span>
                       <GroupedNumberInput
                         className="cp-qty-input"

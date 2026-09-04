@@ -1,5 +1,6 @@
 .pd-container {
   max-width: 720px;
+  margin: 0 auto;
 }
 
 .pd-back-link {
@@ -123,7 +124,8 @@
 }
 
 .pd-list-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 48px auto;
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
@@ -132,7 +134,6 @@
 }
 
 .pd-list-name {
-  flex: 1;
   font-size: 14px;
   font-weight: 500;
   color: #1a1a20;
@@ -216,4 +217,30 @@
 .pd-add-btn:disabled {
   opacity: 0.4;
   cursor: default;
+}
+
+@media (max-width: 640px) {
+  .pd-title {
+    font-size: 21px;
+  }
+
+  .pd-page-header {
+    flex-wrap: wrap;
+  }
+
+  .pd-header-actions {
+    flex-wrap: wrap;
+  }
+
+  .pd-section {
+    padding: 18px;
+  }
+
+  .pd-add-form {
+    flex-wrap: wrap;
+  }
+
+  .pd-select {
+    flex-basis: 100%;
+  }
 }

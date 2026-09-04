@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiGet, apiPut } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import { notifySetupStatusChanged } from '../lib/setupStatus';
@@ -83,6 +84,7 @@ export default function BusinessProfile() {
 
   return (
     <div className="bp-container">
+      <Link to="/setup" className="bp-back-link">← Back to setup</Link>
       <div className="bp-page-header">
         <h1 className="bp-title">Business Profile</h1>
         <p className="bp-subtitle">

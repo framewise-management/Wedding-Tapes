@@ -1,5 +1,19 @@
 .pk-container {
   max-width: 1080px;
+  margin: 0 auto;
+}
+
+.pk-back-link {
+  display: inline-block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #54545c;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.pk-back-link:hover {
+  color: #1a1a20;
 }
 
 .pk-page-header {
@@ -255,6 +269,31 @@
 .pk-toggle-btn.pk-danger:hover {
   border-color: #c23b2e;
   color: #c23b2e;
+}
+
+@media (max-width: 768px) {
+  .pk-title {
+    font-size: 24px;
+  }
+
+  .pk-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pk-table-head {
+    display: none;
+  }
+
+  .pk-table-head,
+  .pk-table-row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .pk-status,
+  .pk-row-actions {
+    justify-self: start;
+  }
 }
 
 .pk-empty {

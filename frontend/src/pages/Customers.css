@@ -1,5 +1,6 @@
 .cu-container {
   max-width: 1080px;
+  margin: 0 auto;
 }
 
 .cu-page-header {
@@ -256,4 +257,34 @@
   text-align: center;
   font-size: 14px;
   color: #6b6b74;
+}
+
+@media (max-width: 768px) {
+  .cu-title {
+    font-size: 24px;
+  }
+
+  .cu-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cu-table-head {
+    display: none;
+  }
+
+  .cu-table-head,
+  .cu-table-row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .cu-row-actions {
+    justify-self: start;
+  }
+
+  .cu-cell-phone,
+  .cu-cell-email,
+  .cu-cell-address {
+    white-space: normal;
+  }
 }

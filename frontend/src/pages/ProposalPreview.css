@@ -1,5 +1,6 @@
 .pv-container {
   max-width: 780px;
+  margin: 0 auto;
 }
 
 .pv-page-header {
@@ -331,4 +332,33 @@
 .pv-error {
   font-size: 14px;
   color: #b3423a;
+}
+
+@media (max-width: 640px) {
+  .pv-page-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pv-header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pv-sheet {
+    padding: 18px;
+  }
+
+  .pv-business-row {
+    flex-direction: column;
+  }
+
+  .pv-proposal-meta {
+    text-align: left;
+  }
+
+  .pv-line-item {
+    flex-direction: column;
+    gap: 4px;
+  }
 }

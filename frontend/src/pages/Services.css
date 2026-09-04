@@ -1,5 +1,19 @@
 .sv-container {
   max-width: 1080px;
+  margin: 0 auto;
+}
+
+.sv-back-link {
+  display: inline-block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #54545c;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.sv-back-link:hover {
+  color: #1a1a20;
 }
 
 .sv-page-header {
@@ -99,7 +113,7 @@
 .sv-table-head,
 .sv-table-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr 160px;
   column-gap: 20px;
   align-items: center;
 }
@@ -155,6 +169,41 @@
   padding: 4px 10px;
   border-radius: 100px;
   white-space: nowrap;
+}
+
+.sv-category-photography {
+  background: #e8f1fc;
+  color: #1d4f91;
+}
+
+.sv-category-videography {
+  background: #f0e8fb;
+  color: #6b2fa0;
+}
+
+.sv-category-cinematic {
+  background: #e6f4f4;
+  color: #0f6b6b;
+}
+
+.sv-category-editing {
+  background: #fef3d9;
+  color: #8a5a00;
+}
+
+.sv-category-drone {
+  background: #e4f4fb;
+  color: #0a6d93;
+}
+
+.sv-category-candid {
+  background: #fde8e4;
+  color: #b42318;
+}
+
+.sv-category-album {
+  background: #e7f6ec;
+  color: #1f7a3f;
 }
 
 .sv-cell-price {
@@ -327,7 +376,7 @@
 
 .sv-edit-row-fields {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr 160px;
   gap: 10px;
   align-items: center;
 }
@@ -416,4 +465,34 @@
 
 .sv-submit-btn:hover {
   opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .sv-title {
+    font-size: 24px;
+  }
+
+  .sv-table-head {
+    display: none;
+  }
+
+  .sv-table-head,
+  .sv-table-row {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+
+  .sv-row-actions,
+  .sv-row-confirm {
+    justify-self: start;
+  }
+
+  .sv-edit-row-fields {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+
+  .sv-edit-row-actions {
+    justify-self: start;
+  }
 }

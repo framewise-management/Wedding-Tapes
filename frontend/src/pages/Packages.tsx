@@ -69,6 +69,7 @@ export default function Packages() {
 
   return (
     <div className="pk-container">
+      <Link to="/setup" className="pk-back-link">← Back to setup</Link>
       <div className="pk-page-header">
         <div>
           <h1 className="pk-title">Packages</h1>

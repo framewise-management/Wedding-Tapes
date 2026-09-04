@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import { notifySetupStatusChanged } from '../lib/setupStatus';
@@ -8,6 +9,10 @@ import './Services.css';
 const EMPTY_FORM = { name: '', category: '', description: '', flatPrice: '' };
 
 const CATEGORIES = ['Photography', 'Videography', 'Cinematic', 'Editing', 'Drone', 'Candid', 'Album'];
+
+function categorySlug(category: string): string {
+  return category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
 
 function PlusIcon() {
   return (
@@ -152,6 +157,7 @@ export default function Services() {
 
   return (
     <div className="sv-container">
+      <Link to="/setup" className="sv-back-link">← Back to setup</Link>
       <div className="sv-page-header">
         <div>
           <h1 className="sv-title">Services</h1>
@@ -236,7 +242,11 @@ export default function Services() {
                   {s.description && <p className="sv-cell-desc">{s.description}</p>}
                 </div>
                 <div>
-                  {s.category && <span className="sv-category-badge">{s.category}</span>}
+                  {s.category && (
+                    <span className={`sv-category-badge sv-category-${categorySlug(s.category)}`}>
+                      {s.category}
+                    </span>
+                  )}
                 </div>
                 <span className="sv-cell-price">
                   {s.flatPrice != null ? `₹${s.flatPrice.toLocaleString('en-IN')}` : '—'}

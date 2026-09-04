@@ -1,5 +1,6 @@
 .cal-container {
   max-width: 1080px;
+  margin: 0 auto;
 }
 
 .cal-page-header {
@@ -197,7 +198,7 @@
 
 .cal-detail-row {
   display: grid;
-  grid-template-columns: 130px 1fr 1fr auto;
+  grid-template-columns: 130px 1fr 1fr 100px;
   align-items: center;
   gap: 16px;
   padding: 10px 0;
@@ -250,4 +251,40 @@
 .cal-status-accepted {
   background: #eaf7ec;
   color: #2f6b3c;
+}
+
+@media (max-width: 768px) {
+  .cal-title {
+    font-size: 24px;
+  }
+
+  .cal-day {
+    min-height: 52px;
+    padding: 5px;
+    gap: 3px;
+  }
+
+  .cal-weekday {
+    font-size: 9.5px;
+    padding: 6px 0;
+  }
+
+  .cal-day-number {
+    font-size: 12px;
+  }
+
+  .cal-nav {
+    gap: 12px;
+  }
+
+  .cal-month-label {
+    min-width: 130px;
+    font-size: 14.5px;
+  }
+
+  .cal-detail-row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+    padding: 12px 0;
+  }
 }

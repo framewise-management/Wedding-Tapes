@@ -1,5 +1,6 @@
 .cp-container {
   max-width: 900px;
+  margin: 0 auto;
 }
 
 .cp-page-header {
@@ -189,7 +190,7 @@
 }
 
 .cp-selected-row {
-  display: flex;
+  display: grid;
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
@@ -197,8 +198,15 @@
   border-radius: 10px;
 }
 
+.cp-selected-row-package {
+  grid-template-columns: 1fr 60px 100px auto;
+}
+
+.cp-selected-row-service {
+  grid-template-columns: 1fr 60px auto 100px auto;
+}
+
 .cp-selected-name {
-  flex: 1;
   min-width: 0;
   font-size: 14px;
   font-weight: 500;
@@ -389,4 +397,31 @@
 
 .cp-success strong {
   color: #1d4a27;
+}
+
+@media (max-width: 640px) {
+  .cp-title {
+    font-size: 22px;
+  }
+
+  .cp-section {
+    padding: 16px;
+  }
+
+  .cp-row,
+  .cp-new-customer,
+  .cp-template-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cp-selected-row-package,
+  .cp-selected-row-service {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+    justify-items: start;
+  }
+
+  .cp-remove-btn {
+    justify-self: end;
+  }
 }
