@@ -12,6 +12,7 @@
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  background: #ffffff;
   border-right: 1px solid #e5e4e7;
   padding: 28px 20px;
   display: flex;
