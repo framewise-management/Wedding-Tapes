@@ -296,26 +296,108 @@
   gap: 10px;
 }
 
-.cal-sync-btn {
-  padding: 8px 14px;
+.cal-google {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
   border: 1px solid #e5e4e7;
-  border-radius: 9px;
+  border-radius: 999px;
   background: #fff;
+}
+
+.cal-google-label {
   font-size: 13px;
+  font-weight: 600;
+  color: #1a1a20;
+}
+
+.cal-google-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7a7a85;
+}
+
+.cal-google-status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c4c4cc;
+}
+
+.cal-google-status-active {
+  color: #2f6b3c;
+}
+
+.cal-google-status-active::before {
+  background: #35a35a;
+}
+
+.cal-connect-btn {
+  padding: 5px 12px;
+  border: 1px solid #e5e4e7;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
   font-weight: 600;
   font-family: inherit;
   color: #1a1a20;
   cursor: pointer;
 }
 
-.cal-sync-btn:hover {
+.cal-connect-btn:hover:not(:disabled) {
   border-color: #0f766e;
   color: #0f766e;
 }
 
-.cal-sync-btn:disabled {
+.cal-connect-btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.cal-sync-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #e5e4e7;
+  border-radius: 50%;
+  background: #fff;
+  color: #1a1a20;
+  cursor: pointer;
+}
+
+.cal-sync-icon:hover:not(:disabled) {
+  border-color: #0f766e;
+  color: #0f766e;
+}
+
+.cal-sync-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cal-sync-icon-busy {
+  animation: cal-spin 0.9s linear infinite;
+}
+
+@keyframes cal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal-sync-icon-busy {
+    animation: none;
+    opacity: 0.6;
+  }
 }
 
 .cal-sync-note {

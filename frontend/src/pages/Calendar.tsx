@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiGet, apiPost } from '../api/client';
+import GoogleIcon from '../components/GoogleIcon';
+import type { Business } from '../types/business';
 import type { Proposal } from '../types/proposal';
 import './Calendar.css';
 
@@ -18,6 +20,30 @@ function toDateKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
+function SyncIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+      <path
+        d="M20 11a8 8 0 0 0-14.7-4.4M4 13a8 8 0 0 0 14.7 4.4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M20 4v4h-4M4 20v-4h4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function dates(n: number): string {
+  return `${n} date${n === 1 ? '' : 's'}`;
+}
+
 export default function Calendar() {
   const [proposals, setProposals] = useState<Proposal[] | null>(null);
   const [error, setError] = useState('');
@@ -26,26 +52,41 @@ export default function Calendar() {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [connecting, setConnecting] = useState(false);
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [syncing, setSyncing] = useState(false);
   const [googleStatus, setGoogleStatus] = useState('');
 
-  function connectGoogle() {
-    setConnecting(true);
+  const connected = Boolean(business?.googleCalendarId);
+
+  // Connect and sync are the same idempotent call — it reuses an existing
+  // calendar, re-shares it, and re-pushes every open/booked date.
+  function syncGoogle() {
+    const wasConnected = connected;
+    setSyncing(true);
     setError('');
-    apiPost<{ sharedWith: string; syncedEvents: number }>('/api/business/google-calendar')
-      .then((r) =>
+    setGoogleStatus('');
+    apiPost<{ calendarId: string; sharedWith: string; syncedEvents: number }>(
+      '/api/business/google-calendar',
+    )
+      .then((r) => {
+        setBusiness((b) => (b ? { ...b, googleCalendarId: r.calendarId } : b));
         setGoogleStatus(
-          `Shared with ${r.sharedWith} — open Google Calendar and accept the invite. ${r.syncedEvents} date${r.syncedEvents === 1 ? '' : 's'} synced.`,
-        ),
-      )
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to connect'))
-      .finally(() => setConnecting(false));
+          wasConnected
+            ? `${dates(r.syncedEvents)} synced to Google Calendar.`
+            : `Connected — shared with ${r.sharedWith}. Open Google Calendar and accept the invite. ${dates(r.syncedEvents)} synced.`,
+        );
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to sync'))
+      .finally(() => setSyncing(false));
   }
 
   useEffect(() => {
     apiGet<Proposal[]>('/api/proposals')
       .then(setProposals)
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load proposals'));
+    apiGet<Business>('/api/business')
+      .then(setBusiness)
+      .catch(() => setBusiness(null));
   }, []);
 
   const byDate = useMemo(() => {
@@ -87,9 +128,33 @@ export default function Calendar() {
             <span className="cal-legend-item"><span className="cal-dot cal-dot-sent" />Open inquiry</span>
             <span className="cal-legend-item"><span className="cal-dot cal-dot-accepted" />Booked</span>
           </div>
-          <button type="button" className="cal-sync-btn" onClick={connectGoogle} disabled={connecting}>
-            {connecting ? 'Connecting…' : 'Connect Google Calendar'}
-          </button>
+          <div className="cal-google">
+            <GoogleIcon size={16} />
+            <span className="cal-google-label">Google Calendar</span>
+            <span className={'cal-google-status' + (connected ? ' cal-google-status-active' : '')}>
+              {connected ? 'Active' : 'Not connected'}
+            </span>
+            {!connected && (
+              <button
+                type="button"
+                className="cal-connect-btn"
+                onClick={syncGoogle}
+                disabled={syncing || business === null}
+              >
+                {syncing ? 'Connecting…' : 'Connect'}
+              </button>
+            )}
+            <button
+              type="button"
+              className={'cal-sync-icon' + (syncing ? ' cal-sync-icon-busy' : '')}
+              onClick={syncGoogle}
+              disabled={!connected || syncing}
+              title={connected ? 'Sync now' : 'Connect Google Calendar to enable sync'}
+              aria-label={connected ? 'Sync now' : 'Connect Google Calendar to enable sync'}
+            >
+              <SyncIcon />
+            </button>
+          </div>
         </div>
       </div>
 
