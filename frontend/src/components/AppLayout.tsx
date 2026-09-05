@@ -15,7 +15,7 @@ const NAV_ITEMS = [
     to: '/setup',
     label: 'Setup',
     icon: 'M10.3 2.5h3.4l.6 2.4a7.6 7.6 0 0 1 1.9 1.1l2.4-.8 1.7 3-1.9 1.6a7.6 7.6 0 0 1 0 2.2l1.9 1.6-1.7 3-2.4-.8a7.6 7.6 0 0 1-1.9 1.1l-.6 2.4h-3.4l-.6-2.4a7.6 7.6 0 0 1-1.9-1.1l-2.4.8-1.7-3 1.9-1.6a7.6 7.6 0 0 1 0-2.2L2.7 8.2l1.7-3 2.4.8a7.6 7.6 0 0 1 1.9-1.1z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
-    activeMatch: ['/setup', '/business', '/services', '/packages'],
+    activeMatch: ['/setup', '/business', '/profile', '/services', '/packages'],
   },
   { to: '/proposals/new', label: 'Create Proposal', icon: 'M8 3h5l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM13 3v5h5M9 13h6M9 17h6' },
   { to: '/proposals', label: 'Proposal History', icon: 'M12 8v4l3 2M21 12a9 9 0 1 1-3-6.7M21 4v5h-5' },

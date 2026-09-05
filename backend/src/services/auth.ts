@@ -2,11 +2,23 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db/client';
 import { businesses, users } from '../db/schema';
 import { isPgError } from '../db/pg-error';
-import { BadRequestError, ConflictError, ForbiddenError, UnauthorizedError } from '../lib/http-error';
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../lib/http-error';
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
 import { notifyDiscord } from '../lib/discord';
-import type { GoogleAuthInput, LoginInput, ResendVerificationInput, SignupInput } from '../schemas/auth';
+import type {
+  GoogleAuthInput,
+  LoginInput,
+  ResendVerificationInput,
+  SignupInput,
+  UpdateProfileInput,
+} from '../schemas/auth';
 
 function issueToken(user: { id: string; businessId: string; email: string }) {
   return { token: signJwt({ sub: user.id, businessId: user.businessId, email: user.email }) };
@@ -178,4 +190,19 @@ export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: 
     }
     throw err;
   }
+}
+
+export async function getProfile(userId: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: { id: true, firstName: true, lastName: true, email: true, phone: true, createdAt: true },
+  });
+  if (!user) throw new NotFoundError('User not found');
+  return user;
+}
+
+export async function updateProfile(userId: string, input: UpdateProfileInput) {
+  await getProfile(userId);
+  await db.update(users).set(input).where(eq(users.id, userId));
+  return getProfile(userId);
 }

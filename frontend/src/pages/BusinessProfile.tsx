@@ -62,6 +62,7 @@ export default function BusinessProfile() {
         email: business.email ?? undefined,
         address: business.address ?? undefined,
         website: business.website ?? undefined,
+        instagram: business.instagram ?? undefined,
         defaultValidityDays: business.defaultValidityDays ?? undefined,
         defaultTerms: business.defaultTerms ?? undefined,
       });
@@ -178,6 +179,19 @@ export default function BusinessProfile() {
                 />
               </div>
               <div>
+                <label className="bp-label" htmlFor="bp-instagram">
+                  Instagram
+                </label>
+                <input
+                  id="bp-instagram"
+                  className="bp-input"
+                  value={business.instagram ?? ''}
+                  onChange={(e) => updateField('instagram', e.target.value)}
+                  placeholder="@yourstudio"
+                  autoComplete="off"
+                />
+              </div>
+              <div>
                 <label className="bp-label" htmlFor="bp-address">
                   Address
                 </label>
@@ -267,6 +281,7 @@ export default function BusinessProfile() {
               {business.phone && <p>{business.phone}</p>}
               {business.email && <p>{business.email}</p>}
               {business.website && <p>{business.website}</p>}
+              {business.instagram && <p>{business.instagram}</p>}
               {business.address && <p>{business.address}</p>}
             </div>
 

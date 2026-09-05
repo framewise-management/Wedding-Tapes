@@ -26,6 +26,15 @@ export default function Calendar() {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [feedUrl, setFeedUrl] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  function showFeedUrl() {
+    if (feedUrl) return setFeedUrl('');
+    apiGet<{ url: string }>('/api/business/calendar-url')
+      .then((r) => setFeedUrl(r.url))
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load feed URL'));
+  }
 
   useEffect(() => {
     apiGet<Proposal[]>('/api/proposals')
@@ -67,11 +76,43 @@ export default function Calendar() {
           <h1 className="cal-title">Calendar</h1>
           <p className="cal-subtitle">Open inquiries and booked dates at a glance.</p>
         </div>
-        <div className="cal-legend">
-          <span className="cal-legend-item"><span className="cal-dot cal-dot-sent" />Open inquiry</span>
-          <span className="cal-legend-item"><span className="cal-dot cal-dot-accepted" />Booked</span>
+        <div className="cal-header-right">
+          <div className="cal-legend">
+            <span className="cal-legend-item"><span className="cal-dot cal-dot-sent" />Open inquiry</span>
+            <span className="cal-legend-item"><span className="cal-dot cal-dot-accepted" />Booked</span>
+          </div>
+          <button type="button" className="cal-sync-btn" onClick={showFeedUrl}>
+            Sync to Google Calendar
+          </button>
         </div>
       </div>
+
+      {feedUrl && (
+        <div className="cal-sync-panel">
+          <p className="cal-sync-title">Subscribe to this feed</p>
+          <p className="cal-sync-help">
+            Google Calendar → <b>Other calendars</b> → <b>From URL</b>, paste this link. Booked and
+            open dates appear automatically; Google refreshes the feed every few hours.
+          </p>
+          <div className="cal-sync-url-row">
+            <input className="cal-sync-url" readOnly value={feedUrl} onFocus={(e) => e.target.select()} />
+            <button
+              type="button"
+              className="cal-sync-copy"
+              onClick={() => {
+                navigator.clipboard.writeText(feedUrl);
+                setCopied(true);
+              }}
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+          <p className="cal-sync-help">
+            Anyone with this link can see your booked dates — treat it like a password.
+            {feedUrl.includes('localhost') && ' Google can’t reach a localhost URL; this one only works once deployed.'}
+          </p>
+        </div>
+      )}
 
       {error && <div className="cal-error-banner">{error}</div>}
 

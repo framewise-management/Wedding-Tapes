@@ -7,6 +7,7 @@ export const updateBusinessSchema = z.object({
   email: z.string().email('email must be an email').optional(),
   address: z.string().optional(),
   website: z.string().optional(),
+  instagram: z.string().optional(),
   defaultValidityDays: z.number().int().min(0).optional(),
   defaultTerms: z.string().optional(),
 });

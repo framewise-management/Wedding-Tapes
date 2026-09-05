@@ -15,6 +15,27 @@
       "when": 1788501466025,
       "tag": "0001_green_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788612361772,
+      "tag": "0002_superb_hitman",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788612552270,
+      "tag": "0003_cute_black_cat",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788612781522,
+      "tag": "0004_watery_stardust",
+      "breakpoints": true
     }
   ]
 }

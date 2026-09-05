@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Calendar from './pages/Calendar';
 import Setup from './pages/Setup';
 import BusinessProfile from './pages/BusinessProfile';
+import Profile from './pages/Profile';
 import Customers from './pages/Customers';
 import Services from './pages/Services';
 import Packages from './pages/Packages';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/setup" element={<Setup />} />
           <Route path="/business" element={<BusinessProfile />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/services" element={<Services />} />
           <Route path="/packages" element={<Packages />} />

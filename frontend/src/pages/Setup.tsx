@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { apiGet } from '../api/client';
 import type { Business } from '../types/business';
 import type { Package, Service } from '../types/catalog';
+import type { Profile } from '../types/user';
 import './Setup.css';
+
+function PersonIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 function BusinessIcon() {
   return (
@@ -30,19 +39,30 @@ function PackagesIcon() {
 }
 
 export default function Setup() {
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [services, setServices] = useState<Service[] | null>(null);
   const [packages, setPackages] = useState<Package[] | null>(null);
 
   useEffect(() => {
+    apiGet<Profile>('/api/auth/me').then(setProfile).catch(() => setProfile(null));
     apiGet<Business>('/api/business').then(setBusiness).catch(() => setBusiness(null));
     apiGet<Service[]>('/api/services?active=true').then(setServices).catch(() => setServices(null));
     apiGet<Package[]>('/api/packages').then(setPackages).catch(() => setPackages(null));
   }, []);
 
   const businessComplete = Boolean(business?.phone);
+  const profileComplete = Boolean(profile?.firstName);
 
   const cards = [
+    {
+      to: '/profile',
+      icon: <PersonIcon />,
+      title: 'Personal Profile',
+      description: 'Your own name and sign-in email — separate from the studio details.',
+      status: profile === null ? 'Loading…' : profileComplete ? 'Complete' : 'Needs setup',
+      complete: profileComplete,
+    },
     {
       to: '/business',
       icon: <BusinessIcon />,

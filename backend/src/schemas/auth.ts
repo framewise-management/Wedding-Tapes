@@ -24,3 +24,10 @@ export const googleAuthSchema = z.object({
   accessToken: z.string().min(1, 'accessToken should not be empty'),
 });
 export type GoogleAuthInput = z.infer<typeof googleAuthSchema>;
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().min(1, 'firstName should not be empty').optional(),
+  lastName: z.string().min(1, 'lastName should not be empty').optional(),
+  phone: z.string().optional(),
+});
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

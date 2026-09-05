@@ -103,6 +103,7 @@ export interface PdfBusiness {
   phone: string | null;
   email: string | null;
   website: string | null;
+  instagram: string | null;
   address: string | null;
   defaultTerms: string | null;
 }
@@ -233,7 +234,7 @@ function renderHeader(
 
   doc.fontSize(19).font('Times-Bold').fillColor(palette.accentLight).text(business.name, textX, startY, { width: 280 });
   doc.fontSize(9.5).font('Helvetica').fillColor(palette.muted);
-  const contact = [business.phone, business.email, business.website, business.address]
+  const contact = [business.phone, business.email, business.website, business.instagram, business.address]
     .filter(Boolean)
     .join('  ·  ');
   if (contact) doc.text(contact, textX, doc.y, { width: 280 });

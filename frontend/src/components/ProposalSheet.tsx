@@ -34,6 +34,7 @@ export default function ProposalSheet({
               {business.phone && <span>{business.phone}</span>}
               {business.email && <span>{business.email}</span>}
               {business.website && <span>{business.website}</span>}
+              {business.instagram && <span>{business.instagram}</span>}
             </div>
             {business.address && <p className="pv-business-address">{business.address}</p>}
           </div>

@@ -6,6 +6,7 @@ export interface Business {
   email: string | null;
   address: string | null;
   website: string | null;
+  instagram: string | null;
   defaultValidityDays: number | null;
   defaultTerms: string | null;
 }

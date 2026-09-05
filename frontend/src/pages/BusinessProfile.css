@@ -352,3 +352,9 @@
     padding: 18px;
   }
 }
+
+.bp-input:disabled {
+  background: #f7f7f8;
+  color: #6b6b74;
+  cursor: not-allowed;
+}
