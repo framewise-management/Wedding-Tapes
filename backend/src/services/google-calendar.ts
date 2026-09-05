@@ -14,9 +14,20 @@ interface ServiceAccountKey {
 }
 
 function serviceAccount(): ServiceAccountKey | null {
-  const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON?.trim();
   if (!raw) return null;
-  const key = JSON.parse(raw) as ServiceAccountKey;
+
+  // A .env file needs the JSON single-quoted; a value pasted from there into a
+  // dashboard keeps those quotes, since nothing strips them outside dotenv.
+  const json = raw.replace(/^'|'$/g, '');
+  let key: ServiceAccountKey;
+  try {
+    key = JSON.parse(json) as ServiceAccountKey;
+  } catch {
+    throw new BadRequestError(
+      'GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON — paste the whole service-account key on one line',
+    );
+  }
   // Env vars can't hold real newlines, so the PEM usually arrives escaped.
   return { ...key, private_key: key.private_key.replace(/\\n/g, '\n') };
 }
