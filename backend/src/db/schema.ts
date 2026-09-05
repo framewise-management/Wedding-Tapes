@@ -25,7 +25,6 @@ export const businesses = pgTable('businesses', {
   address: varchar(),
   website: varchar(),
   instagram: varchar(),
-  calendarToken: varchar('calendar_token'),
   googleCalendarId: varchar('google_calendar_id'),
   defaultValidityDays: integer('default_validity_days'),
   defaultTerms: text('default_terms'),

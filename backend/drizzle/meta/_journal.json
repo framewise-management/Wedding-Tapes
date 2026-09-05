@@ -43,6 +43,13 @@
       "when": 1788613353610,
       "tag": "0005_jittery_stepford_cuckoos",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788615034899,
+      "tag": "0006_faithful_venom",
+      "breakpoints": true
     }
   ]
 }
