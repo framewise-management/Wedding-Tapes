@@ -344,11 +344,11 @@
 }
 
 .pk-manage-link {
-  font-size: 13px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #54545c;
   text-decoration: none;
-  white-space: nowrap;
 }
 
 .pk-manage-link:hover {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
+import { apiDelete, apiGet, apiPost } from '../api/client';
 import { GroupedNumberInput } from '../components/GroupedNumberInput';
 import type { Package, Service } from '../types/catalog';
 import './Packages.css';
@@ -76,16 +76,6 @@ export default function Packages() {
       load();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create package');
-    }
-  }
-
-  async function toggleActive(pkg: Package) {
-    setError('');
-    try {
-      await apiPut(`/api/packages/${pkg.id}`, { active: !pkg.active });
-      load();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update package');
     }
   }
 
@@ -238,10 +228,12 @@ export default function Packages() {
                 {p.active ? 'Active' : 'Inactive'}
               </span>
               <div className="pk-row-actions">
-                <Link to={`/packages/${p.id}`} className="pk-manage-link">Manage</Link>
-                <button type="button" className="pk-toggle-btn" onClick={() => toggleActive(p)}>
-                  {p.active ? 'Deactivate' : 'Reactivate'}
-                </button>
+                <Link to={`/packages/${p.id}`} className="pk-manage-link" aria-label="Manage" title="Manage">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 20h9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
                 <button type="button" className="pk-toggle-btn pk-danger" onClick={() => deletePackage(p)}>
                   Delete
                 </button>
