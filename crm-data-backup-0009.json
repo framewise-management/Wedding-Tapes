@@ -1,0 +1,131 @@
+{
+  "takenAt": "2026-09-05T20:31:31.011Z",
+  "note": "CRM data from migration 0009 (customer_events + customers pipeline columns), saved before reverting.",
+  "customer_events": [
+    {
+      "id": "f68355a4-3aa6-4336-967d-3f99e5147891",
+      "business_id": "4e7d9102-7f42-4da4-b8fa-527451960101",
+      "customer_id": "8623a4c6-1ad3-4e6e-a875-effb22115964",
+      "event_no": 1,
+      "event_type": "PRE_WEDDING",
+      "event_date": "2026-10-15T00:00:00.000Z",
+      "location": "Badlapur",
+      "service_requirement": "Candid, cinematic",
+      "package_price": 20000,
+      "final_quotation": 15000,
+      "booking_amount": 3000,
+      "created_at": "2026-09-05T14:40:04.853Z",
+      "updated_at": "2026-09-05T14:40:04.853Z"
+    },
+    {
+      "id": "8dd574ce-a1df-4cac-9d7b-bf9cd91909c9",
+      "business_id": "4e7d9102-7f42-4da4-b8fa-527451960101",
+      "customer_id": "8623a4c6-1ad3-4e6e-a875-effb22115964",
+      "event_no": 2,
+      "event_type": "HALDI",
+      "event_date": "2026-11-20T00:00:00.000Z",
+      "location": "Mira Road",
+      "service_requirement": "Traditional photo, Traditional video",
+      "package_price": 80000,
+      "final_quotation": 76000,
+      "booking_amount": null,
+      "created_at": "2026-09-05T14:40:04.798Z",
+      "updated_at": "2026-09-05T14:40:04.798Z"
+    },
+    {
+      "id": "b7fa8c9b-32e1-4865-b886-39effc222217",
+      "business_id": "4e7d9102-7f42-4da4-b8fa-527451960101",
+      "customer_id": "8623a4c6-1ad3-4e6e-a875-effb22115964",
+      "event_no": 3,
+      "event_type": "WEDDING",
+      "event_date": "2026-11-21T00:00:00.000Z",
+      "location": "Surat",
+      "service_requirement": "Drone",
+      "package_price": 120000,
+      "final_quotation": 110000,
+      "booking_amount": null,
+      "created_at": "2026-09-05T14:40:04.906Z",
+      "updated_at": "2026-09-05T14:40:04.906Z"
+    }
+  ],
+  "customers_crm_columns": [
+    {
+      "id": "eacd1306-d012-47ec-b825-0f0f4d04a17a",
+      "name": "Priya ",
+      "client_code": null,
+      "bride_name": null,
+      "groom_name": null,
+      "lead_source": null,
+      "budget": null,
+      "pipeline_status": null,
+      "enquiry_date": null,
+      "follow_up_date": null,
+      "requirement_of_days": null
+    },
+    {
+      "id": "6747abe4-420d-43a9-b838-5bf727472c81",
+      "name": "om",
+      "client_code": null,
+      "bride_name": null,
+      "groom_name": null,
+      "lead_source": null,
+      "budget": null,
+      "pipeline_status": null,
+      "enquiry_date": null,
+      "follow_up_date": null,
+      "requirement_of_days": null
+    },
+    {
+      "id": "1b927446-8fcf-4bb4-8aaa-45caa38520bf",
+      "name": "prashant",
+      "client_code": null,
+      "bride_name": null,
+      "groom_name": null,
+      "lead_source": null,
+      "budget": null,
+      "pipeline_status": null,
+      "enquiry_date": null,
+      "follow_up_date": null,
+      "requirement_of_days": null
+    },
+    {
+      "id": "0fe2897b-4f1c-4719-a05f-47e2b2dbcd95",
+      "name": "sumi anshka",
+      "client_code": null,
+      "bride_name": null,
+      "groom_name": null,
+      "lead_source": null,
+      "budget": null,
+      "pipeline_status": null,
+      "enquiry_date": null,
+      "follow_up_date": null,
+      "requirement_of_days": null
+    },
+    {
+      "id": "8623a4c6-1ad3-4e6e-a875-effb22115964",
+      "name": "Riya & Aman",
+      "client_code": "WC-0001",
+      "bride_name": "Riya",
+      "groom_name": "Aman",
+      "lead_source": "INSTAGRAM",
+      "budget": "AGREED",
+      "pipeline_status": "BOOKED",
+      "enquiry_date": "2026-09-01T00:00:00.000Z",
+      "follow_up_date": "2026-09-10T00:00:00.000Z",
+      "requirement_of_days": 3
+    },
+    {
+      "id": "1dc08d3e-796c-44d2-9af7-949b915ce002",
+      "name": "Omakar meenakshi",
+      "client_code": null,
+      "bride_name": null,
+      "groom_name": null,
+      "lead_source": null,
+      "budget": null,
+      "pipeline_status": "ENQUIRY",
+      "enquiry_date": null,
+      "follow_up_date": null,
+      "requirement_of_days": null
+    }
+  ]
+}
