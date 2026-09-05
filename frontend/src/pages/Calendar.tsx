@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { apiGet } from '../api/client';
+import { apiGet, apiPost } from '../api/client';
 import type { Proposal } from '../types/proposal';
 import './Calendar.css';
 
@@ -28,6 +28,21 @@ export default function Calendar() {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [feedUrl, setFeedUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const [googleStatus, setGoogleStatus] = useState('');
+
+  function connectGoogle() {
+    setConnecting(true);
+    setError('');
+    apiPost<{ sharedWith: string; syncedEvents: number }>('/api/business/google-calendar')
+      .then((r) =>
+        setGoogleStatus(
+          `Shared with ${r.sharedWith} — open Google Calendar and accept the invite. ${r.syncedEvents} date${r.syncedEvents === 1 ? '' : 's'} synced.`,
+        ),
+      )
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to connect'))
+      .finally(() => setConnecting(false));
+  }
 
   function showFeedUrl() {
     if (feedUrl) return setFeedUrl('');
@@ -81,11 +96,18 @@ export default function Calendar() {
             <span className="cal-legend-item"><span className="cal-dot cal-dot-sent" />Open inquiry</span>
             <span className="cal-legend-item"><span className="cal-dot cal-dot-accepted" />Booked</span>
           </div>
-          <button type="button" className="cal-sync-btn" onClick={showFeedUrl}>
-            Sync to Google Calendar
-          </button>
+          <div className="cal-sync-actions">
+            <button type="button" className="cal-sync-btn" onClick={connectGoogle} disabled={connecting}>
+              {connecting ? 'Connecting…' : 'Connect Google Calendar'}
+            </button>
+            <button type="button" className="cal-sync-btn" onClick={showFeedUrl}>
+              Calendar feed URL
+            </button>
+          </div>
         </div>
       </div>
+
+      {googleStatus && <div className="cal-sync-note">{googleStatus}</div>}
 
       {feedUrl && (
         <div className="cal-sync-panel">

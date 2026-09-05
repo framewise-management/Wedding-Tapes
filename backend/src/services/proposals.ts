@@ -9,6 +9,7 @@ import { findOnePackage } from './packages';
 import { findOneService } from './catalog-services';
 import { getBusiness } from './business';
 import { notifyDiscord } from '../lib/discord';
+import { removeGoogleEvent, syncProposalToGoogle } from './google-calendar';
 import type {
   CalculateProposalInput,
   CreateProposalInput,
@@ -75,8 +76,9 @@ export async function incrementShareViewCount(id: string) {
 }
 
 export async function removeProposal(businessId: string, id: string) {
-  await findOneProposal(businessId, id);
+  const existing = await findOneProposal(businessId, id);
   await db.delete(proposals).where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
+  await removeGoogleEvent(businessId, existing.googleEventId);
 }
 
 export async function createProposal(businessId: string, input: CreateProposalInput) {
@@ -239,6 +241,7 @@ export async function calculateProposal(
 
   const refreshed = await findOneProposal(businessId, id);
   await persistPricing(refreshed);
+  await syncProposalToGoogle(id);
   return findOneProposal(businessId, id);
 }
 
@@ -248,6 +251,7 @@ export async function updateProposalStatus(businessId: string, id: string, statu
     .update(proposals)
     .set({ status })
     .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
+  await syncProposalToGoogle(id);
   return findOneProposal(businessId, id);
 }
 

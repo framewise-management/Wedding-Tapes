@@ -5,6 +5,7 @@ import { parseBody } from '../lib/validate';
 import { updateBusinessSchema } from '../schemas/business';
 import { getBusiness, updateBusiness } from '../services/business';
 import { getOrCreateCalendarToken } from '../services/calendar';
+import { connectGoogleCalendar } from '../services/google-calendar';
 
 export const businessRoutes = new Hono<{ Variables: AuthedVariables }>();
 
@@ -19,6 +20,11 @@ businessRoutes.get('/calendar-url', async (c) => {
   const user = c.get('user');
   const token = await getOrCreateCalendarToken(user.businessId);
   return c.json({ url: `${new URL(c.req.url).origin}/api/public/calendar/${token}.ics` });
+});
+
+businessRoutes.post('/google-calendar', async (c) => {
+  const user = c.get('user');
+  return c.json(await connectGoogleCalendar(user.businessId, user.email));
 });
 
 businessRoutes.put('/', async (c) => {

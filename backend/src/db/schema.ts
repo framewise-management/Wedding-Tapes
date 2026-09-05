@@ -26,6 +26,7 @@ export const businesses = pgTable('businesses', {
   website: varchar(),
   instagram: varchar(),
   calendarToken: varchar('calendar_token'),
+  googleCalendarId: varchar('google_calendar_id'),
   defaultValidityDays: integer('default_validity_days'),
   defaultTerms: text('default_terms'),
   createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
@@ -180,6 +181,7 @@ export const proposals = pgTable(
     validUntil: date('valid_until', { mode: 'string' }),
     notes: text(),
     shareViewCount: integer('share_view_count').default(0).notNull(),
+    googleEventId: varchar('google_event_id'),
     createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string' })
       .defaultNow()
