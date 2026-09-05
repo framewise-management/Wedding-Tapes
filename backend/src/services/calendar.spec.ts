@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderCalendar, type CalendarEvent } from './calendar';
+import { renderCalendar, renderEventDocument, type CalendarEvent } from './calendar';
 
 const event: CalendarEvent = {
   id: 'abc-123',
@@ -39,5 +39,16 @@ describe('renderCalendar', () => {
     for (const line of ics.split('\r\n')) {
       expect(Buffer.byteLength(line)).toBeLessThanOrEqual(75);
     }
+  });
+
+  it('renders a single-event CalDAV resource without METHOD', () => {
+    const doc = renderEventDocument(event);
+    // RFC 4791 §4.1: a calendar object resource MUST NOT specify METHOD.
+    expect(doc).not.toContain('METHOD:');
+    expect(doc).not.toContain('X-WR-CALNAME');
+    expect(doc.match(/BEGIN:VEVENT/g)).toHaveLength(1);
+    expect(doc).toContain('UID:abc-123@wedding-tapes');
+    expect(doc.startsWith('BEGIN:VCALENDAR')).toBe(true);
+    expect(doc.endsWith('END:VCALENDAR\r\n')).toBe(true);
   });
 });

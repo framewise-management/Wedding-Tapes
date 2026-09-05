@@ -7,6 +7,9 @@ export interface Business {
   address: string | null;
   website: string | null;
   instagram: string | null;
+  appleId: string | null;
+  appleConnected: boolean;
+  appleCredentialSaved: boolean;
   googleCalendarId: string | null;
   defaultValidityDays: number | null;
   defaultTerms: string | null;

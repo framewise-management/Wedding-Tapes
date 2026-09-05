@@ -9,7 +9,14 @@ export async function getBusiness(businessId: string) {
     where: eq(businesses.id, businessId),
   });
   if (!business) throw new NotFoundError('Business not found');
-  return business;
+  // The stored iCloud app-specific password never leaves the server, not even
+  // encrypted — the client only needs to know whether a connection exists.
+  const { applePasswordEnc, calendarToken: _calendarToken, ...safe } = business;
+  return {
+    ...safe,
+    appleConnected: Boolean(safe.appleCalendarUrl),
+    appleCredentialSaved: Boolean(applePasswordEnc),
+  };
 }
 
 export async function updateBusiness(businessId: string, input: UpdateBusinessInput) {

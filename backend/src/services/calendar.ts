@@ -56,8 +56,39 @@ export interface CalendarEvent {
   customer: { name: string; phone: string | null };
 }
 
+function stampNow(): string {
+  return new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+function eventLines(p: CalendarEvent, stamp: string): string[] {
+  const label = p.status === 'ACCEPTED' ? 'Booked' : 'Open inquiry';
+  return [
+    'BEGIN:VEVENT',
+    `UID:${p.id}@wedding-tapes`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${dateOnly(p.weddingDate)}`,
+    `DTEND;VALUE=DATE:${nextDay(p.weddingDate)}`,
+    fold(`SUMMARY:${escapeText(`${p.customer.name} — ${label}`)}`),
+    fold(`LOCATION:${escapeText(p.weddingLocation)}`),
+    fold(
+      `DESCRIPTION:${escapeText(
+        [
+          `Proposal ${p.proposalNumber}`,
+          `Status: ${p.status}`,
+          `Total: ₹${Number(p.total).toLocaleString('en-IN')}`,
+          p.customer.phone ? `Phone: ${p.customer.phone}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n'),
+      )}`,
+    ),
+    p.status === 'ACCEPTED' ? 'STATUS:CONFIRMED' : 'STATUS:TENTATIVE',
+    'END:VEVENT',
+  ];
+}
+
 export function renderCalendar(calendarName: string, rows: CalendarEvent[]): string {
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const stamp = stampNow();
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -70,35 +101,27 @@ export function renderCalendar(calendarName: string, rows: CalendarEvent[]): str
     'REFRESH-INTERVAL;VALUE=DURATION:PT1H',
   ];
 
-  for (const p of rows) {
-    const label = p.status === 'ACCEPTED' ? 'Booked' : 'Open inquiry';
-    lines.push(
-      'BEGIN:VEVENT',
-      `UID:${p.id}@wedding-tapes`,
-      `DTSTAMP:${stamp}`,
-      `DTSTART;VALUE=DATE:${dateOnly(p.weddingDate)}`,
-      `DTEND;VALUE=DATE:${nextDay(p.weddingDate)}`,
-      fold(`SUMMARY:${escapeText(`${p.customer.name} — ${label}`)}`),
-      fold(`LOCATION:${escapeText(p.weddingLocation)}`),
-      fold(
-        `DESCRIPTION:${escapeText(
-          [
-            `Proposal ${p.proposalNumber}`,
-            `Status: ${p.status}`,
-            `Total: ₹${Number(p.total).toLocaleString('en-IN')}`,
-            p.customer.phone ? `Phone: ${p.customer.phone}` : '',
-          ]
-            .filter(Boolean)
-            .join('\n'),
-        )}`,
-      ),
-      p.status === 'ACCEPTED' ? 'STATUS:CONFIRMED' : 'STATUS:TENTATIVE',
-      'END:VEVENT',
-    );
-  }
+  for (const p of rows) lines.push(...eventLines(p, stamp));
 
   lines.push('END:VCALENDAR');
   return lines.join('\r\n') + '\r\n';
+}
+
+/**
+ * One VEVENT as a standalone CalDAV resource. RFC 4791 §4.1 forbids METHOD on a
+ * calendar object resource, so this can't reuse renderCalendar's PUBLISH header.
+ */
+export function renderEventDocument(p: CalendarEvent): string {
+  return (
+    [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Wedding Tapes//Proposals//EN',
+      'CALSCALE:GREGORIAN',
+      ...eventLines(p, stampNow()),
+      'END:VCALENDAR',
+    ].join('\r\n') + '\r\n'
+  );
 }
 
 export async function buildCalendarFeed(token: string): Promise<string> {

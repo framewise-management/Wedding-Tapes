@@ -13,3 +13,11 @@ export const updateBusinessSchema = z.object({
 });
 
 export type UpdateBusinessInput = z.infer<typeof updateBusinessSchema>;
+
+// Both optional: an empty body means "reconnect with the saved password".
+export const connectAppleCalendarSchema = z.object({
+  appleId: z.string().email('appleId must be an email').optional(),
+  appPassword: z.string().min(1, 'appPassword is required').optional(),
+});
+
+export type ConnectAppleCalendarInput = z.infer<typeof connectAppleCalendarSchema>;

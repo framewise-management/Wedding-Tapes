@@ -400,6 +400,76 @@
   }
 }
 
+.cal-feed-panel {
+  border: 1px solid #e5e4e7;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+  background: #fbfbfc;
+}
+
+.cal-feed-title {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a20;
+}
+
+.cal-feed-help {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #54545c;
+}
+
+.cal-feed-step {
+  margin: 8px 0 0;
+}
+
+.cal-feed-url-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cal-feed-url {
+  flex: 1 1 260px;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid #e5e4e7;
+  border-radius: 8px;
+  background: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: #1a1a20;
+}
+
+.cal-feed-subscribe {
+  display: inline-block;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 999px;
+  background: #1a1a20;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cal-feed-subscribe:hover {
+  background: #0f766e;
+}
+
+.cal-feed-subscribe:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .cal-sync-note {
   border: 1px solid #cfe8d6;
   background: #eaf7ec;
