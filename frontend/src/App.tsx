@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import Customers from './pages/Customers';
 import Services from './pages/Services';
 import Packages from './pages/Packages';
+import EventTypes from './pages/EventTypes';
 import PackageDetail from './pages/PackageDetail';
 import CreateProposal from './pages/CreateProposal';
 import PackageServiceSelection from './pages/PackageServiceSelection';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/event-types" element={<EventTypes />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/packages/:id" element={<PackageDetail />} />
           <Route path="/proposals" element={<ProposalHistory />} />

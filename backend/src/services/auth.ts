@@ -12,6 +12,7 @@ import {
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
 import { notifyDiscord } from '../lib/discord';
+import { seedDefaultEventTypes } from './event-types';
 import type {
   GoogleAuthInput,
   LoginInput,
@@ -91,6 +92,7 @@ export async function signup(input: SignupInput): Promise<{ message: string }> {
         lastName: input.lastName,
         email: input.email,
       });
+      await seedDefaultEventTypes(tx, business.id);
     });
   } catch (err) {
     if (isPgError(err, '23505')) {
@@ -175,6 +177,7 @@ export async function loginWithGoogle(input: GoogleAuthInput): Promise<{ token: 
           email,
         })
         .returning();
+      await seedDefaultEventTypes(tx, business.id);
       return user;
     });
     await notifyDiscord(`🆕 New signup via Google: **${profile.businessName}** (${email})`);

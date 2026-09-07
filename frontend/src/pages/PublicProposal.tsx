@@ -45,7 +45,12 @@ export default function PublicProposal() {
   if (error) return <div className="pp-page"><p className="pp-notice">{error}</p></div>;
   if (!data) return <div className="pp-page"><p className="pp-notice">Loading…</p></div>;
 
-  const themeClass = data.proposal.template === 'BRIGHT_MODERN' ? 'tpl-bright' : 'tpl-dark';
+  const themeClass =
+    data.proposal.template === 'BRIGHT_MODERN'
+      ? 'tpl-bright'
+      : data.proposal.template === 'EDITORIAL'
+        ? 'tpl-editorial'
+        : 'tpl-dark';
 
   return (
     <div className={`pp-page ${themeClass}`}>

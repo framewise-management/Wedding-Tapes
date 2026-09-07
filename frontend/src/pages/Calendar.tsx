@@ -4,6 +4,7 @@ import { apiDelete, apiGet, apiPost } from '../api/client';
 import GoogleIcon from '../components/GoogleIcon';
 import type { Business } from '../types/business';
 import type { Proposal } from '../types/proposal';
+import { datesInRange } from '../lib/dates';
 import './Calendar.css';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -155,9 +156,10 @@ export default function Calendar() {
     const map = new Map<string, Proposal[]>();
     for (const p of proposals ?? []) {
       if (!CALENDAR_STATUSES.includes(p.status as (typeof CALENDAR_STATUSES)[number])) continue;
-      const key = p.weddingDate.slice(0, 10);
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(p);
+      for (const key of datesInRange(p.weddingDate, p.weddingEndDate)) {
+        if (!map.has(key)) map.set(key, []);
+        map.get(key)!.push(p);
+      }
     }
     return map;
   }, [proposals]);

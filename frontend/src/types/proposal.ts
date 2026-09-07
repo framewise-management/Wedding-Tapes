@@ -2,6 +2,7 @@ import type { Customer } from './customer';
 
 export interface ProposalPackage {
   id: string;
+  proposalEventId: string | null;
   packageId: string;
   packageName: string;
   packageDescription: string | null;
@@ -12,6 +13,7 @@ export interface ProposalPackage {
 
 export interface ProposalItem {
   id: string;
+  proposalEventId: string | null;
   serviceId: string;
   serviceName: string;
   description: string | null;
@@ -21,8 +23,16 @@ export interface ProposalItem {
   isOptional: boolean;
 }
 
+export interface ProposalEvent {
+  id: string;
+  eventTypeId: string | null;
+  name: string;
+  date: string;
+  location: string | null;
+}
+
 export type ProposalStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
-export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN';
+export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN' | 'EDITORIAL';
 
 export interface Proposal {
   id: string;
@@ -30,6 +40,7 @@ export interface Proposal {
   customer: Customer;
   proposalNumber: string;
   weddingDate: string;
+  weddingEndDate: string | null;
   weddingLocation: string;
   numberOfDays: number | null;
   status: ProposalStatus;
@@ -44,6 +55,7 @@ export interface Proposal {
   validUntil: string | null;
   notes: string | null;
   shareViewCount: number;
+  events: ProposalEvent[];
   packages: ProposalPackage[];
   items: ProposalItem[];
   createdAt: string;

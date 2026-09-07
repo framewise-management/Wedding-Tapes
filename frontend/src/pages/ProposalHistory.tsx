@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiDelete, apiGet } from '../api/client';
 import type { Proposal, ProposalStatus } from '../types/proposal';
+import { formatDateRange } from '../lib/dates';
 import './ProposalHistory.css';
 
 const STATUSES: ProposalStatus[] = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'];
@@ -107,7 +108,7 @@ export default function ProposalHistory() {
                 {p.proposalNumber}
               </Link>
               <span className="ph-cell-customer">{p.customer.name}</span>
-              <span className="ph-cell-date">{formatDate(p.weddingDate)}</span>
+              <span className="ph-cell-date">{formatDateRange(p.weddingDate, p.weddingEndDate, formatDate)}</span>
               <span className="ph-cell-total">{money(p.total)}</span>
               <span className={`ph-status ph-status-${p.status.toLowerCase()}`}>{p.status}</span>
               <span className="ph-cell-date">{p.shareViewCount || '—'}</span>

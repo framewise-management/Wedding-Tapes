@@ -14,7 +14,7 @@ import { relations, sql } from 'drizzle-orm';
 
 export type ProposalStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
 export type DiscountType = 'FIXED' | 'PERCENTAGE';
-export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN';
+export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN' | 'EDITORIAL';
 
 export const businesses = pgTable('businesses', {
   id: uuid().defaultRandom().primaryKey().notNull(),
@@ -87,6 +87,29 @@ export const services = pgTable(
       foreignColumns: [businesses.id],
       name: 'FK_c591d6bbbe01010d8705127ba33',
     }).onDelete('cascade'),
+  ],
+);
+
+export const eventTypes = pgTable(
+  'event_types',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    businessId: uuid('business_id').notNull(),
+    name: varchar().notNull(),
+    active: boolean().default(true).notNull(),
+    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'string' })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => sql`now()`),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.businessId],
+      foreignColumns: [businesses.id],
+      name: 'FK_event_types_business',
+    }).onDelete('cascade'),
+    unique('UQ_event_types_business_name').on(table.businessId, table.name),
   ],
 );
 
@@ -170,6 +193,7 @@ export const proposals = pgTable(
     customerId: uuid('customer_id').notNull(),
     proposalNumber: varchar('proposal_number').notNull(),
     weddingDate: date('wedding_date', { mode: 'string' }).notNull(),
+    weddingEndDate: date('wedding_end_date', { mode: 'string' }),
     weddingLocation: varchar('wedding_location').notNull(),
     numberOfDays: integer('number_of_days'),
     status: varchar().$type<ProposalStatus>().default('DRAFT').notNull(),
@@ -206,11 +230,40 @@ export const proposals = pgTable(
   ],
 );
 
+export const proposalEvents = pgTable(
+  'proposal_events',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    proposalId: uuid('proposal_id').notNull(),
+    // Nullable so deactivating or deleting a catalog event type never
+    // rewrites history -- `name` is the snapshot that actually renders.
+    eventTypeId: uuid('event_type_id'),
+    name: varchar().notNull(),
+    date: date({ mode: 'string' }).notNull(),
+    location: varchar(),
+    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.proposalId],
+      foreignColumns: [proposals.id],
+      name: 'FK_proposal_events_proposal',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.eventTypeId],
+      foreignColumns: [eventTypes.id],
+      name: 'FK_proposal_events_event_type',
+    }),
+  ],
+);
+
 export const proposalPackages = pgTable(
   'proposal_packages',
   {
     id: uuid().defaultRandom().primaryKey().notNull(),
     proposalId: uuid('proposal_id').notNull(),
+    // null = the line covers the whole proposal rather than one event.
+    proposalEventId: uuid('proposal_event_id'),
     packageId: uuid('package_id').notNull(),
     packageName: varchar('package_name').notNull(),
     packageDescription: text('package_description'),
@@ -230,6 +283,13 @@ export const proposalPackages = pgTable(
       foreignColumns: [proposals.id],
       name: 'FK_fbae1e2110026d140767642c571',
     }).onDelete('cascade'),
+    // SET NULL, not cascade: every save replaces the whole event set, and
+    // cascading would delete the line items attached to them.
+    foreignKey({
+      columns: [table.proposalEventId],
+      foreignColumns: [proposalEvents.id],
+      name: 'FK_proposal_packages_event',
+    }).onDelete('set null'),
   ],
 );
 
@@ -238,6 +298,7 @@ export const proposalItems = pgTable(
   {
     id: uuid().defaultRandom().primaryKey().notNull(),
     proposalId: uuid('proposal_id').notNull(),
+    proposalEventId: uuid('proposal_event_id'),
     serviceId: uuid('service_id').notNull(),
     serviceName: varchar('service_name').notNull(),
     description: text(),
@@ -258,6 +319,11 @@ export const proposalItems = pgTable(
       foreignColumns: [proposals.id],
       name: 'FK_461897fd2a9acc7e9a9d65c8bf2',
     }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.proposalEventId],
+      foreignColumns: [proposalEvents.id],
+      name: 'FK_proposal_items_event',
+    }).onDelete('set null'),
   ],
 );
 
@@ -269,6 +335,7 @@ export const businessesRelations = relations(businesses, ({ many }) => ({
   users: many(users),
   services: many(services),
   packages: many(packages),
+  eventTypes: many(eventTypes),
   customers: many(customers),
   proposals: many(proposals),
 }));
@@ -287,6 +354,13 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
   }),
   packageServices: many(packageServices),
   proposalItems: many(proposalItems),
+}));
+
+export const eventTypesRelations = relations(eventTypes, ({ one }) => ({
+  business: one(businesses, {
+    fields: [eventTypes.businessId],
+    references: [businesses.id],
+  }),
 }));
 
 export const packagesRelations = relations(packages, ({ one, many }) => ({
@@ -328,9 +402,25 @@ export const proposalsRelations = relations(proposals, ({ one, many }) => ({
   }),
   packages: many(proposalPackages),
   items: many(proposalItems),
+  events: many(proposalEvents),
+}));
+
+export const proposalEventsRelations = relations(proposalEvents, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [proposalEvents.proposalId],
+    references: [proposals.id],
+  }),
+  eventType: one(eventTypes, {
+    fields: [proposalEvents.eventTypeId],
+    references: [eventTypes.id],
+  }),
 }));
 
 export const proposalPackagesRelations = relations(proposalPackages, ({ one }) => ({
+  event: one(proposalEvents, {
+    fields: [proposalPackages.proposalEventId],
+    references: [proposalEvents.id],
+  }),
   package: one(packages, {
     fields: [proposalPackages.packageId],
     references: [packages.id],
@@ -342,6 +432,10 @@ export const proposalPackagesRelations = relations(proposalPackages, ({ one }) =
 }));
 
 export const proposalItemsRelations = relations(proposalItems, ({ one }) => ({
+  event: one(proposalEvents, {
+    fields: [proposalItems.proposalEventId],
+    references: [proposalEvents.id],
+  }),
   service: one(services, {
     fields: [proposalItems.serviceId],
     references: [services.id],

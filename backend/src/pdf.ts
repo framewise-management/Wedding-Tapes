@@ -1,5 +1,9 @@
 import PDFDocument from 'pdfkit';
-import type { DiscountType, ProposalTemplate } from './db/schema';
+import type { ProposalTemplate } from './db/schema';
+import { formatDate, groupByEvent, money, type PdfBusiness, type PdfProposal } from './pdf-shared';
+import { generateEditorialPdf } from './pdf-editorial';
+
+export type { PdfBusiness, PdfProposal } from './pdf-shared';
 
 const PAGE_MARGIN = 50;
 const CONTENT_WIDTH = 495;
@@ -24,7 +28,8 @@ interface Palette {
   topbar: string;
 }
 
-const PALETTES: Record<ProposalTemplate, Palette> = {
+// EDITORIAL has its own renderer and palette, so it is absent here on purpose.
+const PALETTES: Partial<Record<ProposalTemplate, Palette>> = {
   DARK_LUXE: {
     bg: '#0d0703',
     card: '#1a0d08',
@@ -57,26 +62,12 @@ const PALETTES: Record<ProposalTemplate, Palette> = {
   },
 };
 
-// ponytail: pdfkit's standard fonts (Helvetica) only cover WinAnsi, which has no ₹ glyph —
-// embedding a Unicode font just for the rupee sign isn't worth it yet, so the PDF spells it out.
-function money(value: number): string {
-  return `Rs. ${value.toLocaleString('en-IN')}`;
-}
-
 // proposalNumber is server-generated (WP-{year}-{seq}), never user input, but the
 // header value is still built from it — strip CR/LF/quotes/backslash defensively
 // so a future format change can't turn into header injection.
 export function proposalPdfContentDisposition(proposalNumber: string): string {
   const safeName = proposalNumber.replace(/[\r\n"\\]/g, '_');
   return `attachment; filename="${safeName}.pdf"; filename*=UTF-8''${encodeURIComponent(safeName)}.pdf`;
-}
-
-function formatDate(value: string | Date): string {
-  return new Date(value).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
 }
 
 function dataUrlToBuffer(dataUrl: string): Buffer | null {
@@ -97,48 +88,14 @@ function ensureSpace(doc: PDFKit.PDFDocument, height: number): void {
   }
 }
 
-export interface PdfBusiness {
-  name: string;
-  logo: string | null;
-  phone: string | null;
-  email: string | null;
-  website: string | null;
-  instagram: string | null;
-  address: string | null;
-  defaultTerms: string | null;
-}
-
-export interface PdfProposal {
-  proposalNumber: string;
-  createdAt: string | Date;
-  validUntil: string | null;
-  weddingDate: string;
-  weddingLocation: string;
-  numberOfDays: number | null;
-  template: ProposalTemplate;
-  subtotal: number;
-  discountAmount: number;
-  discountType: DiscountType | null;
-  discountValue: number | null;
-  taxRate: number;
-  taxAmount: number;
-  total: number;
-  customer: { name: string; phone: string; email: string | null };
-  packages: { packageName: string; packageDescription: string | null; quantity: number; total: number }[];
-  items: {
-    serviceName: string;
-    description: string | null;
-    quantity: number;
-    total: number;
-    isOptional: boolean;
-  }[];
-}
-
 export async function generateProposalPdf(
   proposal: PdfProposal,
   business: PdfBusiness,
 ): Promise<Buffer> {
-  const palette = PALETTES[proposal.template] ?? PALETTES.DARK_LUXE;
+  if (proposal.template === 'EDITORIAL') {
+    return generateEditorialPdf(proposal, business);
+  }
+  const palette = PALETTES[proposal.template] ?? PALETTES.DARK_LUXE!;
   const doc = new PDFDocument({ size: 'A4', margin: PAGE_MARGIN });
   const chunks: Buffer[] = [];
   doc.on('data', (chunk) => chunks.push(chunk));
@@ -156,10 +113,11 @@ export async function generateProposalPdf(
     doc,
     palette,
     'Selected Packages',
-    proposal.packages.map((p) => ({
+    groupByEvent(proposal, proposal.packages).map((p) => ({
       name: p.quantity > 1 ? `${p.packageName} x ${p.quantity}` : p.packageName,
       description: p.packageDescription,
       amount: p.total,
+      group: p.group,
     })),
   );
   const includedItems = proposal.items.filter((i) => !i.isOptional);
@@ -168,20 +126,22 @@ export async function generateProposalPdf(
     doc,
     palette,
     'Services',
-    includedItems.map((i) => ({
+    groupByEvent(proposal, includedItems).map((i) => ({
       name: i.quantity > 1 ? `${i.serviceName} x ${i.quantity}` : i.serviceName,
       description: i.description,
       amount: i.total,
+      group: i.group,
     })),
   );
   renderLineItems(
     doc,
     palette,
     'Optional Services (not included in total)',
-    optionalItems.map((i) => ({
+    groupByEvent(proposal, optionalItems).map((i) => ({
       name: i.quantity > 1 ? `${i.serviceName} x ${i.quantity}` : i.serviceName,
       description: i.description,
       amount: i.total,
+      group: i.group,
     })),
   );
   renderPricing(doc, palette, proposal);
@@ -284,6 +244,31 @@ function renderCustomer(doc: PDFKit.PDFDocument, palette: Palette, proposal: Pdf
 }
 
 function renderWedding(doc: PDFKit.PDFDocument, palette: Palette, proposal: PdfProposal): void {
+  if (proposal.events.length) {
+    sectionHeading(doc, palette, proposal.events.length > 1 ? 'Event Schedule' : 'Wedding Details');
+    // Already date-ordered by the query that loaded the proposal.
+    for (const event of proposal.events) {
+      ensureSpace(doc, 34);
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(11)
+        .fillColor(palette.heading)
+        .text(`${event.name} — ${formatDate(event.date)}`, PAGE_MARGIN, doc.y, {
+          width: CONTENT_WIDTH,
+        });
+      doc
+        .font('Helvetica')
+        .fontSize(9.5)
+        .fillColor(palette.muted)
+        .text(event.location ?? proposal.weddingLocation, PAGE_MARGIN, doc.y, {
+          width: CONTENT_WIDTH,
+        });
+      doc.y += 5;
+    }
+    doc.font('Helvetica').fillColor(palette.body);
+    return;
+  }
+
   sectionHeading(doc, palette, 'Wedding Details');
   doc
     .fontSize(11)
@@ -305,16 +290,36 @@ function renderWedding(doc: PDFKit.PDFDocument, palette: Palette, proposal: PdfP
   doc.fillColor(palette.body);
 }
 
+function groupHeading(doc: PDFKit.PDFDocument, palette: Palette, label: string): void {
+  ensureSpace(doc, 30);
+  doc.y += 4;
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(9.5)
+    .fillColor(palette.muted)
+    .text(label.toUpperCase(), PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH, characterSpacing: 0.4 });
+  doc.x = PAGE_MARGIN;
+  doc.y += 5;
+  doc.font('Helvetica').fillColor(palette.body);
+}
+
 function renderLineItems(
   doc: PDFKit.PDFDocument,
   palette: Palette,
   title: string,
-  items: { name: string; description: string | null; amount: number }[],
+  items: { name: string; description: string | null; amount: number; group: string | null }[],
 ): void {
   if (!items.length) return;
   sectionHeading(doc, palette, title);
+  const showGroups = items.some((i) => i.group);
+  let currentGroup: string | null = null;
   const innerWidth = CONTENT_WIDTH - CARD_PAD * 2;
   for (const item of items) {
+    const group = item.group ?? 'All events';
+    if (showGroups && group !== currentGroup) {
+      groupHeading(doc, palette, group);
+      currentGroup = group;
+    }
     doc.font('Helvetica-Bold').fontSize(11);
     const nameH = doc.heightOfString(item.name, { width: innerWidth });
     let descH = 0;

@@ -1,12 +1,21 @@
-import { and, desc, eq, ilike, inArray, like, sql } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
+import { and, asc, desc, eq, ilike, inArray, like, sql } from 'drizzle-orm';
 import { db } from '../db/client';
-import { customers, proposalItems, proposalPackages, proposals } from '../db/schema';
+import {
+  customers,
+  proposalEvents,
+  proposalItems,
+  proposalPackages,
+  proposals,
+} from '../db/schema';
 import type { ProposalStatus } from '../db/schema';
 import { BadRequestError, ConflictError, NotFoundError } from '../lib/http-error';
 import { calculatePricing } from '../pricing';
+import { deriveEventFields } from '../event-dates';
 import { findOneCustomer } from './customers';
 import { findOnePackage } from './packages';
 import { findOneService } from './catalog-services';
+import { findOneEventType } from './event-types';
 import { getBusiness } from './business';
 import { notifyDiscord } from '../lib/discord';
 import { removeGoogleEvent, syncProposalToGoogle } from './google-calendar';
@@ -14,10 +23,16 @@ import { removeAppleEvent, syncProposalToApple } from './apple-calendar';
 import type {
   CalculateProposalInput,
   CreateProposalInput,
+  ProposalEventInput,
   UpdateProposalInput,
 } from '../schemas/proposals';
 
-const RELATIONS = { customer: true, packages: true, items: true } as const;
+const RELATIONS = {
+  customer: true,
+  packages: true,
+  items: true,
+  events: { orderBy: [asc(proposalEvents.date), asc(proposalEvents.createdAt)] },
+} satisfies NonNullable<Parameters<typeof db.query.proposals.findFirst>[0]>['with'];
 
 export async function findAllProposals(
   businessId: string,
@@ -89,12 +104,29 @@ export async function createProposal(businessId: string, input: CreateProposalIn
   }
   await findOneCustomer(businessId, input.customerId);
 
+  const eventSnapshots = input.events
+    ? await Promise.all(input.events.map((e) => resolveEventSnapshot(businessId, e)))
+    : undefined;
+
   const packageSnapshots = await Promise.all(
-    (input.packages ?? []).map((p) => resolvePackageSnapshot(businessId, p, true)),
+    (input.packages ?? []).map((p) =>
+      resolvePackageSnapshot(businessId, p, true, eventIdAt(eventSnapshots, p.eventIndex)),
+    ),
   );
   const itemSnapshots = await Promise.all(
-    (input.items ?? []).map((i) => resolveItemSnapshot(businessId, i, true)),
+    (input.items ?? []).map((i) =>
+      resolveItemSnapshot(businessId, i, true, eventIdAt(eventSnapshots, i.eventIndex)),
+    ),
   );
+  // The schema's refine guarantees a weddingDate whenever events are absent.
+  const eventFields = eventSnapshots
+    ? deriveEventFields(eventSnapshots)
+    : {
+        weddingDate: input.weddingDate!,
+        weddingEndDate: null,
+        numberOfDays: input.numberOfDays ?? null,
+      };
+
   const taxRate = input.taxRate ?? 0;
   const pricing = calculatePricing({
     packages: packageSnapshots,
@@ -114,9 +146,10 @@ export async function createProposal(businessId: string, input: CreateProposalIn
         businessId,
         customerId: input.customerId,
         proposalNumber,
-        weddingDate: input.weddingDate,
+        weddingDate: eventFields.weddingDate,
+        weddingEndDate: eventFields.weddingEndDate,
         weddingLocation: input.weddingLocation,
-        numberOfDays: input.numberOfDays ?? null,
+        numberOfDays: eventFields.numberOfDays,
         notes: input.notes ?? null,
         validUntil,
         status: 'DRAFT',
@@ -131,6 +164,11 @@ export async function createProposal(businessId: string, input: CreateProposalIn
       })
       .returning();
 
+    if (eventSnapshots?.length) {
+      await tx
+        .insert(proposalEvents)
+        .values(eventSnapshots.map((e) => ({ ...e, proposalId: created.id })));
+    }
     if (packageSnapshots.length) {
       await tx
         .insert(proposalPackages)
@@ -158,11 +196,17 @@ export async function updateProposal(businessId: string, id: string, input: Upda
     await findOneCustomer(businessId, input.customerId);
   }
 
+  const eventSnapshots = input.events
+    ? await Promise.all(input.events.map((e) => resolveEventSnapshot(businessId, e)))
+    : undefined;
+
   const patch: Partial<typeof proposals.$inferInsert> = {};
   if (input.customerId !== undefined) patch.customerId = input.customerId;
   if (input.weddingDate !== undefined) patch.weddingDate = input.weddingDate;
   if (input.weddingLocation !== undefined) patch.weddingLocation = input.weddingLocation;
   if (input.numberOfDays !== undefined) patch.numberOfDays = input.numberOfDays;
+  // Events own the date columns, so they overwrite anything sent alongside them.
+  if (eventSnapshots) Object.assign(patch, deriveEventFields(eventSnapshots));
   if (input.notes !== undefined) patch.notes = input.notes;
   if (input.validUntil !== undefined) patch.validUntil = input.validUntil;
   if (input.discount !== undefined) {
@@ -179,6 +223,13 @@ export async function updateProposal(businessId: string, id: string, input: Upda
       .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
   }
 
+  if (eventSnapshots) {
+    await db.delete(proposalEvents).where(eq(proposalEvents.proposalId, id));
+    await db
+      .insert(proposalEvents)
+      .values(eventSnapshots.map((e) => ({ ...e, proposalId: id })));
+  }
+
   if (input.packages !== undefined || input.items !== undefined) {
     if (input.packages !== undefined) {
       await db.delete(proposalPackages).where(eq(proposalPackages.proposalId, id));
@@ -189,17 +240,28 @@ export async function updateProposal(businessId: string, id: string, input: Upda
     const existingPackageIds = new Set(existing.packages.map((p) => p.packageId));
     const existingServiceIds = new Set(existing.items.map((i) => i.serviceId));
 
+    const eventRefs = eventSnapshots ?? existing.events;
     const newPackages = input.packages
       ? await Promise.all(
           input.packages.map((p) =>
-            resolvePackageSnapshot(businessId, p, !existingPackageIds.has(p.packageId)),
+            resolvePackageSnapshot(
+              businessId,
+              p,
+              !existingPackageIds.has(p.packageId),
+              eventIdAt(eventRefs, p.eventIndex),
+            ),
           ),
         )
       : undefined;
     const newItems = input.items
       ? await Promise.all(
           input.items.map((i) =>
-            resolveItemSnapshot(businessId, i, !existingServiceIds.has(i.serviceId)),
+            resolveItemSnapshot(
+              businessId,
+              i,
+              !existingServiceIds.has(i.serviceId),
+              eventIdAt(eventRefs, i.eventIndex),
+            ),
           ),
         )
       : undefined;
@@ -291,10 +353,37 @@ async function persistPricing(proposal: Awaited<ReturnType<typeof findOneProposa
     .where(and(eq(proposals.id, proposal.id), eq(proposals.businessId, proposal.businessId)));
 }
 
+function eventIdAt(events: { id: string }[] | undefined, index: number | undefined): string | null {
+  if (index === undefined) return null;
+  const event = events?.[index];
+  if (!event) {
+    throw new BadRequestError(`eventIndex ${index} does not match any event on this proposal`);
+  }
+  return event.id;
+}
+
+async function resolveEventSnapshot(businessId: string, input: ProposalEventInput) {
+  // The catalog name wins over whatever the client sent, and is then snapshotted
+  // so a later rename or delete of the event type can't rewrite this proposal.
+  const eventType = input.eventTypeId
+    ? await findOneEventType(businessId, input.eventTypeId)
+    : null;
+  return {
+    // Assigned here rather than by the DB default so line items can reference
+    // an event before the insert happens.
+    id: randomUUID(),
+    eventTypeId: eventType?.id ?? null,
+    name: eventType?.name ?? input.name,
+    date: input.date,
+    location: input.location ?? null,
+  };
+}
+
 async function resolvePackageSnapshot(
   businessId: string,
   input: { packageId: string; quantity: number },
   requireActive: boolean,
+  proposalEventId: string | null,
 ) {
   const pkg = await findOnePackage(businessId, input.packageId);
   if (requireActive && !pkg.active) {
@@ -302,6 +391,7 @@ async function resolvePackageSnapshot(
   }
   const quantity = input.quantity ?? 1;
   return {
+    proposalEventId,
     packageId: pkg.id,
     packageName: pkg.name,
     packageDescription: pkg.description,
@@ -319,6 +409,7 @@ async function resolveItemSnapshot(
     isOptional: boolean;
   },
   requireActive: boolean,
+  proposalEventId: string | null,
 ) {
   const service = await findOneService(businessId, input.serviceId);
   if (requireActive && !service.active) {
@@ -330,6 +421,7 @@ async function resolveItemSnapshot(
   }
   const quantity = input.quantity ?? 1;
   return {
+    proposalEventId,
     serviceId: service.id,
     serviceName: service.name,
     description: service.description,

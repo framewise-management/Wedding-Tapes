@@ -51,6 +51,7 @@ export interface CalendarEvent {
   proposalNumber: string;
   status: string;
   weddingDate: string;
+  weddingEndDate: string | null;
   weddingLocation: string;
   total: number;
   customer: { name: string; phone: string | null };
@@ -67,7 +68,7 @@ function eventLines(p: CalendarEvent, stamp: string): string[] {
     `UID:${p.id}@wedding-tapes`,
     `DTSTAMP:${stamp}`,
     `DTSTART;VALUE=DATE:${dateOnly(p.weddingDate)}`,
-    `DTEND;VALUE=DATE:${nextDay(p.weddingDate)}`,
+    `DTEND;VALUE=DATE:${nextDay(p.weddingEndDate ?? p.weddingDate)}`,
     fold(`SUMMARY:${escapeText(`${p.customer.name} — ${label}`)}`),
     fold(`LOCATION:${escapeText(p.weddingLocation)}`),
     fold(

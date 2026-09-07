@@ -1,0 +1,22 @@
+/* Reuses the Services catalog styling; only the row grid differs (name + actions). */
+.et-page .sv-table-head,
+.et-page .sv-table-row {
+  grid-template-columns: 1fr 160px;
+}
+
+.et-add-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.et-add-form .sv-input {
+  max-width: 320px;
+}
+
+@media (max-width: 640px) {
+  .et-page .sv-table-head,
+  .et-page .sv-table-row {
+    grid-template-columns: 1fr;
+  }
+}

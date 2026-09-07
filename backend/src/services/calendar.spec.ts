@@ -6,6 +6,7 @@ const event: CalendarEvent = {
   proposalNumber: 'WP-2026-0001',
   status: 'ACCEPTED',
   weddingDate: '2026-03-31',
+  weddingEndDate: null,
   weddingLocation: 'Taj Palace, Mumbai; Hall A',
   total: 250000,
   customer: { name: 'Priya, Rahul', phone: '+91 98765 43210' },
@@ -23,6 +24,12 @@ describe('renderCalendar', () => {
   it('makes an all-day event ending the next day', () => {
     expect(ics).toContain('DTSTART;VALUE=DATE:20260331');
     expect(ics).toContain('DTEND;VALUE=DATE:20260401');
+  });
+
+  it('spans a multi-day event through the day after the last one', () => {
+    const ics = renderCalendar('x', [{ ...event, weddingDate: '2026-03-30', weddingEndDate: '2026-04-01' }]);
+    expect(ics).toContain('DTSTART;VALUE=DATE:20260330');
+    expect(ics).toContain('DTEND;VALUE=DATE:20260402');
   });
 
   it('escapes commas and semicolons in text fields', () => {

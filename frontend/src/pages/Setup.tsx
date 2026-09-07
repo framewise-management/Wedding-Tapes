@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiGet } from '../api/client';
 import type { Business } from '../types/business';
 import type { Package, Service } from '../types/catalog';
+import type { EventType } from '../types/eventType';
 import type { Profile } from '../types/user';
 import './Setup.css';
 
@@ -30,6 +31,14 @@ function ServicesIcon() {
   );
 }
 
+function EventsIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M8 3v4M16 3v4M3.5 9.5h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function PackagesIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -43,12 +52,14 @@ export default function Setup() {
   const [business, setBusiness] = useState<Business | null>(null);
   const [services, setServices] = useState<Service[] | null>(null);
   const [packages, setPackages] = useState<Package[] | null>(null);
+  const [eventTypes, setEventTypes] = useState<EventType[] | null>(null);
 
   useEffect(() => {
     apiGet<Profile>('/api/auth/me').then(setProfile).catch(() => setProfile(null));
     apiGet<Business>('/api/business').then(setBusiness).catch(() => setBusiness(null));
     apiGet<Service[]>('/api/services?active=true').then(setServices).catch(() => setServices(null));
     apiGet<Package[]>('/api/packages').then(setPackages).catch(() => setPackages(null));
+    apiGet<EventType[]>('/api/event-types?active=true').then(setEventTypes).catch(() => setEventTypes(null));
   }, []);
 
   const businessComplete = Boolean(business?.phone);
@@ -78,6 +89,14 @@ export default function Setup() {
       description: 'The catalog of individual services you can add to a proposal.',
       status: services === null ? 'Loading…' : `${services.length} service${services.length === 1 ? '' : 's'}`,
       complete: (services?.length ?? 0) > 0,
+    },
+    {
+      to: '/event-types',
+      icon: <EventsIcon />,
+      title: 'Events',
+      description: 'The ceremonies you shoot — Haldi, Sangeet, Wedding — selectable on a proposal.',
+      status: eventTypes === null ? 'Loading…' : `${eventTypes.length} event${eventTypes.length === 1 ? '' : 's'}`,
+      complete: (eventTypes?.length ?? 0) > 0,
     },
     {
       to: '/packages',

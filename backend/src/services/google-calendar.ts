@@ -154,7 +154,7 @@ async function pushEvent(key: ServiceAccountKey, calendarId: string, p: Syncable
       .filter(Boolean)
       .join('\n'),
     start: { date: p.weddingDate.slice(0, 10) },
-    end: { date: nextDay(p.weddingDate) },
+    end: { date: nextDay(p.weddingEndDate ?? p.weddingDate) },
     status: p.status === 'ACCEPTED' ? 'confirmed' : 'tentative',
   };
 

@@ -324,3 +324,37 @@
     text-align: left;
   }
 }
+
+.pp-page .pv-event-group {
+  color: var(--pp-muted);
+}
+
+/* Editorial: warm paper and gold rules, matching the PDF of the same name. */
+.pp-page.tpl-editorial {
+  --pp-muted: #6b6259;
+  background: #fffdf9;
+  color: #2b2622;
+}
+
+.pp-page.tpl-editorial .pv-sheet {
+  background: #fffdf9;
+  border-color: #e4d9c4;
+}
+
+.pp-page.tpl-editorial .pv-line-item-name,
+.pp-page.tpl-editorial h2 {
+  color: #1f1a17;
+}
+
+.pp-page.tpl-editorial .pv-event-group {
+  color: #c9a86a;
+}
+
+.pp-page.tpl-editorial .pv-line-item-total {
+  color: #1f1a17;
+}
+
+.pp-page.tpl-editorial .pv-pricing-row.pv-total span:first-child,
+.pp-page.tpl-editorial .pv-pricing-row.pv-total span:last-child {
+  color: #1f1a17;
+}

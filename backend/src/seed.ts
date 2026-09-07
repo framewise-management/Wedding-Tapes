@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db/client';
 import { businesses, users } from './db/schema';
+import { seedDefaultEventTypes } from './services/event-types';
 
 async function seed() {
   const email = process.env.SEED_ADMIN_EMAIL ?? 'admin@example.com';
@@ -49,6 +50,7 @@ async function seed() {
       businessId: business.id,
       email,
     });
+    await seedDefaultEventTypes(db, business.id);
     console.log('Seeded business and admin user:');
   }
 
