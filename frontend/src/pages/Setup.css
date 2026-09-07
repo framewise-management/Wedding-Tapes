@@ -10,14 +10,14 @@
 .su-title {
   font-size: 30px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .su-subtitle {
   font-size: 15px;
-  color: #54545c;
+  color: var(--text);
   margin: 0;
 }
 
@@ -32,17 +32,17 @@
   flex-direction: column;
   gap: 14px;
   padding: 22px;
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface);
   text-decoration: none;
   color: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .su-card:hover {
-  border-color: #0f766e;
-  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 6px 20px var(--accent-bg);
 }
 
 .su-card-icon {
@@ -52,8 +52,8 @@
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: #f2f2f4;
-  color: #0f766e;
+  background: var(--chip-bg);
+  color: var(--accent);
 }
 
 .su-card-title-row {
@@ -66,7 +66,7 @@
 .su-card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .su-card-status {
@@ -76,19 +76,19 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  background: #f0eff2;
-  color: #54545c;
+  background: var(--border-subtle);
+  color: var(--text);
   white-space: nowrap;
 }
 
 .su-card-status-complete {
-  background: #eaf7ec;
-  color: #2f6b3c;
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
 }
 
 .su-card-desc {
   font-size: 13.5px;
-  color: #6b6b74;
+  color: var(--text-muted);
   line-height: 1.5;
   margin: 0;
 }

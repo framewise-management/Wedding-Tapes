@@ -15,14 +15,14 @@
 .db-title {
   font-size: 30px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .db-subtitle {
   font-size: 15px;
-  color: #54545c;
+  color: var(--text);
   margin: 0;
 }
 
@@ -33,8 +33,8 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #0f766e;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 14.5px;
   font-weight: 600;
   text-decoration: none;
@@ -53,7 +53,7 @@
 .db-section h2 {
   font-size: 13px;
   font-weight: 700;
-  color: #6b6b74;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 14px;
@@ -66,7 +66,7 @@
 }
 
 .db-stat-card {
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -77,23 +77,23 @@
 .db-stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.5px;
 }
 
 .db-stat-label {
   font-size: 13px;
   font-weight: 600;
-  color: #54545c;
+  color: var(--text);
 }
 
-.db-stat-draft .db-stat-value { color: #b3651a; }
-.db-stat-sent .db-stat-value { color: #29579c; }
-.db-stat-accepted .db-stat-value { color: #2f6b3c; }
-.db-stat-rejected .db-stat-value { color: #b3423a; }
+.db-stat-draft .db-stat-value { color: var(--status-draft); }
+.db-stat-sent .db-stat-value { color: var(--status-sent); }
+.db-stat-accepted .db-stat-value { color: var(--status-accepted); }
+.db-stat-rejected .db-stat-value { color: var(--error-text); }
 
 .db-recent-list {
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -104,7 +104,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  border-bottom: 1px solid #f0eff2;
+  border-bottom: 1px solid var(--border-subtle);
   text-decoration: none;
   color: inherit;
 }
@@ -114,26 +114,26 @@
 }
 
 .db-recent-row:hover {
-  background: #fafafa;
+  background: var(--hover-bg);
 }
 
 .db-recent-number {
   font-size: 14.5px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   margin: 0;
 }
 
 .db-recent-customer {
   font-size: 13px;
-  color: #54545c;
+  color: var(--text);
   margin: 2px 0 0;
 }
 
 .db-recent-total {
   font-size: 14.5px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .db-recent-status {
@@ -144,36 +144,36 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #f0eff2;
-  color: #54545c;
+  background: var(--border-subtle);
+  color: var(--text);
 }
 
 .db-recent-status-draft {
-  background: #fdf1e4;
-  color: #b3651a;
+  background: var(--status-draft-bg);
+  color: var(--status-draft);
 }
 
 .db-recent-status-sent {
-  background: #e6eefc;
-  color: #29579c;
+  background: var(--status-sent-bg);
+  color: var(--status-sent);
 }
 
 .db-recent-status-accepted {
-  background: #eaf7ec;
-  color: #2f6b3c;
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
 }
 
 .db-recent-status-rejected {
-  background: #fbeceb;
-  color: #b3423a;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 
 .db-empty {
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #6b6b74;
-  border: 1px solid #e5e4e7;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
   border-radius: 14px;
 }
 

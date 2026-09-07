@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { apiGet } from '../api/client';
 import { clearToken } from '../auth/auth';
 import { onSetupStatusChanged } from '../lib/setupStatus';
+import { useTheme } from '../theme';
 import type { Business } from '../types/business';
 import type { Service } from '../types/catalog';
 import './AppLayout.css';
@@ -73,6 +74,34 @@ function MenuIcon() {
   );
 }
 
+function SunIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M12 3v1.6M12 19.4V21M4.9 4.9l1.1 1.1M18 18l1.1 1.1M3 12h1.6M19.4 12H21M4.9 19.1 6 18M18 6l1.1-1.1"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M20 14.5A7.5 7.5 0 1 1 9.5 4 6.2 6.2 0 0 0 20 14.5Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed';
 
 export default function AppLayout() {
@@ -84,6 +113,7 @@ export default function AppLayout() {
     () => localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true',
   );
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -115,6 +145,9 @@ export default function AppLayout() {
     navigate('/');
   }
 
+  const themeLabel = theme === 'dark' ? 'Light mode' : 'Dark mode';
+  const themeAria = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+
   return (
     <div className="app-shell">
       <div className="app-mobile-topbar">
@@ -128,6 +161,15 @@ export default function AppLayout() {
         </button>
         <span className="app-brand-mark">FW</span>
         <span className="app-brand-name">Framewise</span>
+        <button
+          type="button"
+          className="app-theme-btn app-theme-btn-topbar"
+          onClick={toggleTheme}
+          aria-label={themeAria}
+          title={themeLabel}
+        >
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
       </div>
 
       {mobileNavOpen && (
@@ -166,6 +208,16 @@ export default function AppLayout() {
         </nav>
 
         <div className="app-logout-wrap">
+          <button
+            type="button"
+            className="app-theme-btn"
+            onClick={toggleTheme}
+            title={themeLabel}
+            aria-label={themeAria}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            <span className="app-nav-label">{themeLabel}</span>
+          </button>
           <button
             type="button"
             className="app-collapse-btn"

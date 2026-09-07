@@ -10,19 +10,19 @@
 .cp-title {
   font-size: 30px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .cp-subtitle {
   font-size: 15px;
-  color: #54545c;
+  color: var(--text);
   margin: 0;
 }
 
 .cp-section {
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 24px;
   margin-bottom: 20px;
@@ -31,13 +31,13 @@
 .cp-section h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   margin: 0 0 3px;
 }
 
 .cp-section-sub {
   font-size: 13.5px;
-  color: #6b6b74;
+  color: var(--text-muted);
   margin: 0 0 18px;
 }
 
@@ -45,7 +45,7 @@
   display: block;
   font-size: 12.5px;
   font-weight: 600;
-  color: #54545c;
+  color: var(--text);
   margin-bottom: 6px;
 }
 
@@ -55,11 +55,11 @@
   width: 100%;
   box-sizing: border-box;
   padding: 11px 13px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #1a1a20;
+  color: var(--text-h);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -67,8 +67,8 @@
 .cp-input:focus,
 .cp-select:focus,
 .cp-textarea:focus {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-ring);
 }
 
 .cp-row {
@@ -94,10 +94,10 @@
 .cp-link-btn {
   flex: none;
   padding: 11px 14px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
-  background: #fff;
-  color: #54545c;
+  background: var(--surface);
+  color: var(--text);
   font-size: 13.5px;
   font-weight: 600;
   font-family: inherit;
@@ -106,8 +106,8 @@
 }
 
 .cp-link-btn:hover {
-  border-color: #1a1a20;
-  color: #1a1a20;
+  border-color: var(--text-h);
+  color: var(--text-h);
 }
 
 .cp-new-customer {
@@ -124,7 +124,7 @@
   justify-content: space-between;
   gap: 14px;
   padding: 12px 0;
-  border-bottom: 1px solid #f0eff2;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cp-catalog-row:last-child {
@@ -138,12 +138,12 @@
 .cp-catalog-name {
   font-size: 14.5px;
   font-weight: 500;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .cp-catalog-price {
   font-size: 13px;
-  color: #54545c;
+  color: var(--text);
   margin-top: 2px;
 }
 
@@ -152,8 +152,8 @@
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  background: #1a1a20;
-  color: #fff;
+  background: var(--btn-ink);
+  color: var(--on-btn-ink);
   font-size: 13.5px;
   font-weight: 600;
   font-family: inherit;
@@ -179,7 +179,7 @@
 .cp-selected-heading {
   font-size: 12px;
   font-weight: 600;
-  color: #6b6b74;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 20px 0 10px;
@@ -194,7 +194,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 10px;
 }
 
@@ -210,14 +210,14 @@
   min-width: 0;
   font-size: 14px;
   font-weight: 500;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .cp-qty-input {
   width: 60px;
   box-sizing: border-box;
   padding: 7px 9px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 13.5px;
   font-family: inherit;
@@ -229,14 +229,14 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #54545c;
+  color: var(--text);
   white-space: nowrap;
 }
 
 .cp-selected-total {
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   white-space: nowrap;
 }
 
@@ -247,21 +247,21 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: #fff;
-  color: #54545c;
+  background: var(--surface);
+  color: var(--text);
   cursor: pointer;
 }
 
 .cp-remove-btn:hover {
-  border-color: #c23b2e;
-  color: #c23b2e;
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .cp-empty-note {
   font-size: 13.5px;
-  color: #6b6b74;
+  color: var(--text-muted);
 }
 
 .cp-pricing-row {
@@ -270,16 +270,16 @@
   justify-content: space-between;
   padding: 6px 0;
   font-size: 14px;
-  color: #54545c;
+  color: var(--text);
 }
 
 .cp-pricing-row.cp-total {
-  border-top: 1px solid #e5e4e7;
+  border-top: 1px solid var(--border);
   margin-top: 8px;
   padding-top: 14px;
   font-size: 17px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .cp-actions {
@@ -293,8 +293,8 @@
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
-  background: #0f766e;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 14.5px;
   font-weight: 600;
   font-family: inherit;
@@ -312,17 +312,17 @@
 
 .cp-preview-link {
   padding: 12px 24px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
-  background: #fff;
-  color: #1a1a20;
+  background: var(--surface);
+  color: var(--text-h);
   font-size: 14.5px;
   font-weight: 600;
   text-decoration: none;
 }
 
 .cp-preview-link:hover {
-  border-color: #1a1a20;
+  border-color: var(--text-h);
 }
 
 .cp-template-grid {
@@ -337,9 +337,9 @@
   align-items: flex-start;
   gap: 8px;
   padding: 16px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--surface);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -347,12 +347,12 @@
 }
 
 .cp-template-card:hover {
-  border-color: #1a1a20;
+  border-color: var(--text-h);
 }
 
 .cp-template-card-selected {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-ring);
 }
 
 .cp-template-swatch {
@@ -370,33 +370,33 @@
 .cp-template-name {
   font-size: 14.5px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .cp-template-desc {
   font-size: 12.5px;
-  color: #6b6b74;
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
 .cp-error {
   font-size: 13.5px;
-  color: #b3423a;
+  color: var(--error-text);
   font-weight: 500;
 }
 
 .cp-success {
-  border: 1px solid #cfe8d4;
-  background: #f2faf3;
+  border: 1px solid var(--success-border);
+  background: var(--success-bg);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 20px;
   font-size: 14px;
-  color: #2f6b3c;
+  color: var(--status-accepted);
 }
 
 .cp-success strong {
-  color: #1d4a27;
+  color: var(--success-text-strong);
 }
 
 @media (max-width: 640px) {

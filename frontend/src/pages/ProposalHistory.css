@@ -15,14 +15,14 @@
 .ph-title {
   font-size: 30px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 
 .ph-subtitle {
   font-size: 15px;
-  color: #54545c;
+  color: var(--text);
   margin: 0;
 }
 
@@ -33,8 +33,8 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #0f766e;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 14.5px;
   font-weight: 600;
   text-decoration: none;
@@ -47,13 +47,13 @@
 }
 
 .ph-error-banner {
-  border: 1px solid #f3c9c5;
-  background: #fbeceb;
+  border: 1px solid var(--danger-border);
+  background: var(--error-bg);
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 20px;
   font-size: 13.5px;
-  color: #b3423a;
+  color: var(--error-text);
 }
 
 .ph-filters {
@@ -67,34 +67,34 @@
   max-width: 340px;
   box-sizing: border-box;
   padding: 11px 13px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #1a1a20;
+  color: var(--text-h);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .ph-status-filter {
   padding: 11px 13px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: 14.5px;
   font-family: inherit;
-  color: #1a1a20;
+  color: var(--text-h);
   outline: none;
-  background: #fff;
+  background: var(--surface);
 }
 
 .ph-search:focus,
 .ph-status-filter:focus {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-ring);
 }
 
 .ph-table {
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -109,21 +109,21 @@
 
 .ph-table-head {
   padding: 14px 20px;
-  background: #fafafa;
-  border-bottom: 1px solid #e5e4e7;
+  background: var(--hover-bg);
+  border-bottom: 1px solid var(--border);
 }
 
 .ph-table-head span {
   font-size: 12px;
   font-weight: 600;
-  color: #6b6b74;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .ph-table-row {
   padding: 16px 20px;
-  border-bottom: 1px solid #f0eff2;
+  border-bottom: 1px solid var(--border-subtle);
   text-decoration: none;
   color: inherit;
 }
@@ -133,13 +133,13 @@
 }
 
 .ph-table-row:hover {
-  background: #fafafa;
+  background: var(--hover-bg);
 }
 
 .ph-cell-number {
   font-size: 14.5px;
   font-weight: 500;
-  color: #1a1a20;
+  color: var(--text-h);
 }
 
 .ph-row-link {
@@ -152,10 +152,10 @@
 
 .ph-delete-btn {
   padding: 6px 12px;
-  border: 1.5px solid #e5e4e7;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: #fff;
-  color: #54545c;
+  background: var(--surface);
+  color: var(--text);
   font-size: 12.5px;
   font-weight: 600;
   font-family: inherit;
@@ -164,15 +164,15 @@
 }
 
 .ph-delete-btn:hover {
-  border-color: #c23b2e;
-  color: #c23b2e;
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .ph-cell-customer,
 .ph-cell-date,
 .ph-cell-total {
   font-size: 14px;
-  color: #54545c;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,35 +186,35 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #f0eff2;
-  color: #54545c;
+  background: var(--border-subtle);
+  color: var(--text);
 }
 
 .ph-status-draft {
-  background: #fdf1e4;
-  color: #b3651a;
+  background: var(--status-draft-bg);
+  color: var(--status-draft);
 }
 
 .ph-status-sent {
-  background: #e6eefc;
-  color: #29579c;
+  background: var(--status-sent-bg);
+  color: var(--status-sent);
 }
 
 .ph-status-accepted {
-  background: #eaf7ec;
-  color: #2f6b3c;
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
 }
 
 .ph-status-rejected {
-  background: #fbeceb;
-  color: #b3423a;
+  background: var(--error-bg);
+  color: var(--error-text);
 }
 
 .ph-empty {
   padding: 40px 20px;
   text-align: center;
   font-size: 14px;
-  color: #6b6b74;
+  color: var(--text-muted);
 }
 
 @media (max-width: 768px) {

@@ -1,9 +1,9 @@
 .app-shell {
   display: flex;
   height: 100vh;
-  background: #ffffff;
+  background: var(--bg);
   font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
-  color: #54545c;
+  color: var(--text);
 }
 
 .app-sidebar {
@@ -12,8 +12,8 @@
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #ffffff;
-  border-right: 1px solid #e5e4e7;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
   padding: 28px 20px;
   display: flex;
   flex-direction: column;
@@ -53,8 +53,8 @@
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  background: #0f766e;
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,7 +66,7 @@
 .app-brand-name {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a20;
+  color: var(--text-h);
   letter-spacing: -0.1px;
 }
 
@@ -85,21 +85,21 @@
   text-decoration: none;
   font-size: 14.5px;
   font-weight: 500;
-  color: #54545c;
+  color: var(--text);
   background: transparent;
 }
 
 .app-nav-item:hover {
-  background: #f4f3ec;
+  background: var(--muted-bg);
 }
 
 .app-nav-item.active {
-  background: rgba(15, 118, 110, 0.1);
-  color: #0f766e;
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .app-nav-item.active:hover {
-  background: rgba(15, 118, 110, 0.1);
+  background: var(--accent-bg);
 }
 
 .app-nav-icon {
@@ -112,14 +112,15 @@
 .app-logout-wrap {
   margin-top: auto;
   padding-top: 16px;
-  border-top: 1px solid #e5e4e7;
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .app-collapse-btn,
-.app-logout-btn {
+.app-logout-btn,
+.app-theme-btn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -128,7 +129,7 @@
   border: none;
   background: none;
   border-radius: 8px;
-  color: #54545c;
+  color: var(--text);
   font-size: 14.5px;
   font-weight: 500;
   cursor: pointer;
@@ -137,12 +138,14 @@
 }
 
 .app-collapse-btn:hover,
-.app-logout-btn:hover {
-  background: #f4f3ec;
+.app-logout-btn:hover,
+.app-theme-btn:hover {
+  background: var(--muted-bg);
 }
 
 .app-sidebar.collapsed .app-collapse-btn,
-.app-sidebar.collapsed .app-logout-btn {
+.app-sidebar.collapsed .app-logout-btn,
+.app-sidebar.collapsed .app-theme-btn {
   justify-content: center;
   padding: 9px;
 }
@@ -176,11 +179,21 @@
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
-    border-bottom: 1px solid #e5e4e7;
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    background: #fff;
+    background: var(--surface);
     z-index: 30;
+  }
+
+  .app-theme-btn-topbar {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
   }
 
   .app-menu-btn {
@@ -189,10 +202,10 @@
     justify-content: center;
     width: 36px;
     height: 36px;
-    border: 1.5px solid #e5e4e7;
+    border: 1.5px solid var(--border);
     border-radius: 9px;
-    background: #fff;
-    color: #1a1a20;
+    background: var(--surface);
+    color: var(--text-h);
     cursor: pointer;
     flex: none;
   }
@@ -201,7 +214,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(20, 20, 24, 0.32);
+    background: var(--overlay);
     z-index: 40;
   }
 
@@ -212,7 +225,7 @@
     z-index: 41;
     width: 260px;
     padding: 24px 20px;
-    box-shadow: 12px 0 32px rgba(20, 20, 24, 0.14);
+    box-shadow: 12px 0 32px var(--overlay);
     transform: translateX(-100%);
     transition: transform 0.2s ease;
   }
@@ -255,16 +268,16 @@
 .app-setup-notice {
   margin: 0 0 20px;
   padding: 10px 14px;
-  border: 1px solid rgba(15, 118, 110, 0.25);
+  border: 1px solid var(--accent-border);
   border-radius: 10px;
-  background: rgba(15, 118, 110, 0.08);
-  color: #54545c;
+  background: var(--accent-soft);
+  color: var(--text);
   font-size: 13.5px;
   line-height: 1.5;
 }
 
 .app-setup-notice a {
-  color: #0f766e;
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
 }
