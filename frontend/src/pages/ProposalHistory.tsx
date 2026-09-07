@@ -53,7 +53,7 @@ export default function ProposalHistory() {
       <div className="ph-page-header">
         <div>
           <h1 className="ph-title">Proposals</h1>
-          <p className="ph-subtitle">Every quotation you've built, searchable by customer.</p>
+          <p className="ph-subtitle">Every quotation you've built, searchable by client.</p>
         </div>
         <Link to="/proposals/new" className="ph-add-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -70,7 +70,7 @@ export default function ProposalHistory() {
           className="ph-search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by customer name…"
+          placeholder="Search by client name…"
         />
         <select className="ph-status-filter" value={status} onChange={(e) => setStatus(e.target.value as typeof status)}>
           <option value="">All statuses</option>
@@ -83,7 +83,7 @@ export default function ProposalHistory() {
       <div className="ph-table">
         <div className="ph-table-head">
           <span>Proposal</span>
-          <span>Customer</span>
+          <span>Client</span>
           <span>Wedding date</span>
           <span>Total</span>
           <span>Status</span>

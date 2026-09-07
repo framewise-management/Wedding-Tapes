@@ -90,7 +90,7 @@ export default function BusinessProfile() {
       <div className="bp-page-header">
         <h1 className="bp-title">Business Profile</h1>
         <p className="bp-subtitle">
-          This information appears on every proposal you send to customers.
+          This information appears on every proposal you send to clients.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ export default function BusinessProfile() {
 
           <section className="bp-section">
             <h2>Contact</h2>
-            <p className="bp-section-sub">How customers can reach you.</p>
+            <p className="bp-section-sub">How clients can reach you.</p>
 
             <div className="bp-grid-2">
               <div>

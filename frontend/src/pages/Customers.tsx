@@ -85,7 +85,7 @@ export default function Customers() {
       setForm(EMPTY_FORM);
       load(search);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save customer');
+      setError(err instanceof Error ? err.message : 'Failed to save client');
     }
   }
 
@@ -96,7 +96,7 @@ export default function Customers() {
       await apiDelete(`/api/customers/${customer.id}`);
       load(search);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete customer');
+      setError(err instanceof Error ? err.message : 'Failed to delete client');
     }
   }
 
@@ -104,7 +104,7 @@ export default function Customers() {
     <div className="cu-container">
       <div className="cu-page-header">
         <div>
-          <h1 className="cu-title">Customers</h1>
+          <h1 className="cu-title">Clients</h1>
           <p className="cu-subtitle">
             Everyone you've built a proposal for, or plan to.
           </p>
@@ -117,7 +117,7 @@ export default function Customers() {
               <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             )}
           </svg>
-          {showForm ? 'Close' : 'Add customer'}
+          {showForm ? 'Close' : 'Add client'}
         </button>
       </div>
 
@@ -125,7 +125,7 @@ export default function Customers() {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="cu-form" autoComplete="off">
-          <h2>{editingId ? 'Edit customer' : 'New customer'}</h2>
+          <h2>{editingId ? 'Edit client' : 'New client'}</h2>
           <p className="cu-form-sub">Name and phone are required.</p>
 
           <div className="cu-form-row">
@@ -172,7 +172,7 @@ export default function Customers() {
                 className="cu-input"
                 value={form.address}
                 onChange={(e) => updateField('address', e.target.value)}
-                placeholder="Customer address"
+                placeholder="Client address"
                 autoComplete="off"
               />
             </div>
@@ -187,7 +187,7 @@ export default function Customers() {
                 rows={3}
                 value={form.notes}
                 onChange={(e) => updateField('notes', e.target.value)}
-                placeholder="Anything worth remembering about this customer"
+                placeholder="Anything worth remembering about this client"
               />
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function Customers() {
           <div className="cu-empty">Loading…</div>
         ) : customers.length === 0 ? (
           <div className="cu-empty">
-            {search ? 'No customers match your search.' : 'No customers yet. Add your first one above.'}
+            {search ? 'No clients match your search.' : 'No clients yet. Add your first one above.'}
           </div>
         ) : (
           customers.map((c) => (

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
@@ -32,7 +32,8 @@ function App() {
           <Route path="/setup" element={<Setup />} />
           <Route path="/business" element={<BusinessProfile />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/customers" element={<Customers />} />
+          <Route path="/clients" element={<Customers />} />
+          <Route path="/customers" element={<Navigate to="/clients" replace />} />
           <Route path="/services" element={<Services />} />
           <Route path="/event-types" element={<EventTypes />} />
           <Route path="/packages" element={<Packages />} />

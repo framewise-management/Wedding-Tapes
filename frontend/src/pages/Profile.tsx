@@ -61,7 +61,7 @@ export default function Profile() {
       <div className="bp-page-header">
         <h1 className="bp-title">Personal Profile</h1>
         <p className="bp-subtitle">
-          Your own account details — separate from the studio details customers see.
+          Your own account details — separate from the studio details clients see.
         </p>
       </div>
 

@@ -111,7 +111,7 @@ export default function CreateProposal() {
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-    apiGet<Customer[]>('/api/customers').then(setCustomers).catch(() => setError('Failed to load customers'));
+    apiGet<Customer[]>('/api/customers').then(setCustomers).catch(() => setError('Failed to load clients'));
     apiGet<Package[]>('/api/packages').then(setPackages).catch(() => setError('Failed to load packages'));
     apiGet<Service[]>('/api/services').then(setServices).catch(() => setError('Failed to load services'));
     apiGet<EventType[]>('/api/event-types?active=true').then(setEventTypes).catch(() => setError('Failed to load events'));
@@ -248,7 +248,7 @@ export default function CreateProposal() {
     if (saved) return;
     setError('');
     if (!customerId) {
-      setError('Select or create a customer first');
+      setError('Select or create a client first');
       return;
     }
     if (!selectedPackages.length && !selectedItems.length) {
@@ -369,7 +369,7 @@ export default function CreateProposal() {
         <p className="cp-subtitle">
           {isEditing
             ? 'Only drafts can be edited — changes recalculate the total.'
-            : 'Build a quotation from your catalog and send it to a customer.'}
+            : 'Build a quotation from your catalog and send it to a client.'}
         </p>
       </div>
 
@@ -381,7 +381,7 @@ export default function CreateProposal() {
 
       <form onSubmit={handleSubmit} autoComplete="off">
         <section className="cp-section">
-          <h2>Customer</h2>
+          <h2>Client</h2>
           <p className="cp-section-sub">Who this proposal is for.</p>
 
           <div className="cp-customer-row">
@@ -390,7 +390,7 @@ export default function CreateProposal() {
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
             >
-              <option value="">Select a customer…</option>
+              <option value="">Select a client…</option>
               {customers.map((c) => (
                 <option key={c.id} value={c.id}>{c.name} — {c.phone}</option>
               ))}
@@ -400,7 +400,7 @@ export default function CreateProposal() {
               className="cp-link-btn"
               onClick={() => setShowNewCustomer((v) => !v)}
             >
-              {showNewCustomer ? 'Cancel' : '+ New customer'}
+              {showNewCustomer ? 'Cancel' : '+ New client'}
             </button>
           </div>
 
@@ -517,7 +517,7 @@ export default function CreateProposal() {
 
         <section className="cp-section">
           <h2>Template</h2>
-          <p className="cp-section-sub">How the proposal looks when shared with the customer.</p>
+          <p className="cp-section-sub">How the proposal looks when shared with the client.</p>
           <div className="cp-template-grid">
             {TEMPLATE_OPTIONS.map((opt) => (
               <button
