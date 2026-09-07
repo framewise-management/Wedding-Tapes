@@ -113,6 +113,25 @@ export const eventTypes = pgTable(
   ],
 );
 
+export const blockedDates = pgTable(
+  'blocked_dates',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    businessId: uuid('business_id').notNull(),
+    date: date({ mode: 'string' }).notNull(),
+    reason: varchar(),
+    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.businessId],
+      foreignColumns: [businesses.id],
+      name: 'FK_blocked_dates_business',
+    }).onDelete('cascade'),
+    unique('UQ_blocked_dates_business_date').on(table.businessId, table.date),
+  ],
+);
+
 export const packages = pgTable(
   'packages',
   {

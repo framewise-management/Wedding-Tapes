@@ -82,6 +82,7 @@ export type CalculateProposalInput = z.infer<typeof calculateProposalSchema>;
 export const listProposalsQuerySchema = z.object({
   search: z.string().optional(),
   status: z.enum(proposalStatuses).optional(),
+  customerId: z.uuid().optional(),
 });
 
 export const updateProposalStatusSchema = z.object({

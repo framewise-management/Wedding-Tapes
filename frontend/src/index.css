@@ -570,3 +570,87 @@ body:has(.pp-page) #root {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   WedPro palette — sampled pixel-exact from the Create Proposal reference
+   mockup. Kept under its own --wp-* namespace so it can be adopted screen by
+   screen without disturbing the tokens the rest of the app still uses.
+   --------------------------------------------------------------------------- */
+:root {
+  --wp-bg: #f9f9f9;
+  --wp-sidebar: #f7f6f4;
+  --wp-surface: #ffffff;
+  --wp-surface-2: #fcfbfa;
+  --wp-border: #e8ebef;
+  --wp-border-soft: #f1f3f5;
+  --wp-border-dashed: #d9dde3;
+
+  --wp-ink: #0b1220;
+  --wp-body: #3d4958;
+  --wp-muted: #6b7684;
+  --wp-faint: #98a1ad;
+
+  --wp-navy: #091926;
+  --wp-on-navy: #ffffff;
+
+  --wp-gold: #c8974b;
+  --wp-gold-strong: #b8863f;
+  --wp-gold-soft: #f0eae2;
+  --wp-gold-border: #d9b285;
+  --wp-amber-link: #9a6534;
+  --wp-premium: #b08d57;
+  /* Solid CTA fill sampled from the Change Client modal's own buttons --
+     a deeper brown than --wp-gold, used for filled buttons on modals
+     layered over the page (Add New Client / Select Client). */
+  --wp-gold-deep: #976e42;
+  --wp-gold-deep-hover: #86602f;
+  --wp-row-selected: #faf7f3;
+  --wp-tab-active: #eae3d9;
+
+  --wp-danger: #e64340;
+  --wp-danger-soft: #f9e1dd;
+  --wp-success: #4ba452;
+  --wp-success-soft: #eaf6ec;
+
+  --wp-shadow-sm: 0 1px 2px rgba(11, 18, 32, 0.04);
+  --wp-shadow: 0 1px 3px rgba(11, 18, 32, 0.06), 0 8px 24px rgba(11, 18, 32, 0.04);
+}
+
+/* The mockup is light-only; these keep the same design language legible when
+   the app's theme toggle is switched to dark. */
+[data-theme='dark'] {
+  --wp-bg: #14161a;
+  --wp-sidebar: #171a1f;
+  --wp-surface: #1c1f25;
+  --wp-surface-2: #21242b;
+  --wp-border: #2b2f37;
+  --wp-border-soft: #23262d;
+  --wp-border-dashed: #383d47;
+
+  --wp-ink: #f2f4f7;
+  --wp-body: #b9c1cc;
+  --wp-muted: #8b95a3;
+  --wp-faint: #6a7482;
+
+  --wp-navy: #e8eaee;
+  --wp-on-navy: #0b1220;
+
+  --wp-gold: #d8ad68;
+  --wp-gold-strong: #e0bb7f;
+  --wp-gold-soft: #2e2820;
+  --wp-gold-border: #6b5636;
+  --wp-amber-link: #d2a56a;
+  --wp-premium: #c7a06a;
+  --wp-gold-deep: #b98a54;
+  --wp-gold-deep-hover: #c99862;
+  --wp-row-selected: #2a241c;
+  --wp-tab-active: #33291d;
+
+  --wp-danger: #f08078;
+  --wp-danger-soft: #3a2422;
+  --wp-success: #6cc274;
+  --wp-success-soft: #1e2f21;
+
+  --wp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --wp-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+}

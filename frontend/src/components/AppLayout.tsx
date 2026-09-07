@@ -6,6 +6,7 @@ import { onSetupStatusChanged } from '../lib/setupStatus';
 import { useTheme } from '../theme';
 import type { Business } from '../types/business';
 import type { Service } from '../types/catalog';
+import type { Profile } from '../types/user';
 import './AppLayout.css';
 
 const NAV_ITEMS = [
@@ -39,6 +40,28 @@ function NavIcon({ path }: { path: string }) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d={path} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CameraIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M4 8.5a1.5 1.5 0 0 1 1.5-1.5h1.6l1-1.6A1.5 1.5 0 0 1 9.4 4.6h5.2a1.5 1.5 0 0 1 1.3.8l1 1.6h1.6A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-9Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12.5" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m9 6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -109,6 +132,8 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [needsBusiness, setNeedsBusiness] = useState(false);
   const [needsServices, setNeedsServices] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [business, setBusiness] = useState<Business | null>(null);
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true',
   );
@@ -130,7 +155,10 @@ export default function AppLayout() {
   useEffect(() => {
     function refreshSetupStatus() {
       apiGet<Business>('/api/business')
-        .then((business) => setNeedsBusiness(!business.phone))
+        .then((b) => {
+          setBusiness(b);
+          setNeedsBusiness(!b.phone);
+        })
         .catch(() => setNeedsBusiness(false));
       apiGet<Service[]>('/api/services')
         .then((services) => setNeedsServices(services.length === 0))
@@ -139,6 +167,18 @@ export default function AppLayout() {
     refreshSetupStatus();
     return onSetupStatusChanged(refreshSetupStatus);
   }, []);
+
+  useEffect(() => {
+    apiGet<Profile>('/api/auth/me').then(setProfile).catch(() => setProfile(null));
+  }, []);
+
+  const profileName =
+    [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') || profile?.email || 'Account';
+  const profileInitials =
+    [profile?.firstName, profile?.lastName]
+      .filter(Boolean)
+      .map((n) => n![0]!.toUpperCase())
+      .join('') || profileName[0]?.toUpperCase() || '?';
 
   function handleLogout() {
     clearToken();
@@ -159,7 +199,9 @@ export default function AppLayout() {
         >
           <MenuIcon />
         </button>
-        <span className="app-brand-mark">FW</span>
+        <span className="app-brand-mark">
+          <CameraIcon />
+        </span>
         <span className="app-brand-name">Framewise</span>
         <button
           type="button"
@@ -178,7 +220,9 @@ export default function AppLayout() {
 
       <aside className={'app-sidebar' + (collapsed ? ' collapsed' : '') + (mobileNavOpen ? ' mobile-open' : '')}>
         <div className="app-brand">
-          <span className="app-brand-mark">FW</span>
+          <span className="app-brand-mark">
+            <CameraIcon />
+          </span>
           <span className="app-brand-name">Framewise</span>
         </div>
 
@@ -206,6 +250,17 @@ export default function AppLayout() {
             </Link>
           ))}
         </nav>
+
+        <Link to="/profile" className="app-profile-card" title={collapsed ? profileName : undefined}>
+          <span className="app-profile-avatar">{profileInitials}</span>
+          <span className="app-profile-text">
+            <span className="app-profile-name">{profileName}</span>
+            <span className="app-profile-sub">{business?.name || 'Your Studio'}</span>
+          </span>
+          <span className="app-profile-chevron">
+            <ChevronIcon />
+          </span>
+        </Link>
 
         <div className="app-logout-wrap">
           <button
