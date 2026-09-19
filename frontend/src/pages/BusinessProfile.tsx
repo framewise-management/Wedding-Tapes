@@ -64,7 +64,6 @@ export default function BusinessProfile() {
         website: business.website ?? undefined,
         instagram: business.instagram ?? undefined,
         defaultValidityDays: business.defaultValidityDays ?? undefined,
-        defaultTerms: business.defaultTerms ?? undefined,
       });
       setBusiness(updated);
       setStatus('Saved');
@@ -228,19 +227,10 @@ export default function BusinessProfile() {
                   placeholder="14"
                 />
               </div>
-              <div>
-                <label className="bp-label" htmlFor="bp-terms">
-                  Default terms &amp; conditions
-                </label>
-                <textarea
-                  id="bp-terms"
-                  className="bp-textarea"
-                  rows={5}
-                  value={business.defaultTerms ?? ''}
-                  onChange={(e) => updateField('defaultTerms', e.target.value)}
-                  placeholder="Payment terms, cancellation policy, delivery timeline…"
-                />
-              </div>
+              <p className="bp-hint">
+                Terms &amp; conditions are managed as clauses in{' '}
+                <Link to="/terms" className="bp-back-link">Terms &amp; Conditions</Link>.
+              </p>
             </div>
           </section>
 

@@ -4,6 +4,7 @@ import {
   formatDate,
   groupByEvent,
   money,
+  termsText,
   type PdfBusiness,
   type PdfProposal,
 } from './pdf-shared';
@@ -275,7 +276,7 @@ function renderPaymentPage(doc: PDFKit.PDFDocument, proposal: PdfProposal, busin
   doc.y += 30;
   sectionLabel(doc, 'Terms');
   const terms =
-    business.defaultTerms ??
+    termsText(business) ??
     `The payment plan above is non-negotiable to hold the event date. The booking token confirms exclusivity for ${formatDate(
       proposal.weddingDate,
     )} and is credited toward the total investment. Album prices are tentative and subject to change based on the quality of album chosen.`;

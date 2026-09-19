@@ -1,3 +1,5 @@
+import type { Term } from './term';
+
 export interface Business {
   id: string;
   name: string;
@@ -13,4 +15,29 @@ export interface Business {
   googleCalendarId: string | null;
   defaultValidityDays: number | null;
   defaultTerms: string | null;
+  terms: Term[];
+  bankDetails: string | null;
+  upiId: string | null;
+  paymentNotes: string | null;
+  paymentConditions: PaymentCondition[] | null;
+  paymentModes: PaymentMode[] | null;
+  gstNumber: string | null;
+  invoicePrefix: string | null;
+  invoiceNextNumber: number | null;
+  receiptPrefix: string | null;
+  receiptNextNumber: number | null;
 }
+
+export type PaymentMode = 'UPI' | 'BANK' | 'CASH' | 'CHEQUE' | 'CARD';
+export interface PaymentCondition {
+  label: string;
+  percent: number;
+}
+
+export const PAYMENT_MODE_LABELS: Record<PaymentMode, string> = {
+  UPI: 'UPI',
+  BANK: 'Bank transfer',
+  CASH: 'Cash',
+  CHEQUE: 'Cheque',
+  CARD: 'Card',
+};

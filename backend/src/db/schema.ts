@@ -9,12 +9,15 @@ import {
   unique,
   boolean,
   date,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
 
 export type ProposalStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED';
 export type DiscountType = 'FIXED' | 'PERCENTAGE';
 export type ProposalTemplate = 'DARK_LUXE' | 'BRIGHT_MODERN' | 'EDITORIAL';
+export type PaymentMode = 'UPI' | 'BANK' | 'CASH' | 'CHEQUE' | 'CARD';
+export type PaymentCondition = { label: string; percent: number };
 
 export const businesses = pgTable('businesses', {
   id: uuid().defaultRandom().primaryKey().notNull(),
@@ -32,6 +35,16 @@ export const businesses = pgTable('businesses', {
   appleCalendarUrl: varchar('apple_calendar_url'),
   defaultValidityDays: integer('default_validity_days'),
   defaultTerms: text('default_terms'),
+  bankDetails: text('bank_details'),
+  upiId: varchar('upi_id'),
+  paymentNotes: text('payment_notes'),
+  paymentConditions: jsonb('payment_conditions').$type<PaymentCondition[]>(),
+  paymentModes: jsonb('payment_modes').$type<PaymentMode[]>(),
+  gstNumber: varchar('gst_number'),
+  invoicePrefix: varchar('invoice_prefix'),
+  invoiceNextNumber: integer('invoice_next_number'),
+  receiptPrefix: varchar('receipt_prefix'),
+  receiptNextNumber: integer('receipt_next_number'),
   createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'string' })
     .defaultNow()
@@ -110,6 +123,29 @@ export const eventTypes = pgTable(
       name: 'FK_event_types_business',
     }).onDelete('cascade'),
     unique('UQ_event_types_business_name').on(table.businessId, table.name),
+  ],
+);
+
+export const terms = pgTable(
+  'terms',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    businessId: uuid('business_id').notNull(),
+    title: varchar().notNull(),
+    body: text().notNull(),
+    active: boolean().default(true).notNull(),
+    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'string' })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => sql`now()`),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.businessId],
+      foreignColumns: [businesses.id],
+      name: 'FK_terms_business',
+    }).onDelete('cascade'),
   ],
 );
 

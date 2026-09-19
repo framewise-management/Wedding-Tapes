@@ -194,11 +194,23 @@ export default function ProposalSheet({
         <div className="pv-pricing-row pv-total"><span>Final total</span><span>{money(proposal.total)}</span></div>
       </section>
 
-      {business.defaultTerms && (
+      {business.terms?.length ? (
         <section className="pv-section">
           <h2>Terms &amp; conditions</h2>
-          <p className="pv-terms">{business.defaultTerms}</p>
+          {business.terms.map((term) => (
+            <div key={term.id}>
+              <h3 className="pv-terms-title">{term.title}</h3>
+              <p className="pv-terms">{term.body}</p>
+            </div>
+          ))}
         </section>
+      ) : (
+        business.defaultTerms && (
+          <section className="pv-section">
+            <h2>Terms &amp; conditions</h2>
+            <p className="pv-terms">{business.defaultTerms}</p>
+          </section>
+        )
       )}
     </div>
   );

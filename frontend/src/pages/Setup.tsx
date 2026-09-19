@@ -5,6 +5,7 @@ import type { Business } from '../types/business';
 import type { Package, Service } from '../types/catalog';
 import type { EventType } from '../types/eventType';
 import type { Profile } from '../types/user';
+import type { Term } from '../types/term';
 import './Setup.css';
 
 function PersonIcon() {
@@ -47,12 +48,29 @@ function PackagesIcon() {
   );
 }
 
+function PaymentIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3 10h18M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm2 8h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TermsIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 3h8l4 4v14H6V3ZM14 3v4h4M9 12h6M9 16h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function Setup() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
   const [services, setServices] = useState<Service[] | null>(null);
   const [packages, setPackages] = useState<Package[] | null>(null);
   const [eventTypes, setEventTypes] = useState<EventType[] | null>(null);
+  const [terms, setTerms] = useState<Term[] | null>(null);
 
   useEffect(() => {
     apiGet<Profile>('/api/auth/me').then(setProfile).catch(() => setProfile(null));
@@ -60,10 +78,14 @@ export default function Setup() {
     apiGet<Service[]>('/api/services?active=true').then(setServices).catch(() => setServices(null));
     apiGet<Package[]>('/api/packages').then(setPackages).catch(() => setPackages(null));
     apiGet<EventType[]>('/api/event-types?active=true').then(setEventTypes).catch(() => setEventTypes(null));
+    apiGet<Term[]>('/api/terms').then(setTerms).catch(() => setTerms(null));
   }, []);
 
   const businessComplete = Boolean(business?.phone);
   const profileComplete = Boolean(profile?.firstName);
+  const paymentsComplete = Boolean(
+    business?.paymentModes?.length && business?.paymentConditions?.length,
+  );
 
   const cards = [
     {
@@ -81,6 +103,25 @@ export default function Setup() {
       description: 'Your business name, logo, contact details, and default proposal terms.',
       status: business === null ? 'Loading…' : businessComplete ? 'Complete' : 'Needs setup',
       complete: businessComplete,
+    },
+    {
+      to: '/payments',
+      icon: <PaymentIcon />,
+      title: 'Payment & Invoice',
+      description: 'Payment conditions, accepted payment modes, and invoice/receipt settings.',
+      status: business === null ? 'Loading…' : paymentsComplete ? 'Complete' : 'Needs setup',
+      complete: paymentsComplete,
+    },
+    {
+      to: '/terms',
+      icon: <TermsIcon />,
+      title: 'Terms & Conditions',
+      description: 'The clause library printed on every proposal and PDF.',
+      status:
+        terms === null
+          ? 'Loading…'
+          : `${terms.length} clause${terms.length === 1 ? '' : 's'}`,
+      complete: (terms?.length ?? 0) > 0,
     },
     {
       to: '/services',

@@ -6,6 +6,8 @@ import Calendar from './pages/Calendar';
 import Setup from './pages/Setup';
 import BusinessProfile from './pages/BusinessProfile';
 import Profile from './pages/Profile';
+import Payments from './pages/Payments';
+import Terms from './pages/Terms';
 import Customers from './pages/Customers';
 import Services from './pages/Services';
 import Packages from './pages/Packages';
@@ -32,6 +34,8 @@ function App() {
           <Route path="/setup" element={<Setup />} />
           <Route path="/business" element={<BusinessProfile />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/clients" element={<Customers />} />
           <Route path="/customers" element={<Navigate to="/clients" replace />} />
           <Route path="/services" element={<Services />} />

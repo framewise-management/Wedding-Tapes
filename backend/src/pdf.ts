@@ -1,6 +1,13 @@
 import PDFDocument from 'pdfkit';
 import type { ProposalTemplate } from './db/schema';
-import { formatDate, groupByEvent, money, type PdfBusiness, type PdfProposal } from './pdf-shared';
+import {
+  formatDate,
+  groupByEvent,
+  money,
+  termsText,
+  type PdfBusiness,
+  type PdfProposal,
+} from './pdf-shared';
 import { generateEditorialPdf } from './pdf-editorial';
 
 export type { PdfBusiness, PdfProposal } from './pdf-shared';
@@ -418,11 +425,12 @@ function renderPricing(doc: PDFKit.PDFDocument, palette: Palette, proposal: PdfP
 }
 
 function renderTerms(doc: PDFKit.PDFDocument, palette: Palette, business: PdfBusiness): void {
-  if (!business.defaultTerms) return;
+  const terms = termsText(business);
+  if (!terms) return;
   sectionHeading(doc, palette, 'Terms & Conditions');
   const innerWidth = CONTENT_WIDTH - CARD_PAD * 2;
   doc.font('Helvetica').fontSize(9.5);
-  const textH = doc.heightOfString(business.defaultTerms, { width: innerWidth });
+  const textH = doc.heightOfString(terms, { width: innerWidth });
   const boxHeight = CARD_PAD * 2 + textH;
   ensureSpace(doc, boxHeight + 10);
   const boxY = doc.y;
@@ -431,7 +439,7 @@ function renderTerms(doc: PDFKit.PDFDocument, palette: Palette, business: PdfBus
     .fillAndStroke(palette.termsBg, palette.cardBorder);
   doc
     .fillColor(palette.muted)
-    .text(business.defaultTerms, PAGE_MARGIN + CARD_PAD, boxY + CARD_PAD, { width: innerWidth });
+    .text(terms, PAGE_MARGIN + CARD_PAD, boxY + CARD_PAD, { width: innerWidth });
   doc.x = PAGE_MARGIN;
   doc.y = boxY + boxHeight + 10;
   doc.fillColor(palette.body);

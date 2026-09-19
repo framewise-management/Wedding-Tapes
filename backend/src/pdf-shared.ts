@@ -9,6 +9,15 @@ export interface PdfBusiness {
   instagram: string | null;
   address: string | null;
   defaultTerms: string | null;
+  terms?: { title: string; body: string }[];
+}
+
+// Clause library wins; defaultTerms is the pre-library fallback.
+export function termsText(business: PdfBusiness): string | null {
+  if (business.terms?.length) {
+    return business.terms.map((t) => `${t.title}\n${t.body}`).join('\n\n');
+  }
+  return business.defaultTerms;
 }
 
 export interface PdfProposal {

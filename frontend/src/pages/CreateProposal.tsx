@@ -1039,12 +1039,22 @@ export default function CreateProposal() {
                   />
                   <h3 className="cp-subhead">Terms &amp; conditions</h3>
                   <p className="cp-panel-sub">
-                    Pulled from your business profile onto every proposal.{' '}
-                    <Link to="/business" className="cp-link">Edit terms</Link>
+                    Your active clauses print on every proposal.{' '}
+                    <Link to="/terms" className="cp-link">Edit terms</Link>
                   </p>
-                  <p className="cp-terms">
-                    {business?.defaultTerms || 'No default terms set yet.'}
-                  </p>
+                  {business?.terms?.length ? (
+                    business.terms.map((term) => (
+                      <p className="cp-terms" key={term.id}>
+                        <strong>{term.title}</strong>
+                        {'\n'}
+                        {term.body}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="cp-terms">
+                      {business?.defaultTerms || 'No terms set yet.'}
+                    </p>
+                  )}
                 </>
               )}
             </section>

@@ -329,6 +329,17 @@
   margin: 0;
 }
 
+.pv-terms-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 14px 0 4px;
+}
+
+.pv-terms-title:first-child {
+  margin-top: 0;
+}
+
 .pv-error {
   font-size: 14px;
   color: var(--error-text);
