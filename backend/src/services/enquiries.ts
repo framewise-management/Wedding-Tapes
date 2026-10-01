@@ -1,7 +1,6 @@
 import { and, desc, eq, ilike, or, type SQL } from 'drizzle-orm';
-import { businesses, enquiries } from '../db/schema';
-import { isPgError } from '../db/pg-error';
-import { BadRequestError, ConflictError } from '../lib/http-error';
+import { enquiries } from '../db/schema';
+import { NotFoundError } from '../lib/http-error';
 import { db } from '../db/client';
 import type { EnquiryStatus } from '../schemas/enquiries';
 
@@ -23,11 +22,6 @@ interface CreateEnquiryInput {
 }
 
 export async function createEnquiry(input: CreateEnquiryInput) {
-  const business = await db.select().from(businesses).where(eq(businesses.id, input.businessId)).limit(1);
-  if (business.length === 0) {
-    throw new BadRequestError('Business not found');
-  }
-
   const [result] = await db
     .insert(enquiries)
     .values({
@@ -77,7 +71,8 @@ export async function findOneEnquiry(businessId: string, id: string) {
     .from(enquiries)
     .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)));
 
-  return result || null;
+  if (!result) throw new NotFoundError('Enquiry not found');
+  return result;
 }
 
 export async function updateEnquiry(businessId: string, id: string, updates: { status?: EnquiryStatus }) {
@@ -87,21 +82,16 @@ export async function updateEnquiry(businessId: string, id: string, updates: { s
     .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
     .returning();
 
-  return result || null;
+  if (!result) throw new NotFoundError('Enquiry not found');
+  return result;
 }
 
 export async function deleteEnquiry(businessId: string, id: string) {
-  try {
-    const [result] = await db
-      .delete(enquiries)
-      .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
-      .returning();
+  const [result] = await db
+    .delete(enquiries)
+    .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
+    .returning();
 
-    return result || null;
-  } catch (err) {
-    if (isPgError(err, '23503')) {
-      throw new ConflictError('Enquiry is referenced by other records and cannot be deleted');
-    }
-    throw err;
-  }
+  if (!result) throw new NotFoundError('Enquiry not found');
+  return result;
 }

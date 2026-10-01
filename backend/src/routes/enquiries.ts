@@ -36,30 +36,18 @@ enquiriesRoutes.get('/', async (c) => {
 enquiriesRoutes.get('/:id', async (c) => {
   const id = parseUuidParam(c, 'id');
   const user = c.get('user');
-  const enquiry = await findOneEnquiry(user.businessId, id);
-  if (!enquiry) {
-    return c.json({ error: { code: 'NOT_FOUND', message: 'Enquiry not found' } }, 404);
-  }
-  return c.json(enquiry);
+  return c.json(await findOneEnquiry(user.businessId, id));
 });
 
 enquiriesRoutes.put('/:id', async (c) => {
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, updateEnquirySchema);
   const user = c.get('user');
-  const enquiry = await updateEnquiry(user.businessId, id, input);
-  if (!enquiry) {
-    return c.json({ error: { code: 'NOT_FOUND', message: 'Enquiry not found' } }, 404);
-  }
-  return c.json(enquiry);
+  return c.json(await updateEnquiry(user.businessId, id, input));
 });
 
 enquiriesRoutes.delete('/:id', async (c) => {
   const id = parseUuidParam(c, 'id');
   const user = c.get('user');
-  const enquiry = await deleteEnquiry(user.businessId, id);
-  if (!enquiry) {
-    return c.json({ error: { code: 'NOT_FOUND', message: 'Enquiry not found' } }, 404);
-  }
-  return c.json(enquiry);
+  return c.json(await deleteEnquiry(user.businessId, id));
 });
