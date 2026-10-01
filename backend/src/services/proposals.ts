@@ -197,8 +197,38 @@ export async function updateProposal(businessId: string, id: string, input: Upda
     await findOneCustomer(businessId, input.customerId);
   }
 
+  // Every lookup and validation runs before the first write, so a rejected
+  // replacement can't leave the draft with its rows already deleted.
   const eventSnapshots = input.events
     ? await Promise.all(input.events.map((e) => resolveEventSnapshot(businessId, e)))
+    : undefined;
+
+  const eventRefs = eventSnapshots ?? existing.events;
+  const existingPackageIds = new Set(existing.packages.map((p) => p.packageId));
+  const existingServiceIds = new Set(existing.items.map((i) => i.serviceId));
+  const newPackages = input.packages
+    ? await Promise.all(
+        input.packages.map((p) =>
+          resolvePackageSnapshot(
+            businessId,
+            p,
+            !existingPackageIds.has(p.packageId),
+            eventIdAt(eventRefs, p.eventIndex),
+          ),
+        ),
+      )
+    : undefined;
+  const newItems = input.items
+    ? await Promise.all(
+        input.items.map((i) =>
+          resolveItemSnapshot(
+            businessId,
+            i,
+            !existingServiceIds.has(i.serviceId),
+            eventIdAt(eventRefs, i.eventIndex),
+          ),
+        ),
+      )
     : undefined;
 
   const patch: Partial<typeof proposals.$inferInsert> = {};
@@ -217,66 +247,43 @@ export async function updateProposal(businessId: string, id: string, input: Upda
   if (input.taxRate !== undefined) patch.taxRate = input.taxRate;
   if (input.template !== undefined) patch.template = input.template;
 
-  if (Object.keys(patch).length > 0) {
-    await db
+  Object.assign(
+    patch,
+    calculatePricing({
+      packages: newPackages ?? existing.packages,
+      items: newItems ?? existing.items,
+      discountType: patch.discountType !== undefined ? patch.discountType : existing.discountType,
+      discountValue: patch.discountValue !== undefined ? patch.discountValue : existing.discountValue,
+      taxRate: patch.taxRate ?? existing.taxRate,
+    }),
+  );
+
+  await db.transaction(async (tx) => {
+    await tx
       .update(proposals)
       .set(patch)
       .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-  }
 
-  if (eventSnapshots) {
-    await db.delete(proposalEvents).where(eq(proposalEvents.proposalId, id));
-    await db
-      .insert(proposalEvents)
-      .values(eventSnapshots.map((e) => ({ ...e, proposalId: id })));
-  }
-
-  if (input.packages !== undefined || input.items !== undefined) {
-    if (input.packages !== undefined) {
-      await db.delete(proposalPackages).where(eq(proposalPackages.proposalId, id));
+    if (eventSnapshots) {
+      await tx.delete(proposalEvents).where(eq(proposalEvents.proposalId, id));
+      if (eventSnapshots.length) {
+        await tx.insert(proposalEvents).values(eventSnapshots.map((e) => ({ ...e, proposalId: id })));
+      }
     }
-    if (input.items !== undefined) {
-      await db.delete(proposalItems).where(eq(proposalItems.proposalId, id));
+    if (newPackages) {
+      await tx.delete(proposalPackages).where(eq(proposalPackages.proposalId, id));
+      if (newPackages.length) {
+        await tx.insert(proposalPackages).values(newPackages.map((p) => ({ ...p, proposalId: id })));
+      }
     }
-    const existingPackageIds = new Set(existing.packages.map((p) => p.packageId));
-    const existingServiceIds = new Set(existing.items.map((i) => i.serviceId));
-
-    const eventRefs = eventSnapshots ?? existing.events;
-    const newPackages = input.packages
-      ? await Promise.all(
-          input.packages.map((p) =>
-            resolvePackageSnapshot(
-              businessId,
-              p,
-              !existingPackageIds.has(p.packageId),
-              eventIdAt(eventRefs, p.eventIndex),
-            ),
-          ),
-        )
-      : undefined;
-    const newItems = input.items
-      ? await Promise.all(
-          input.items.map((i) =>
-            resolveItemSnapshot(
-              businessId,
-              i,
-              !existingServiceIds.has(i.serviceId),
-              eventIdAt(eventRefs, i.eventIndex),
-            ),
-          ),
-        )
-      : undefined;
-
-    if (newPackages?.length) {
-      await db.insert(proposalPackages).values(newPackages.map((p) => ({ ...p, proposalId: id })));
+    if (newItems) {
+      await tx.delete(proposalItems).where(eq(proposalItems.proposalId, id));
+      if (newItems.length) {
+        await tx.insert(proposalItems).values(newItems.map((i) => ({ ...i, proposalId: id })));
+      }
     }
-    if (newItems?.length) {
-      await db.insert(proposalItems).values(newItems.map((i) => ({ ...i, proposalId: id })));
-    }
-  }
+  });
 
-  const refreshed = await findOneProposal(businessId, id);
-  await persistPricing(refreshed);
   return findOneProposal(businessId, id);
 }
 
