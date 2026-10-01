@@ -3,13 +3,10 @@ import { Link } from 'react-router-dom';
 import { apiGet } from '../api/client';
 import type { Proposal, ProposalStatus } from '../types/proposal';
 import './Dashboard.css';
+import { money } from '../lib/format';
 
 const STAT_STATUSES: ProposalStatus[] = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'];
 const RECENT_COUNT = 5;
-
-function money(value: number): string {
-  return `₹${value.toLocaleString('en-IN')}`;
-}
 
 export default function Dashboard() {
   const [proposals, setProposals] = useState<Proposal[] | null>(null);

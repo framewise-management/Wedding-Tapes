@@ -12,6 +12,7 @@ import type { Proposal, ProposalTemplate } from '../types/proposal';
 import type { EventType } from '../types/eventType';
 import ChangeClientModal, { type EventSummary } from '../components/ChangeClientModal';
 import './CreateProposal.css';
+import { money } from '../lib/format';
 
 const TEMPLATE_OPTIONS: { value: ProposalTemplate; label: string; description: string; swatch: string[] }[] = [
   { value: 'DARK_LUXE', label: 'Dark Luxe', description: 'Moody dark background, gold & crimson accents, serif headings.', swatch: ['#0d0703', '#d4a843', '#c0392b'] },
@@ -47,10 +48,6 @@ interface SelectedItem {
   quantity: number;
   isOptional: boolean;
   eventKey: string;
-}
-
-function money(value: number): string {
-  return `₹${value.toLocaleString('en-IN')}`;
 }
 
 function initials(name: string): string {

@@ -6,12 +6,9 @@ import type { Proposal, ProposalStatus } from '../types/proposal';
 import type { Business } from '../types/business';
 import { formatDateRange } from '../lib/dates';
 import './ProposalPreview.css';
+import { formatDate } from '../lib/format';
 
 const STATUSES: ProposalStatus[] = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'];
-
-function shortDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-}
 
 function plural(count: number, noun: string): string {
   return `${count} ${noun}${count === 1 ? '' : 's'}`;
@@ -133,7 +130,7 @@ export default function ProposalPreview() {
   if (!proposal || !business) return <p>Loading…</p>;
 
   const summaryParts = [
-    formatDateRange(proposal.weddingDate, proposal.weddingEndDate, shortDate),
+    formatDateRange(proposal.weddingDate, proposal.weddingEndDate, formatDate),
     proposal.events.length > 0 ? plural(proposal.events.length, 'event') : null,
     proposal.packages.length > 0 ? plural(proposal.packages.length, 'package') : null,
     proposal.items.length > 0 ? plural(proposal.items.length, 'service') : null,
@@ -204,7 +201,7 @@ export default function ProposalPreview() {
                         }}
                         disabled={downloading}
                       >
-                        {e.name} — {shortDate(e.date)}
+                        {e.name} — {formatDate(e.date)}
                       </button>
                     ))}
                   </>

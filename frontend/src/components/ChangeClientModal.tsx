@@ -6,6 +6,7 @@ import { PhoneInput } from './PhoneInput';
 import type { Customer } from '../types/customer';
 import type { Proposal } from '../types/proposal';
 import './ChangeClientModal.css';
+import { formatDate } from '../lib/format';
 
 const PAGE_SIZE = 5;
 type Tab = 'all' | 'recent' | 'leads' | 'archived';
@@ -25,10 +26,6 @@ function initials(name: string): string {
       .map((w) => w[0].toUpperCase())
       .join('') || '—'
   );
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export interface EventSummary {

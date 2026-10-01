@@ -4,6 +4,7 @@ import { apiGet, apiPatch } from '../api/client';
 import type { Proposal } from '../types/proposal';
 import { formatDateRange } from '../lib/dates';
 import './Projects.css';
+import { formatDate, money } from '../lib/format';
 
 type Tab = 'active' | 'closed' | 'archived';
 
@@ -12,14 +13,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'closed', label: 'Closed' },
   { key: 'archived', label: 'Archived' },
 ];
-
-function money(value: number): string {
-  return `₹${value.toLocaleString('en-IN')}`;
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-}
 
 function matchesTab(p: Proposal, tab: Tab): boolean {
   if (tab === 'archived') return p.isArchived;
