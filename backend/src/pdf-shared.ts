@@ -1,5 +1,5 @@
 import type { DiscountType, ProposalTemplate } from './db/schema';
-import { NotFoundError } from './lib/http-error';
+import { calculatePricing } from './pricing';
 
 export interface PdfBusiness {
   name: string;
@@ -43,6 +43,7 @@ export interface PdfProposal {
     packageName: string;
     packageDescription: string | null;
     quantity: number;
+    unitPrice: number;
     total: number;
     proposalEventId: string | null;
   }[];
@@ -50,6 +51,7 @@ export interface PdfProposal {
     serviceName: string;
     description: string | null;
     quantity: number;
+    unitPrice: number;
     total: number;
     isOptional: boolean;
     proposalEventId: string | null;
@@ -108,20 +110,24 @@ export function groupByEvent<T extends { proposalEventId: string | null }>(
  * no defined per-event split, so a scoped export shows the event's own line
  * total instead of a share of the full proposal total.
  */
-export function filterProposalToEvent<T extends PdfProposal>(proposal: T, eventId: string): T {
+export function filterProposalToEvent<T extends PdfProposal>(proposal: T, eventId: string): T | undefined {
   const event = proposal.events.find((e) => e.id === eventId);
-  if (!event) throw new NotFoundError('Event not found on this proposal');
+  if (!event) return undefined;
   const packages = proposal.packages.filter((p) => p.proposalEventId === eventId);
   const items = proposal.items.filter((i) => i.proposalEventId === eventId);
-  const total =
-    packages.reduce((sum, p) => sum + p.total, 0) +
-    items.filter((i) => !i.isOptional).reduce((sum, i) => sum + i.total, 0);
+  const { subtotal, total } = calculatePricing({
+    packages,
+    items,
+    discountType: null,
+    discountValue: null,
+    taxRate: 0,
+  });
   return {
     ...proposal,
     events: [event],
     packages,
     items,
-    subtotal: total,
+    subtotal,
     discountAmount: 0,
     discountType: null,
     discountValue: null,

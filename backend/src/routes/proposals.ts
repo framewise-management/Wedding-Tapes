@@ -25,6 +25,7 @@ import {
 import { getBusiness } from '../services/business';
 import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
 import { filterProposalToEvent } from '../pdf-shared';
+import { NotFoundError } from '../lib/http-error';
 
 export const proposalsRoutes = new Hono<{ Variables: AuthedVariables }>();
 
@@ -97,7 +98,9 @@ proposalsRoutes.post('/:id/generate-pdf', async (c) => {
     findOneProposal(user.businessId, id),
     getBusiness(user.businessId),
   ]);
-  const pdf = await generateProposalPdf(eventId ? filterProposalToEvent(proposal, eventId) : proposal, business);
+  const scoped = eventId ? filterProposalToEvent(proposal, eventId) : proposal;
+  if (!scoped) throw new NotFoundError('Event not found on this proposal');
+  const pdf = await generateProposalPdf(scoped, business);
   return c.body(new Uint8Array(pdf), 200, {
     'Content-Type': 'application/pdf',
     'Content-Disposition': proposalPdfContentDisposition(proposal.proposalNumber),
