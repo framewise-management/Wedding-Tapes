@@ -1,13 +1,17 @@
 import { and, eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { services } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
 import type { CreateServiceInput, UpdateServiceInput } from '../schemas/services';
 
 export class CatalogServiceService {
+  constructor(
+    private readonly db: Db,
+  ) {}
+
   findAll(businessId: string, active?: boolean) {
-    return db.query.services.findMany({
+    return this.db.query.services.findMany({
       where: and(
         eq(services.businessId, businessId),
         active !== undefined ? eq(services.active, active) : undefined,
@@ -16,7 +20,7 @@ export class CatalogServiceService {
   }
 
   async findOne(businessId: string, id: string) {
-    const service = await db.query.services.findFirst({
+    const service = await this.db.query.services.findFirst({
       where: and(eq(services.id, id), eq(services.businessId, businessId)),
     });
     if (!service) throw new NotFoundError('Service not found');
@@ -24,7 +28,7 @@ export class CatalogServiceService {
   }
 
   async create(businessId: string, input: CreateServiceInput) {
-    const [service] = await db
+    const [service] = await this.db
       .insert(services)
       .values({ ...input, businessId })
       .returning();
@@ -33,7 +37,7 @@ export class CatalogServiceService {
 
   async update(businessId: string, id: string, input: UpdateServiceInput) {
     await this.findOne(businessId, id);
-    await db
+    await this.db
       .update(services)
       .set(input)
       .where(and(eq(services.id, id), eq(services.businessId, businessId)));
@@ -43,7 +47,7 @@ export class CatalogServiceService {
   async remove(businessId: string, id: string) {
     await this.findOne(businessId, id);
     try {
-      await db.delete(services).where(and(eq(services.id, id), eq(services.businessId, businessId)));
+      await this.db.delete(services).where(and(eq(services.id, id), eq(services.businessId, businessId)));
     } catch (err) {
       if (isPgError(err, '23503')) {
         throw new ConflictError('Cannot delete a service that is part of a package');
@@ -53,4 +57,3 @@ export class CatalogServiceService {
   }
 }
 
-export const catalogServiceService = new CatalogServiceService();

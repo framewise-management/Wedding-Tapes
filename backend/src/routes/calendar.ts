@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { calendarFeedService } from '../services/calendar';
+import { calendarFeedService } from '../services';
 
 // Unauthenticated by design: the token in the URL is the credential, so the
 // feed can be handed to Google Calendar, which sends no auth header.

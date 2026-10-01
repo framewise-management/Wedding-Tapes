@@ -1,14 +1,19 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { businesses } from '../db/schema';
 import { NotFoundError } from '../lib/http-error';
 import type { UpdateBusinessInput } from '../schemas/business';
-import { termService } from './terms';
+import type { TermService } from './terms';
 
 export class BusinessService {
+  constructor(
+    private readonly db: Db,
+    private readonly terms: TermService,
+  ) {}
+
   // Raw row, including secrets: server-side callers only. Anything sent to a client goes through get.
   async findRow(businessId: string) {
-    const business = await db.query.businesses.findFirst({
+    const business = await this.db.query.businesses.findFirst({
       where: eq(businesses.id, businessId),
     });
     if (!business) throw new NotFoundError('Business not found');
@@ -24,7 +29,7 @@ export class BusinessService {
       ...safe,
       // Active clauses ride along so every proposal/PDF render path gets them
       // without a second fetch; the management page reads /api/terms directly.
-      terms: await termService.findAll(businessId, true),
+      terms: await this.terms.findAll(businessId, true),
       appleConnected: Boolean(safe.appleCalendarUrl),
       appleCredentialSaved: Boolean(applePasswordEnc),
     };
@@ -32,9 +37,8 @@ export class BusinessService {
 
   async update(businessId: string, input: UpdateBusinessInput) {
     await this.get(businessId);
-    await db.update(businesses).set(input).where(eq(businesses.id, businessId));
+    await this.db.update(businesses).set(input).where(eq(businesses.id, businessId));
     return this.get(businessId);
   }
 }
 
-export const businessService = new BusinessService();

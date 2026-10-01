@@ -7,7 +7,7 @@ import {
   listEventTypesQuerySchema,
   updateEventTypeSchema,
 } from '../schemas/event-types';
-import { eventTypeService } from '../services/event-types';
+import { eventTypeService } from '../services';
 
 export const eventTypesRoutes = new Hono<{ Variables: AuthedVariables }>();
 

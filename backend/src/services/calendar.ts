@@ -1,21 +1,26 @@
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { NotFoundError } from '../lib/http-error';
 import { calendarEventFor, SYNCED_STATUSES, type CalendarEvent } from './calendar-events';
-import { businessService } from './business';
+import type { BusinessService } from './business';
 
 export type { CalendarEvent };
 
 
 export class CalendarFeedService {
+  constructor(
+    private readonly db: Db,
+    private readonly business: BusinessService,
+  ) {}
+
   async getOrCreateToken(businessId: string): Promise<string> {
-    const business = await businessService.findRow(businessId);
+    const business = await this.business.findRow(businessId);
     if (business.calendarToken) return business.calendarToken;
   
     const token = randomUUID();
-    await db.update(businesses).set({ calendarToken: token }).where(eq(businesses.id, businessId));
+    await this.db.update(businesses).set({ calendarToken: token }).where(eq(businesses.id, businessId));
     return token;
   }
   
@@ -108,12 +113,12 @@ export class CalendarFeedService {
   
 
   async buildFeed(token: string): Promise<string> {
-    const business = await db.query.businesses.findFirst({
+    const business = await this.db.query.businesses.findFirst({
       where: eq(businesses.calendarToken, token),
     });
     if (!business) throw new NotFoundError('Calendar not found');
   
-    const rows = await db.query.proposals.findMany({
+    const rows = await this.db.query.proposals.findMany({
       where: and(eq(proposals.businessId, business.id), inArray(proposals.status, [...SYNCED_STATUSES])),
       with: { customer: true },
     });
@@ -122,4 +127,3 @@ export class CalendarFeedService {
   }
 }
 
-export const calendarFeedService = new CalendarFeedService();

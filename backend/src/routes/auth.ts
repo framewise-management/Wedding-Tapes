@@ -9,7 +9,7 @@ import {
   signupSchema,
   updateProfileSchema,
 } from '../schemas/auth';
-import { authService } from '../services/auth';
+import { authService } from '../services';
 
 export const authRoutes = new Hono<{ Variables: AuthedVariables }>();
 

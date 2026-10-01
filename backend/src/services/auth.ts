@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { businesses, users } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import {
@@ -12,7 +12,7 @@ import {
 import { signJwt } from '../lib/jwt';
 import { supabase } from '../lib/supabase';
 import { notifyDiscord } from '../lib/discord';
-import { eventTypeService } from './event-types';
+import type { EventTypeService } from './event-types';
 import type {
   GoogleAuthInput,
   LoginInput,
@@ -22,6 +22,11 @@ import type {
 } from '../schemas/auth';
 
 export class AuthService {
+  constructor(
+    private readonly db: Db,
+    private readonly eventTypes: EventTypeService,
+  ) {}
+
   private issueToken(user: { id: string; businessId: string; email: string }) {
     return { token: signJwt({ sub: user.id, businessId: user.businessId, email: user.email }) };
   }
@@ -44,7 +49,7 @@ export class AuthService {
       throw new UnauthorizedError('Invalid email or password');
     }
 
-    const user = await db.query.users.findFirst({
+    const user = await this.db.query.users.findFirst({
       where: eq(users.email, input.email),
       with: { business: true },
     });
@@ -58,7 +63,7 @@ export class AuthService {
   }
 
   async signup(input: SignupInput): Promise<{ message: string }> {
-    const existing = await db.query.users.findFirst({ where: eq(users.email, input.email) });
+    const existing = await this.db.query.users.findFirst({ where: eq(users.email, input.email) });
     if (existing) {
       throw new ConflictError('An account with this email already exists');
     }
@@ -81,7 +86,7 @@ export class AuthService {
     }
 
     try {
-      await db.transaction(async (tx) => {
+      await this.db.transaction(async (tx) => {
         const [business] = await tx
           .insert(businesses)
           .values({ name: input.businessName, email: input.email })
@@ -93,7 +98,7 @@ export class AuthService {
           lastName: input.lastName,
           email: input.email,
         });
-        await eventTypeService.seedDefaults(tx, business.id);
+        await this.eventTypes.seedDefaults(tx, business.id);
       });
     } catch (err) {
       if (isPgError(err, '23505')) {
@@ -153,8 +158,8 @@ export class AuthService {
     }
 
     const existing =
-      (await db.query.users.findFirst({ where: eq(users.id, authUser.id), with: { business: true } })) ??
-      (await db.query.users.findFirst({ where: eq(users.email, email), with: { business: true } }));
+      (await this.db.query.users.findFirst({ where: eq(users.id, authUser.id), with: { business: true } })) ??
+      (await this.db.query.users.findFirst({ where: eq(users.email, email), with: { business: true } }));
     if (existing) {
       await notifyDiscord(`🔑 Login via Google: ${existing.email} (**${existing.business.name}**)`);
       return this.issueToken(existing);
@@ -163,7 +168,7 @@ export class AuthService {
     const profile = this.profileFromGoogleMetadata(authUser.user_metadata ?? {}, email);
 
     try {
-      const created = await db.transaction(async (tx) => {
+      const created = await this.db.transaction(async (tx) => {
         const [business] = await tx
           .insert(businesses)
           .values({ name: profile.businessName, email })
@@ -178,7 +183,7 @@ export class AuthService {
             email,
           })
           .returning();
-        await eventTypeService.seedDefaults(tx, business.id);
+        await this.eventTypes.seedDefaults(tx, business.id);
         return user;
       });
       await notifyDiscord(`🆕 New signup via Google: **${profile.businessName}** (${email})`);
@@ -186,8 +191,8 @@ export class AuthService {
     } catch (err) {
       if (isPgError(err, '23505')) {
         const raced =
-          (await db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
-          (await db.query.users.findFirst({ where: eq(users.email, email) }));
+          (await this.db.query.users.findFirst({ where: eq(users.id, authUser.id) })) ??
+          (await this.db.query.users.findFirst({ where: eq(users.email, email) }));
         if (raced) {
           return this.issueToken(raced);
         }
@@ -197,7 +202,7 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    const user = await db.query.users.findFirst({
+    const user = await this.db.query.users.findFirst({
       where: eq(users.id, userId),
       columns: { id: true, firstName: true, lastName: true, email: true, phone: true, createdAt: true },
     });
@@ -207,9 +212,8 @@ export class AuthService {
 
   async updateProfile(userId: string, input: UpdateProfileInput) {
     await this.getProfile(userId);
-    await db.update(users).set(input).where(eq(users.id, userId));
+    await this.db.update(users).set(input).where(eq(users.id, userId));
     return this.getProfile(userId);
   }
 }
 
-export const authService = new AuthService();

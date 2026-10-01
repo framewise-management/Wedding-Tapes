@@ -1,15 +1,23 @@
 import { randomUUID } from 'crypto';
 import { and, eq, like, sql } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { proposals } from '../db/schema';
 import { BadRequestError } from '../lib/http-error';
 import type { ProposalEventInput } from '../schemas/proposals';
-import { businessService } from './business';
-import { catalogServiceService } from './catalog-services';
-import { eventTypeService } from './event-types';
-import { packageService } from './packages';
+import type { BusinessService } from './business';
+import type { CatalogServiceService } from './catalog-services';
+import type { EventTypeService } from './event-types';
+import type { PackageService } from './packages';
 
 export class ProposalSnapshotService {
+  constructor(
+    private readonly db: Db,
+    private readonly business: BusinessService,
+    private readonly catalog: CatalogServiceService,
+    private readonly eventTypes: EventTypeService,
+    private readonly packages: PackageService,
+  ) {}
+
   eventIdAt(events: { id: string }[] | undefined, index: number | undefined): string | null {
     if (index === undefined) return null;
     const event = events?.[index];
@@ -23,7 +31,7 @@ export class ProposalSnapshotService {
     // The catalog name wins over whatever the client sent, and is then snapshotted
     // so a later rename or delete of the event type can't rewrite this proposal.
     const eventType = input.eventTypeId
-      ? await eventTypeService.findOne(businessId, input.eventTypeId)
+      ? await this.eventTypes.findOne(businessId, input.eventTypeId)
       : null;
     return {
       // Assigned here rather than by the DB default so line items can reference
@@ -42,7 +50,7 @@ export class ProposalSnapshotService {
     requireActive: boolean,
     proposalEventId: string | null,
   ) {
-    const pkg = await packageService.findOne(businessId, input.packageId);
+    const pkg = await this.packages.findOne(businessId, input.packageId);
     if (requireActive && !pkg.active) {
       throw new BadRequestError(`${pkg.name} is not active and cannot be added`);
     }
@@ -68,7 +76,7 @@ export class ProposalSnapshotService {
     requireActive: boolean,
     proposalEventId: string | null,
   ) {
-    const service = await catalogServiceService.findOne(businessId, input.serviceId);
+    const service = await this.catalog.findOne(businessId, input.serviceId);
     if (requireActive && !service.active) {
       throw new BadRequestError(`${service.name} is not active and cannot be added`);
     }
@@ -92,7 +100,7 @@ export class ProposalSnapshotService {
   async nextNumber(businessId: string): Promise<string> {
     const year = new Date().getFullYear();
     // ponytail: count-based sequence, not concurrency-safe; add a DB sequence/advisory lock if concurrent proposal creation becomes real.
-    const [{ count }] = await db
+    const [{ count }] = await this.db
       .select({ count: sql<number>`count(*)::int` })
       .from(proposals)
       .where(and(eq(proposals.businessId, businessId), like(proposals.proposalNumber, `WP-${year}-%`)));
@@ -105,7 +113,7 @@ export class ProposalSnapshotService {
     provided?: string,
   ): Promise<string | null> {
     if (provided) return provided;
-    const business = await businessService.get(businessId);
+    const business = await this.business.get(businessId);
     if (!business.defaultValidityDays) return null;
     const date = new Date();
     date.setDate(date.getDate() + business.defaultValidityDays);
@@ -113,4 +121,3 @@ export class ProposalSnapshotService {
   }
 }
 
-export const proposalSnapshotService = new ProposalSnapshotService();

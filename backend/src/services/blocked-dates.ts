@@ -1,13 +1,17 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { blockedDates } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
 import type { CreateBlockedDateInput } from '../schemas/blocked-dates';
 
 export class BlockedDateService {
+  constructor(
+    private readonly db: Db,
+  ) {}
+
   findAll(businessId: string) {
-    return db.query.blockedDates.findMany({
+    return this.db.query.blockedDates.findMany({
       where: eq(blockedDates.businessId, businessId),
       orderBy: asc(blockedDates.date),
     });
@@ -15,7 +19,7 @@ export class BlockedDateService {
 
   async create(businessId: string, input: CreateBlockedDateInput) {
     try {
-      const [row] = await db
+      const [row] = await this.db
         .insert(blockedDates)
         .values({ businessId, date: input.date, reason: input.reason ?? null })
         .returning();
@@ -29,14 +33,13 @@ export class BlockedDateService {
   }
 
   async remove(businessId: string, id: string) {
-    const existing = await db.query.blockedDates.findFirst({
+    const existing = await this.db.query.blockedDates.findFirst({
       where: and(eq(blockedDates.id, id), eq(blockedDates.businessId, businessId)),
     });
     if (!existing) throw new NotFoundError('Blocked date not found');
-    await db
+    await this.db
       .delete(blockedDates)
       .where(and(eq(blockedDates.id, id), eq(blockedDates.businessId, businessId)));
   }
 }
 
-export const blockedDateService = new BlockedDateService();

@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, ilike, inArray, sql } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import {
   customers,
   proposalEvents,
@@ -11,10 +11,10 @@ import type { ProposalStatus } from '../db/schema';
 import { BadRequestError, ConflictError, NotFoundError } from '../lib/http-error';
 import { calculatePricing } from '../pricing';
 import { deriveEventFields } from '../event-dates';
-import { customerService } from './customers';
-import { proposalSnapshotService } from './proposal-snapshots';
+import type { CustomerService } from './customers';
+import type { ProposalSnapshotService } from './proposal-snapshots';
 import { notifyDiscord } from '../lib/discord';
-import { calendarSyncService } from './calendar-sync';
+import type { CalendarSyncService } from './calendar-sync';
 import type {
   CalculateProposalInput,
   CreateProposalInput,
@@ -26,9 +26,16 @@ const RELATIONS = {
   packages: true,
   items: true,
   events: { orderBy: [asc(proposalEvents.date), asc(proposalEvents.createdAt)] },
-} satisfies NonNullable<Parameters<typeof db.query.proposals.findFirst>[0]>['with'];
+} satisfies NonNullable<Parameters<Db['query']['proposals']['findFirst']>[0]>['with'];
 
 export class ProposalService {
+  constructor(
+    private readonly db: Db,
+    private readonly customers: CustomerService,
+    private readonly snapshots: ProposalSnapshotService,
+    private readonly calendarSync: CalendarSyncService,
+  ) {}
+
   async findAll(
     businessId: string,
     query: { search?: string; status?: ProposalStatus; customerId?: string; archived?: boolean } = {},
@@ -36,7 +43,7 @@ export class ProposalService {
     // The customer.name filter can't be expressed in a relational-query
     // `where`, so find matching ids via a join first, then re-fetch with
     // relations preserving the same order.
-    const matches = await db
+    const matches = await this.db
       .select({ id: proposals.id })
       .from(proposals)
       .leftJoin(customers, eq(proposals.customerId, customers.id))
@@ -53,7 +60,7 @@ export class ProposalService {
 
     if (matches.length === 0) return [];
 
-    return db.query.proposals.findMany({
+    return this.db.query.proposals.findMany({
       where: inArray(
         proposals.id,
         matches.map((m) => m.id),
@@ -64,7 +71,7 @@ export class ProposalService {
   }
 
   async findOne(businessId: string, id: string) {
-    const proposal = await db.query.proposals.findFirst({
+    const proposal = await this.db.query.proposals.findFirst({
       where: and(eq(proposals.id, id), eq(proposals.businessId, businessId)),
       with: RELATIONS,
     });
@@ -73,7 +80,7 @@ export class ProposalService {
   }
 
   async findById(id: string) {
-    const proposal = await db.query.proposals.findFirst({
+    const proposal = await this.db.query.proposals.findFirst({
       where: eq(proposals.id, id),
       with: RELATIONS,
     });
@@ -82,7 +89,7 @@ export class ProposalService {
   }
 
   async incrementShareViewCount(id: string) {
-    await db
+    await this.db
       .update(proposals)
       .set({ shareViewCount: sql`${proposals.shareViewCount} + 1` })
       .where(eq(proposals.id, id));
@@ -90,28 +97,28 @@ export class ProposalService {
 
   async remove(businessId: string, id: string) {
     const existing = await this.findOne(businessId, id);
-    await db.delete(proposals).where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-    await calendarSyncService.removeProposal(existing);
+    await this.db.delete(proposals).where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
+    await this.calendarSync.removeProposal(existing);
   }
 
   async create(businessId: string, input: CreateProposalInput) {
     if (!input.packages?.length && !input.items?.length) {
       throw new BadRequestError('A proposal needs at least one package or service');
     }
-    await customerService.findOne(businessId, input.customerId);
+    await this.customers.findOne(businessId, input.customerId);
 
     const eventSnapshots = input.events
-      ? await Promise.all(input.events.map((e) => proposalSnapshotService.event(businessId, e)))
+      ? await Promise.all(input.events.map((e) => this.snapshots.event(businessId, e)))
       : undefined;
 
     const packageSnapshots = await Promise.all(
       (input.packages ?? []).map((p) =>
-        proposalSnapshotService.package(businessId, p, true, proposalSnapshotService.eventIdAt(eventSnapshots, p.eventIndex)),
+        this.snapshots.package(businessId, p, true, this.snapshots.eventIdAt(eventSnapshots, p.eventIndex)),
       ),
     );
     const itemSnapshots = await Promise.all(
       (input.items ?? []).map((i) =>
-        proposalSnapshotService.item(businessId, i, true, proposalSnapshotService.eventIdAt(eventSnapshots, i.eventIndex)),
+        this.snapshots.item(businessId, i, true, this.snapshots.eventIdAt(eventSnapshots, i.eventIndex)),
       ),
     );
     // The schema's refine guarantees a weddingDate whenever events are absent.
@@ -132,10 +139,10 @@ export class ProposalService {
       taxRate,
     });
 
-    const proposalNumber = await proposalSnapshotService.nextNumber(businessId);
-    const validUntil = await proposalSnapshotService.validUntil(businessId, input.validUntil);
+    const proposalNumber = await this.snapshots.nextNumber(businessId);
+    const validUntil = await this.snapshots.validUntil(businessId, input.validUntil);
 
-    const newId = await db.transaction(async (tx) => {
+    const newId = await this.db.transaction(async (tx) => {
       const [created] = await tx
         .insert(proposals)
         .values({
@@ -189,13 +196,13 @@ export class ProposalService {
       throw new ConflictError('Only draft proposals can be edited');
     }
     if (input.customerId !== undefined) {
-      await customerService.findOne(businessId, input.customerId);
+      await this.customers.findOne(businessId, input.customerId);
     }
 
     // Every lookup and validation runs before the first write, so a rejected
     // replacement can't leave the draft with its rows already deleted.
     const eventSnapshots = input.events
-      ? await Promise.all(input.events.map((e) => proposalSnapshotService.event(businessId, e)))
+      ? await Promise.all(input.events.map((e) => this.snapshots.event(businessId, e)))
       : undefined;
 
     const eventRefs = eventSnapshots ?? existing.events;
@@ -204,11 +211,11 @@ export class ProposalService {
     const newPackages = input.packages
       ? await Promise.all(
           input.packages.map((p) =>
-            proposalSnapshotService.package(
+            this.snapshots.package(
               businessId,
               p,
               !existingPackageIds.has(p.packageId),
-              proposalSnapshotService.eventIdAt(eventRefs, p.eventIndex),
+              this.snapshots.eventIdAt(eventRefs, p.eventIndex),
             ),
           ),
         )
@@ -216,11 +223,11 @@ export class ProposalService {
     const newItems = input.items
       ? await Promise.all(
           input.items.map((i) =>
-            proposalSnapshotService.item(
+            this.snapshots.item(
               businessId,
               i,
               !existingServiceIds.has(i.serviceId),
-              proposalSnapshotService.eventIdAt(eventRefs, i.eventIndex),
+              this.snapshots.eventIdAt(eventRefs, i.eventIndex),
             ),
           ),
         )
@@ -253,7 +260,7 @@ export class ProposalService {
       }),
     );
 
-    await db.transaction(async (tx) => {
+    await this.db.transaction(async (tx) => {
       await tx
         .update(proposals)
         .set(patch)
@@ -300,7 +307,7 @@ export class ProposalService {
     if (input.taxRate !== undefined) patch.taxRate = input.taxRate;
 
     if (Object.keys(patch).length > 0) {
-      await db
+      await this.db
         .update(proposals)
         .set(patch)
         .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
@@ -308,23 +315,23 @@ export class ProposalService {
 
     const refreshed = await this.findOne(businessId, id);
     await this.persistPricing(refreshed);
-    await calendarSyncService.syncProposal(id);
+    await this.calendarSync.syncProposal(id);
     return this.findOne(businessId, id);
   }
 
   async updateStatus(businessId: string, id: string, status: ProposalStatus) {
     await this.findOne(businessId, id);
-    await db
+    await this.db
       .update(proposals)
       .set({ status })
       .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-    await calendarSyncService.syncProposal(id);
+    await this.calendarSync.syncProposal(id);
     return this.findOne(businessId, id);
   }
 
   async setArchived(businessId: string, id: string, archived: boolean) {
     await this.findOne(businessId, id);
-    await db
+    await this.db
       .update(proposals)
       .set({ isArchived: archived })
       .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
@@ -352,7 +359,7 @@ export class ProposalService {
       discountValue: proposal.discountValue,
       taxRate: proposal.taxRate,
     });
-    await db
+    await this.db
       .update(proposals)
       .set({
         subtotal: pricing.subtotal,
@@ -364,4 +371,3 @@ export class ProposalService {
   }
 }
 
-export const proposalService = new ProposalService();

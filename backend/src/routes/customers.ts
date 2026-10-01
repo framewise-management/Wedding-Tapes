@@ -7,7 +7,7 @@ import {
   listCustomersQuerySchema,
   updateCustomerSchema,
 } from '../schemas/customers';
-import { customerService } from '../services/customers';
+import { customerService } from '../services';
 
 export const customersRoutes = new Hono<{ Variables: AuthedVariables }>();
 

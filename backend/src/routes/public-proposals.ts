@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { parseUuidParam } from '../lib/validate';
-import { proposalService } from '../services/proposals';
-import { businessService } from '../services/business';
+import { proposalService, businessService } from '../services';
 import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
 
 // Unauthenticated by design: a proposal's id doubles as its share-link

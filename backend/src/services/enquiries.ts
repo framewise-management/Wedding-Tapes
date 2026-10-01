@@ -1,10 +1,10 @@
 import { and, desc, eq, ilike, ne, or, type SQL } from 'drizzle-orm';
 import { enquiries } from '../db/schema';
 import { BadRequestError, ConflictError, NotFoundError } from '../lib/http-error';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import type { EnquiryStatus } from '../schemas/enquiries';
-import { customerService } from './customers';
-import { proposalService } from './proposals';
+import type { CustomerService } from './customers';
+import type { ProposalService } from './proposals';
 
 interface CreateEnquiryInput {
   clientName: string;
@@ -24,8 +24,14 @@ interface CreateEnquiryInput {
 }
 
 export class EnquiryService {
+  constructor(
+    private readonly db: Db,
+    private readonly customers: CustomerService,
+    private readonly proposals: ProposalService,
+  ) {}
+
   async create(input: CreateEnquiryInput) {
-    const [result] = await db
+    const [result] = await this.db
       .insert(enquiries)
       .values({
         businessId: input.businessId,
@@ -65,11 +71,11 @@ export class EnquiryService {
       whereClauses.push(eq(enquiries.status, filters.status));
     }
 
-    return await db.select().from(enquiries).where(and(...whereClauses)).orderBy(desc(enquiries.createdAt));
+    return await this.db.select().from(enquiries).where(and(...whereClauses)).orderBy(desc(enquiries.createdAt));
   }
 
   async findOne(businessId: string, id: string) {
-    const [result] = await db
+    const [result] = await this.db
       .select()
       .from(enquiries)
       .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)));
@@ -79,7 +85,7 @@ export class EnquiryService {
   }
 
   async update(businessId: string, id: string, updates: { status?: EnquiryStatus }) {
-    const [result] = await db
+    const [result] = await this.db
       .update(enquiries)
       .set(updates)
       .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
@@ -90,7 +96,7 @@ export class EnquiryService {
   }
 
   async remove(businessId: string, id: string) {
-    const [result] = await db
+    const [result] = await this.db
       .delete(enquiries)
       .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
       .returning();
@@ -113,7 +119,7 @@ export class EnquiryService {
     }
 
     // Claiming the status first makes a double click or retry fail instead of duplicating.
-    const [claimed] = await db
+    const [claimed] = await this.db
       .update(enquiries)
       .set({ status: 'CONVERTED' })
       .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId), ne(enquiries.status, 'CONVERTED')))
@@ -122,7 +128,7 @@ export class EnquiryService {
 
     let customerId: string | undefined;
     try {
-      const customer = await customerService.create(businessId, {
+      const customer = await this.customers.create(businessId, {
         name: enquiry.clientName,
         phone: enquiry.phone!,
         email: enquiry.email ?? undefined,
@@ -138,7 +144,7 @@ export class EnquiryService {
         .filter(Boolean)
         .join('\n');
 
-      return await proposalService.create(businessId, {
+      return await this.proposals.create(businessId, {
         customerId,
         weddingDate: enquiry.eventDate!,
         weddingLocation: enquiry.location!,
@@ -147,8 +153,8 @@ export class EnquiryService {
         notes,
       });
     } catch (err) {
-      if (customerId) await customerService.remove(businessId, customerId).catch(() => {});
-      await db
+      if (customerId) await this.customers.remove(businessId, customerId).catch(() => {});
+      await this.db
         .update(enquiries)
         .set({ status: enquiry.status })
         .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)));
@@ -157,4 +163,3 @@ export class EnquiryService {
   }
 }
 
-export const enquiryService = new EnquiryService();

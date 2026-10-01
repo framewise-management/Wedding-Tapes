@@ -3,7 +3,7 @@ import type { AuthedVariables } from '../middleware/auth';
 import { authMiddleware } from '../middleware/auth';
 import { parseBody } from '../lib/validate';
 import { updateBusinessSchema } from '../schemas/business';
-import { businessService } from '../services/business';
+import { businessService } from '../services';
 
 export const businessRoutes = new Hono<{ Variables: AuthedVariables }>();
 

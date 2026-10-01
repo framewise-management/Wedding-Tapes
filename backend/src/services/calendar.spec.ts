@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { calendarFeedService, type CalendarEvent } from './calendar';
+import { CalendarFeedService, type CalendarEvent } from './calendar';
+
+const calendarFeedService = new CalendarFeedService({} as never, {} as never);
 
 const event: CalendarEvent = {
   id: 'abc-123',

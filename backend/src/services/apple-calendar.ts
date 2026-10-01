@@ -1,12 +1,13 @@
 import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { BadGatewayError, BadRequestError } from '../lib/http-error';
 import { decryptSecret, encryptSecret } from '../lib/crypto';
-import { calendarFeedService } from './calendar';
+import type { CalendarFeedService } from './calendar';
 import { SYNCED_STATUSES, shouldSync, type CalendarEvent } from './calendar-events';
-import { businessService } from './business';
+import type { CalendarProvider } from './calendar-sync';
+import type { BusinessService } from './business';
 
 const ICLOUD_ROOT = 'https://caldav.icloud.com';
 
@@ -127,13 +128,6 @@ function eventUrl(calendarUrl: string, proposalId: string): string {
   return new URL(`${proposalId}.ics`, calendarUrl).toString();
 }
 
-async function putEvent(creds: Credentials, calendarUrl: string, p: CalendarEvent): Promise<void> {
-  await dav(creds, eventUrl(calendarUrl, p.id), 'PUT', {
-    contentType: 'text/calendar; charset=utf-8',
-    body: calendarFeedService.renderEvent(p),
-  });
-}
-
 async function deleteEvent(
   creds: Credentials,
   calendarUrl: string,
@@ -162,27 +156,21 @@ function credentialsOf(business: AppleConnection): { creds: Credentials; calenda
   };
 }
 
-async function storedCredentials(businessId: string) {
-  return credentialsOf(await businessService.findRow(businessId));
-}
+export class AppleCalendarService implements CalendarProvider {
+  readonly label = 'Apple Calendar';
 
-function openProposals(businessId: string) {
-  return db.query.proposals.findMany({
-    where: and(
-      eq(proposals.businessId, businessId),
-      inArray(proposals.status, [...SYNCED_STATUSES]),
-    ),
-    with: { customer: true },
-  });
-}
+  constructor(
+    private readonly db: Db,
+    private readonly business: BusinessService,
+    private readonly feed: CalendarFeedService,
+  ) {}
 
-export class AppleCalendarService {
   /**
    * Reconnecting reuses the saved password when the caller sends none, so the
    * user only ever types an app-specific password once per Apple ID.
    */
   async connect(businessId: string, input: { appleId?: string; appPassword?: string }) {
-    const business = await businessService.findRow(businessId);
+    const business = await this.business.findRow(businessId);
 
     let creds: Credentials;
     if (input.appPassword) {
@@ -203,10 +191,10 @@ export class AppleCalendarService {
     const home = await findCalendarHome(creds);
     const calendarUrl = await findOrCreateCalendar(creds, home, `${business.name} — Weddings`);
 
-    const open = await openProposals(businessId);
-    for (const proposal of open) await putEvent(creds, calendarUrl, proposal);
+    const open = await this.openProposals(businessId);
+    for (const proposal of open) await this.putEvent(creds, calendarUrl, proposal);
 
-    await db
+    await this.db
       .update(businesses)
       .set({
         appleId: creds.appleId,
@@ -225,7 +213,7 @@ export class AppleCalendarService {
    * — deleting it would destroy dates they may still be relying on.
    */
   async disconnect(businessId: string) {
-    await db
+    await this.db
       .update(businesses)
       .set({ appleCalendarUrl: null })
       .where(eq(businesses.id, businessId));
@@ -237,7 +225,7 @@ export class AppleCalendarService {
     if (!stored) return;
 
     if (shouldSync(proposal.status)) {
-      await putEvent(stored.creds, stored.calendarUrl, proposal);
+      await this.putEvent(stored.creds, stored.calendarUrl, proposal);
     } else {
       await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
     }
@@ -254,13 +242,33 @@ export class AppleCalendarService {
 
   /** Manual re-push of every open/booked date, for the Sync button. */
   async resync(businessId: string) {
-    const stored = await storedCredentials(businessId);
+    const stored = await this.storedCredentials(businessId);
     if (!stored) throw new BadRequestError('Apple Calendar is not connected');
 
-    const open = await openProposals(businessId);
-    for (const proposal of open) await putEvent(stored.creds, stored.calendarUrl, proposal);
+    const open = await this.openProposals(businessId);
+    for (const proposal of open) await this.putEvent(stored.creds, stored.calendarUrl, proposal);
     return { syncedEvents: open.length };
+  }
+
+  private async putEvent(creds: Credentials, calendarUrl: string, p: CalendarEvent): Promise<void> {
+    await dav(creds, eventUrl(calendarUrl, p.id), 'PUT', {
+      contentType: 'text/calendar; charset=utf-8',
+      body: this.feed.renderEvent(p),
+    });
+  }
+
+  private async storedCredentials(businessId: string) {
+    return credentialsOf(await this.business.findRow(businessId));
+  }
+
+  private openProposals(businessId: string) {
+    return this.db.query.proposals.findMany({
+      where: and(
+        eq(proposals.businessId, businessId),
+        inArray(proposals.status, [...SYNCED_STATUSES]),
+      ),
+      with: { customer: true },
+    });
   }
 }
 
-export const appleCalendarService = new AppleCalendarService();

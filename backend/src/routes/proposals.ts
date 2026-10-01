@@ -11,8 +11,7 @@ import {
   updateProposalSchema,
   updateProposalStatusSchema,
 } from '../schemas/proposals';
-import { proposalService } from '../services/proposals';
-import { businessService } from '../services/business';
+import { proposalService, businessService } from '../services';
 import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
 import { filterProposalToEvent } from '../pdf-shared';
 import { NotFoundError } from '../lib/http-error';

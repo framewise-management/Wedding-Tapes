@@ -9,16 +9,16 @@ const mocks = vi.hoisted(() => ({
   removeApple: vi.fn(),
 }));
 
-vi.mock('../db/client', () => ({ db: { query: { proposals: { findFirst: mocks.findFirst } } } }));
-vi.mock('./business', () => ({ businessService: { findRow: mocks.findBusinessRow } }));
-vi.mock('./google-calendar', () => ({
-  googleCalendarService: { syncProposal: mocks.syncGoogle, removeProposalEvent: mocks.removeGoogle },
-}));
-vi.mock('./apple-calendar', () => ({
-  appleCalendarService: { syncProposal: mocks.syncApple, removeProposalEvent: mocks.removeApple },
-}));
+import { CalendarSyncService } from './calendar-sync';
 
-import { calendarSyncService } from './calendar-sync';
+const calendarSyncService = new CalendarSyncService(
+  { query: { proposals: { findFirst: mocks.findFirst } } } as never,
+  { findRow: mocks.findBusinessRow } as never,
+  [
+    { label: 'Google Calendar', syncProposal: mocks.syncGoogle, removeProposalEvent: mocks.removeGoogle },
+    { label: 'Apple Calendar', syncProposal: mocks.syncApple, removeProposalEvent: mocks.removeApple },
+  ],
+);
 
 const proposal = { id: 'p1', businessId: 'b1', status: 'SENT', googleEventId: 'g1' };
 const business = { id: 'b1', googleCalendarId: 'cal' };

@@ -7,7 +7,7 @@ import {
   listServicesQuerySchema,
   updateServiceSchema,
 } from '../schemas/services';
-import { catalogServiceService } from '../services/catalog-services';
+import { catalogServiceService } from '../services';
 
 export const servicesRoutes = new Hono<{ Variables: AuthedVariables }>();
 

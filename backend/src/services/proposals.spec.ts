@@ -19,13 +19,21 @@ const mocks = vi.hoisted(() => {
   return { db, tx, findOneService: vi.fn() };
 });
 
-vi.mock('../db/client', () => ({ db: mocks.db }));
-vi.mock('./catalog-services', () => ({ catalogServiceService: { findOne: mocks.findOneService } }));
-vi.mock('./calendar-sync', () => ({ calendarSyncService: { syncProposal: vi.fn(), removeProposal: vi.fn() } }));
 vi.mock('../lib/discord', () => ({ notifyDiscord: vi.fn() }));
 
 import { NotFoundError } from '../lib/http-error';
-import { proposalService } from './proposals';
+import { ProposalService } from './proposals';
+import { ProposalSnapshotService } from './proposal-snapshots';
+
+const snapshots = new ProposalSnapshotService(
+  mocks.db as never,
+  {} as never,
+  { findOne: mocks.findOneService } as never,
+  {} as never,
+  {} as never,
+);
+const calendarSync = { syncProposal: vi.fn(), removeProposal: vi.fn() };
+const proposalService = new ProposalService(mocks.db as never, {} as never, snapshots, calendarSync as never);
 
 const draft = {
   id: 'p1',

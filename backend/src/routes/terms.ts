@@ -3,7 +3,7 @@ import type { AuthedVariables } from '../middleware/auth';
 import { authMiddleware } from '../middleware/auth';
 import { parseBody, parseQuery, parseUuidParam } from '../lib/validate';
 import { createTermSchema, listTermsQuerySchema, updateTermSchema } from '../schemas/terms';
-import { termService } from '../services/terms';
+import { termService } from '../services';
 
 export const termsRoutes = new Hono<{ Variables: AuthedVariables }>();
 

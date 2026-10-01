@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
 import { db } from './db/client';
 import { businesses, users } from './db/schema';
-import { eventTypeService } from './services/event-types';
+import { eventTypeService } from './services';
 
 async function seed() {
   const email = process.env.SEED_ADMIN_EMAIL ?? 'admin@example.com';

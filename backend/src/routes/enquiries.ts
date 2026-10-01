@@ -7,7 +7,7 @@ import {
   listEnquiriesQuerySchema,
   updateEnquirySchema,
 } from '../schemas/enquiries';
-import { enquiryService } from '../services/enquiries';
+import { enquiryService } from '../services';
 
 export const enquiriesRoutes = new Hono<{ Variables: AuthedVariables }>();
 

@@ -3,7 +3,7 @@ import type { AuthedVariables } from '../middleware/auth';
 import { authMiddleware } from '../middleware/auth';
 import { parseBody, parseUuidParam } from '../lib/validate';
 import { createBlockedDateSchema } from '../schemas/blocked-dates';
-import { blockedDateService } from '../services/blocked-dates';
+import { blockedDateService } from '../services';
 
 export const blockedDatesRoutes = new Hono<{ Variables: AuthedVariables }>();
 

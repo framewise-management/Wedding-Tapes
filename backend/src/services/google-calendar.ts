@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { BadGatewayError, BadRequestError } from '../lib/http-error';
 import { calendarEventFor, shouldSync, SYNCED_STATUSES } from './calendar-events';
-import { businessService } from './business';
+import type { CalendarProvider } from './calendar-sync';
+import type { BusinessService } from './business';
 
 const API = 'https://www.googleapis.com/calendar/v3';
 const SCOPE = 'https://www.googleapis.com/auth/calendar';
@@ -93,7 +94,14 @@ type SyncableProposal = typeof proposals.$inferSelect & {
 
 type GoogleCalendarTarget = Pick<typeof businesses.$inferSelect, 'googleCalendarId'>;
 
-export class GoogleCalendarService {
+export class GoogleCalendarService implements CalendarProvider {
+  readonly label = 'Google Calendar';
+
+  constructor(
+    private readonly db: Db,
+    private readonly business: BusinessService,
+  ) {}
+
   /**
    * Creates the business's own Google calendar (owned by the service account) and
    * shares it with the user's email, so it shows up in their Google Calendar
@@ -105,7 +113,7 @@ export class GoogleCalendarService {
       throw new BadRequestError('Google Calendar is not configured on this server');
     }
 
-    const business = await businessService.findRow(businessId);
+    const business = await this.business.findRow(businessId);
 
     let calendarId = business.googleCalendarId;
     if (!calendarId) {
@@ -114,7 +122,7 @@ export class GoogleCalendarService {
         body: { summary: `${business.name} — Weddings`, timeZone: 'Asia/Kolkata' },
       });
       calendarId = created.id as string;
-      await db
+      await this.db
         .update(businesses)
         .set({ googleCalendarId: calendarId })
         .where(eq(businesses.id, businessId));
@@ -125,7 +133,7 @@ export class GoogleCalendarService {
       body: { role: 'writer', scope: { type: 'user', value: email } },
     });
 
-    const open = await db.query.proposals.findMany({
+    const open = await this.db.query.proposals.findMany({
       where: and(
         eq(proposals.businessId, businessId),
         inArray(proposals.status, [...SYNCED_STATUSES]),
@@ -147,7 +155,7 @@ export class GoogleCalendarService {
       await this.pushEvent(key, business.googleCalendarId, proposal);
     } else if (proposal.googleEventId) {
       await this.removeEvent(key, business.googleCalendarId, proposal.googleEventId);
-      await db.update(proposals).set({ googleEventId: null }).where(eq(proposals.id, proposal.id));
+      await this.db.update(proposals).set({ googleEventId: null }).where(eq(proposals.id, proposal.id));
     }
   }
 
@@ -178,7 +186,7 @@ export class GoogleCalendarService {
     }
 
     const created = await googleFetch(key, base, { method: 'POST', body });
-    await db
+    await this.db
       .update(proposals)
       .set({ googleEventId: created.id as string })
       .where(eq(proposals.id, p.id));
@@ -191,4 +199,3 @@ export class GoogleCalendarService {
   }
 }
 
-export const googleCalendarService = new GoogleCalendarService();

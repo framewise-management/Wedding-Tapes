@@ -17,14 +17,14 @@ const mocks = vi.hoisted(() => {
   return { state, db, createCustomer: vi.fn(), removeCustomer: vi.fn(), createProposal: vi.fn() };
 });
 
-vi.mock('../db/client', () => ({ db: mocks.db }));
-vi.mock('./customers', () => ({
-  customerService: { create: mocks.createCustomer, remove: mocks.removeCustomer },
-}));
-vi.mock('./proposals', () => ({ proposalService: { create: mocks.createProposal } }));
-
 import { BadRequestError, ConflictError } from '../lib/http-error';
-import { enquiryService } from './enquiries';
+import { EnquiryService } from './enquiries';
+
+const enquiryService = new EnquiryService(
+  mocks.db as never,
+  { create: mocks.createCustomer, remove: mocks.removeCustomer } as never,
+  { create: mocks.createProposal } as never,
+);
 
 const enquiry = {
   id: 'e1',

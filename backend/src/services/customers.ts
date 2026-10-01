@@ -1,13 +1,17 @@
 import { and, asc, eq, ilike, or } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { customers } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
 import type { CreateCustomerInput, UpdateCustomerInput } from '../schemas/customers';
 
 export class CustomerService {
+  constructor(
+    private readonly db: Db,
+  ) {}
+
   findAll(businessId: string, search?: string) {
-    return db.query.customers.findMany({
+    return this.db.query.customers.findMany({
       where: search
         ? and(
             eq(customers.businessId, businessId),
@@ -19,7 +23,7 @@ export class CustomerService {
   }
 
   async findOne(businessId: string, id: string) {
-    const customer = await db.query.customers.findFirst({
+    const customer = await this.db.query.customers.findFirst({
       where: and(eq(customers.id, id), eq(customers.businessId, businessId)),
     });
     if (!customer) throw new NotFoundError('Customer not found');
@@ -27,7 +31,7 @@ export class CustomerService {
   }
 
   async create(businessId: string, input: CreateCustomerInput) {
-    const [customer] = await db
+    const [customer] = await this.db
       .insert(customers)
       .values({ ...input, businessId })
       .returning();
@@ -36,7 +40,7 @@ export class CustomerService {
 
   async update(businessId: string, id: string, input: UpdateCustomerInput) {
     await this.findOne(businessId, id);
-    await db
+    await this.db
       .update(customers)
       .set(input)
       .where(and(eq(customers.id, id), eq(customers.businessId, businessId)));
@@ -46,7 +50,7 @@ export class CustomerService {
   async remove(businessId: string, id: string) {
     await this.findOne(businessId, id);
     try {
-      await db
+      await this.db
         .delete(customers)
         .where(and(eq(customers.id, id), eq(customers.businessId, businessId)));
     } catch (err) {
@@ -58,4 +62,3 @@ export class CustomerService {
   }
 }
 
-export const customerService = new CustomerService();

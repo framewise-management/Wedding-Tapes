@@ -1,12 +1,16 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { terms } from '../db/schema';
 import { NotFoundError } from '../lib/http-error';
 import type { CreateTermInput, UpdateTermInput } from '../schemas/terms';
 
 export class TermService {
+  constructor(
+    private readonly db: Db,
+  ) {}
+
   findAll(businessId: string, active?: boolean) {
-    return db.query.terms.findMany({
+    return this.db.query.terms.findMany({
       where: and(
         eq(terms.businessId, businessId),
         active !== undefined ? eq(terms.active, active) : undefined,
@@ -16,7 +20,7 @@ export class TermService {
   }
 
   async findOne(businessId: string, id: string) {
-    const term = await db.query.terms.findFirst({
+    const term = await this.db.query.terms.findFirst({
       where: and(eq(terms.id, id), eq(terms.businessId, businessId)),
     });
     if (!term) throw new NotFoundError('Term not found');
@@ -24,7 +28,7 @@ export class TermService {
   }
 
   async create(businessId: string, input: CreateTermInput) {
-    const [term] = await db
+    const [term] = await this.db
       .insert(terms)
       .values({ ...input, businessId })
       .returning();
@@ -33,7 +37,7 @@ export class TermService {
 
   async update(businessId: string, id: string, input: UpdateTermInput) {
     await this.findOne(businessId, id);
-    await db
+    await this.db
       .update(terms)
       .set(input)
       .where(and(eq(terms.id, id), eq(terms.businessId, businessId)));
@@ -42,8 +46,7 @@ export class TermService {
 
   async remove(businessId: string, id: string) {
     await this.findOne(businessId, id);
-    await db.delete(terms).where(and(eq(terms.id, id), eq(terms.businessId, businessId)));
+    await this.db.delete(terms).where(and(eq(terms.id, id), eq(terms.businessId, businessId)));
   }
 }
 
-export const termService = new TermService();

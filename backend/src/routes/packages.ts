@@ -8,7 +8,7 @@ import {
   listPackagesQuerySchema,
   updatePackageSchema,
 } from '../schemas/packages';
-import { packageService } from '../services/packages';
+import { packageService } from '../services';
 
 export const packagesRoutes = new Hono<{ Variables: AuthedVariables }>();
 

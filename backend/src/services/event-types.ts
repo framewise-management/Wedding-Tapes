@@ -1,5 +1,5 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { db } from '../db/client';
+import type { Db } from '../db/client';
 import { eventTypes } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
@@ -18,13 +18,17 @@ const DEFAULT_EVENT_TYPES = [
   'Birthday',
 ];
 
-type Executor = Pick<typeof db, 'insert'>;
+type Executor = Pick<Db, 'insert'>;
 
 function asDuplicateNameError(err: unknown): unknown {
   return isPgError(err, '23505') ? new ConflictError('An event type with this name already exists') : err;
 }
 
 export class EventTypeService {
+  constructor(
+    private readonly db: Db,
+  ) {}
+
   seedDefaults(executor: Executor, businessId: string) {
     return executor
       .insert(eventTypes)
@@ -32,7 +36,7 @@ export class EventTypeService {
   }
 
   findAll(businessId: string, active?: boolean) {
-    return db.query.eventTypes.findMany({
+    return this.db.query.eventTypes.findMany({
       where: and(
         eq(eventTypes.businessId, businessId),
         active !== undefined ? eq(eventTypes.active, active) : undefined,
@@ -42,7 +46,7 @@ export class EventTypeService {
   }
 
   async findOne(businessId: string, id: string) {
-    const eventType = await db.query.eventTypes.findFirst({
+    const eventType = await this.db.query.eventTypes.findFirst({
       where: and(eq(eventTypes.id, id), eq(eventTypes.businessId, businessId)),
     });
     if (!eventType) throw new NotFoundError('Event type not found');
@@ -51,7 +55,7 @@ export class EventTypeService {
 
   async create(businessId: string, input: CreateEventTypeInput) {
     try {
-      const [eventType] = await db
+      const [eventType] = await this.db
         .insert(eventTypes)
         .values({ ...input, businessId })
         .returning();
@@ -64,7 +68,7 @@ export class EventTypeService {
   async update(businessId: string, id: string, input: UpdateEventTypeInput) {
     await this.findOne(businessId, id);
     try {
-      await db
+      await this.db
         .update(eventTypes)
         .set(input)
         .where(and(eq(eventTypes.id, id), eq(eventTypes.businessId, businessId)));
@@ -77,7 +81,7 @@ export class EventTypeService {
   async remove(businessId: string, id: string) {
     await this.findOne(businessId, id);
     try {
-      await db
+      await this.db
         .delete(eventTypes)
         .where(and(eq(eventTypes.id, id), eq(eventTypes.businessId, businessId)));
     } catch (err) {
@@ -89,4 +93,3 @@ export class EventTypeService {
   }
 }
 
-export const eventTypeService = new EventTypeService();

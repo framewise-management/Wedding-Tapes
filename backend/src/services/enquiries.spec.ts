@@ -12,10 +12,10 @@ const mocks = vi.hoisted(() => {
   return { db: { select: vi.fn(chain), update: vi.fn(chain), delete: vi.fn(chain), insert: vi.fn(chain) } };
 });
 
-vi.mock('../db/client', () => ({ db: mocks.db }));
-
 import { NotFoundError } from '../lib/http-error';
-import { enquiryService } from './enquiries';
+import { EnquiryService } from './enquiries';
+
+const enquiryService = new EnquiryService(mocks.db as never, {} as never, {} as never);
 
 describe('enquiries service', () => {
   it('findOneEnquiry throws NotFoundError when the enquiry is not in the business', async () => {

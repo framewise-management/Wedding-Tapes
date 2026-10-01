@@ -3,9 +3,7 @@ import type { AuthedVariables } from '../middleware/auth';
 import { authMiddleware } from '../middleware/auth';
 import { parseBody } from '../lib/validate';
 import { connectAppleCalendarSchema } from '../schemas/business';
-import { googleCalendarService } from '../services/google-calendar';
-import { calendarFeedService } from '../services/calendar';
-import { appleCalendarService } from '../services/apple-calendar';
+import { googleCalendarService, calendarFeedService, appleCalendarService } from '../services';
 
 // Mounted under /api/business so the URLs the frontend already calls don't change.
 export const calendarIntegrationRoutes = new Hono<{ Variables: AuthedVariables }>();
