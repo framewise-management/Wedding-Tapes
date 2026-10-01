@@ -87,3 +87,7 @@ Package ↔ Service (many-to-many via PackageService)
 ## Explicitly out of scope for the MVP
 
 Do not add unless asked: online payments, customer login/portal, WhatsApp/email automation, e-signatures, booking/contract management, full CRM, AI chatbot, analytics, multi-language/multi-currency, complex tax/discount rules. AI-based requirement extraction is a documented future phase (SRS §24) — not part of the MVP build.
+
+## Wiki
+
+- `../OB-wedding-tapes/` is the LLM-maintained wiki (Obsidian vault) for this project - see its `CLAUDE.md`. Not a code repo. Before non-trivial work, check it for relevant history/decisions; after a significant finding or decision, offer to log it there rather than letting it evaporate at session end. Never write to it silently. Note: this repo's stable branch is `master` (no `main`).
