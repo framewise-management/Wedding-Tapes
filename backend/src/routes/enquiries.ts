@@ -8,6 +8,7 @@ import {
   updateEnquirySchema,
 } from '../schemas/enquiries';
 import {
+  convertEnquiryToProposal,
   createEnquiry,
   deleteEnquiry,
   findAllEnquiries,
@@ -50,4 +51,10 @@ enquiriesRoutes.delete('/:id', async (c) => {
   const id = parseUuidParam(c, 'id');
   const user = c.get('user');
   return c.json(await deleteEnquiry(user.businessId, id));
+});
+
+enquiriesRoutes.post('/:id/convert', async (c) => {
+  const id = parseUuidParam(c, 'id');
+  const user = c.get('user');
+  return c.json(await convertEnquiryToProposal(user.businessId, id), 201);
 });

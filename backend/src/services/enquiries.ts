@@ -1,8 +1,10 @@
-import { and, desc, eq, ilike, or, type SQL } from 'drizzle-orm';
+import { and, desc, eq, ilike, ne, or, type SQL } from 'drizzle-orm';
 import { enquiries } from '../db/schema';
-import { NotFoundError } from '../lib/http-error';
+import { BadRequestError, ConflictError, NotFoundError } from '../lib/http-error';
 import { db } from '../db/client';
 import type { EnquiryStatus } from '../schemas/enquiries';
+import { createCustomer, removeCustomer } from './customers';
+import { createProposal } from './proposals';
 
 interface CreateEnquiryInput {
   clientName: string;
@@ -94,4 +96,61 @@ export async function deleteEnquiry(businessId: string, id: string) {
 
   if (!result) throw new NotFoundError('Enquiry not found');
   return result;
+}
+
+export async function convertEnquiryToProposal(businessId: string, id: string) {
+  const enquiry = await findOneEnquiry(businessId, id);
+  const serviceIds = Array.isArray(enquiry.services) ? (enquiry.services as string[]) : [];
+  const missing = [
+    !enquiry.phone && 'phone',
+    !enquiry.eventDate && 'event date',
+    !enquiry.location && 'location',
+    !serviceIds.length && 'at least one service',
+  ].filter(Boolean);
+  if (missing.length) {
+    throw new BadRequestError(`Can't convert yet: this enquiry is missing ${missing.join(', ')}`);
+  }
+
+  // Claiming the status first makes a double click or retry fail instead of duplicating.
+  const [claimed] = await db
+    .update(enquiries)
+    .set({ status: 'CONVERTED' })
+    .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId), ne(enquiries.status, 'CONVERTED')))
+    .returning();
+  if (!claimed) throw new ConflictError('Enquiry has already been converted');
+
+  let customerId: string | undefined;
+  try {
+    const customer = await createCustomer(businessId, {
+      name: enquiry.clientName,
+      phone: enquiry.phone!,
+      email: enquiry.email ?? undefined,
+    });
+    customerId = customer.id;
+
+    const notes = [
+      'Converted from enquiry',
+      enquiry.source && `Source: ${enquiry.source}`,
+      enquiry.budget && `Budget: ${enquiry.budget}`,
+      enquiry.message,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    return await createProposal(businessId, {
+      customerId,
+      weddingDate: enquiry.eventDate!,
+      weddingLocation: enquiry.location!,
+      numberOfDays: enquiry.eventDuration ?? undefined,
+      items: serviceIds.map((serviceId) => ({ serviceId, quantity: 1, isOptional: false })),
+      notes,
+    });
+  } catch (err) {
+    if (customerId) await removeCustomer(businessId, customerId).catch(() => {});
+    await db
+      .update(enquiries)
+      .set({ status: enquiry.status })
+      .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)));
+    throw err;
+  }
 }
