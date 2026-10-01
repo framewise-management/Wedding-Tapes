@@ -2,12 +2,13 @@ import { randomUUID } from 'crypto';
 import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
-import { BadRequestError, NotFoundError, UnauthorizedError } from '../lib/http-error';
+import { BadGatewayError, BadRequestError } from '../lib/http-error';
 import { decryptSecret, encryptSecret } from '../lib/crypto';
-import { renderEventDocument, type CalendarEvent } from './calendar';
+import { renderEventDocument } from './calendar';
+import { SYNCED_STATUSES, shouldSync, type CalendarEvent } from './calendar-events';
+import { findBusinessRow } from './business';
 
 const ICLOUD_ROOT = 'https://caldav.icloud.com';
-const SYNCED_STATUSES = ['SENT', 'ACCEPTED'] as const;
 
 interface Credentials {
   appleId: string;
@@ -35,12 +36,12 @@ async function dav(
   });
 
   if (res.status === 401 || res.status === 403) {
-    throw new UnauthorizedError(
+    throw new BadRequestError(
       'Apple rejected these credentials — check the Apple ID and that the app-specific password is current',
     );
   }
   if (!res.ok) {
-    throw new BadRequestError(`iCloud ${method} failed (${res.status}): ${await res.text()}`);
+    throw new BadGatewayError(`iCloud ${method} failed (${res.status}): ${await res.text()}`);
   }
   return { url: res.url || url, text: res.status === 204 ? '' : await res.text() };
 }
@@ -144,19 +145,25 @@ async function deleteEvent(
   });
   // A already-absent event is the state we wanted; only real failures matter.
   if (!res.ok && res.status !== 404) {
-    throw new BadRequestError(`iCloud DELETE failed (${res.status})`);
+    throw new BadGatewayError(`iCloud DELETE failed (${res.status})`);
   }
 }
 
-async function storedCredentials(
-  businessId: string,
-): Promise<{ creds: Credentials; calendarUrl: string } | null> {
-  const business = await db.query.businesses.findFirst({ where: eq(businesses.id, businessId) });
-  if (!business?.appleId || !business.applePasswordEnc || !business.appleCalendarUrl) return null;
+type AppleConnection = Pick<
+  typeof businesses.$inferSelect,
+  'appleId' | 'applePasswordEnc' | 'appleCalendarUrl'
+>;
+
+function credentialsOf(business: AppleConnection): { creds: Credentials; calendarUrl: string } | null {
+  if (!business.appleId || !business.applePasswordEnc || !business.appleCalendarUrl) return null;
   return {
     creds: { appleId: business.appleId, password: decryptSecret(business.applePasswordEnc) },
     calendarUrl: business.appleCalendarUrl,
   };
+}
+
+async function storedCredentials(businessId: string) {
+  return credentialsOf(await findBusinessRow(businessId));
 }
 
 function openProposals(businessId: string) {
@@ -177,8 +184,7 @@ export async function connectAppleCalendar(
   businessId: string,
   input: { appleId?: string; appPassword?: string },
 ) {
-  const business = await db.query.businesses.findFirst({ where: eq(businesses.id, businessId) });
-  if (!business) throw new NotFoundError('Business not found');
+  const business = await findBusinessRow(businessId);
 
   let creds: Credentials;
   if (input.appPassword) {
@@ -228,39 +234,27 @@ export async function disconnectAppleCalendar(businessId: string) {
   return { disconnected: true };
 }
 
-/** Best-effort, exactly like the Google path: never fail the proposal write. */
-export async function syncProposalToApple(proposalId: string): Promise<void> {
-  try {
-    const proposal = await db.query.proposals.findFirst({
-      where: eq(proposals.id, proposalId),
-      with: { customer: true },
-    });
-    if (!proposal) return;
+export async function syncProposalToApple(
+  proposal: CalendarEvent,
+  business: AppleConnection,
+): Promise<void> {
+  const stored = credentialsOf(business);
+  if (!stored) return;
 
-    const stored = await storedCredentials(proposal.businessId);
-    if (!stored) return;
-
-    const shouldExist = SYNCED_STATUSES.includes(
-      proposal.status as (typeof SYNCED_STATUSES)[number],
-    );
-    if (shouldExist) {
-      await putEvent(stored.creds, stored.calendarUrl, proposal);
-    } else {
-      await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
-    }
-  } catch (err) {
-    console.error('Apple Calendar sync failed:', err);
+  if (shouldSync(proposal.status)) {
+    await putEvent(stored.creds, stored.calendarUrl, proposal);
+  } else {
+    await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
   }
 }
 
-export async function removeAppleEvent(businessId: string, proposalId: string): Promise<void> {
-  try {
-    const stored = await storedCredentials(businessId);
-    if (!stored) return;
-    await deleteEvent(stored.creds, stored.calendarUrl, proposalId);
-  } catch (err) {
-    console.error('Apple Calendar delete failed:', err);
-  }
+export async function removeAppleEvent(
+  proposal: Pick<CalendarEvent, 'id'>,
+  business: AppleConnection,
+): Promise<void> {
+  const stored = credentialsOf(business);
+  if (!stored) return;
+  await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
 }
 
 /** Manual re-push of every open/booked date, for the Sync button. */

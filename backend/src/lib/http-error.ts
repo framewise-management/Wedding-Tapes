@@ -31,6 +31,12 @@ export class NotFoundError extends HttpError {
   }
 }
 
+export class BadGatewayError extends HttpError {
+  constructor(message: string) {
+    super(502, message);
+  }
+}
+
 export class ConflictError extends HttpError {
   constructor(message: string) {
     super(409, message);

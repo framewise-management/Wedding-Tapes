@@ -18,8 +18,7 @@ import { findOneService } from './catalog-services';
 import { findOneEventType } from './event-types';
 import { getBusiness } from './business';
 import { notifyDiscord } from '../lib/discord';
-import { removeGoogleEvent, syncProposalToGoogle } from './google-calendar';
-import { removeAppleEvent, syncProposalToApple } from './apple-calendar';
+import { removeProposalFromCalendars, syncProposalToCalendars } from './calendar-sync';
 import type {
   CalculateProposalInput,
   CreateProposalInput,
@@ -96,8 +95,7 @@ export async function incrementShareViewCount(id: string) {
 export async function removeProposal(businessId: string, id: string) {
   const existing = await findOneProposal(businessId, id);
   await db.delete(proposals).where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-  await removeGoogleEvent(businessId, existing.googleEventId);
-  await removeAppleEvent(businessId, id);
+  await removeProposalFromCalendars(existing);
 }
 
 export async function createProposal(businessId: string, input: CreateProposalInput) {
@@ -314,7 +312,7 @@ export async function calculateProposal(
 
   const refreshed = await findOneProposal(businessId, id);
   await persistPricing(refreshed);
-  await syncCalendars(id);
+  await syncProposalToCalendars(id);
   return findOneProposal(businessId, id);
 }
 
@@ -324,7 +322,7 @@ export async function updateProposalStatus(businessId: string, id: string, statu
     .update(proposals)
     .set({ status })
     .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-  await syncCalendars(id);
+  await syncProposalToCalendars(id);
   return findOneProposal(businessId, id);
 }
 
@@ -348,11 +346,6 @@ export async function shareProposal(businessId: string, id: string) {
     `🔗 **Shareable link generated**\nProposal **${proposal.proposalNumber}** (${proposal.customer.name})\n<${link}>`,
   );
   return proposal;
-}
-
-async function syncCalendars(id: string) {
-  await syncProposalToGoogle(id);
-  await syncProposalToApple(id);
 }
 
 async function persistPricing(proposal: Awaited<ReturnType<typeof findOneProposal>>) {

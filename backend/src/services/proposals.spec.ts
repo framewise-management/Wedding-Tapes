@@ -21,8 +21,7 @@ const mocks = vi.hoisted(() => {
 
 vi.mock('../db/client', () => ({ db: mocks.db }));
 vi.mock('./catalog-services', () => ({ findOneService: mocks.findOneService }));
-vi.mock('./google-calendar', () => ({ syncProposalToGoogle: vi.fn(), removeGoogleEvent: vi.fn() }));
-vi.mock('./apple-calendar', () => ({ syncProposalToApple: vi.fn(), removeAppleEvent: vi.fn() }));
+vi.mock('./calendar-sync', () => ({ syncProposalToCalendars: vi.fn(), removeProposalFromCalendars: vi.fn() }));
 vi.mock('../lib/discord', () => ({ notifyDiscord: vi.fn() }));
 
 import { NotFoundError } from '../lib/http-error';

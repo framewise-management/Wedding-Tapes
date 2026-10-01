@@ -9,11 +9,12 @@ const STATUS_CODES: Record<number, string> = {
   403: 'FORBIDDEN',
   404: 'NOT_FOUND',
   409: 'CONFLICT',
+  502: 'BAD_GATEWAY',
 };
 
 export const errorHandler: ErrorHandler = (err, c) => {
   const status = err instanceof HttpError ? err.status : 500;
   const message = err instanceof HttpError ? err.message : 'Internal server error';
   const code = STATUS_CODES[status] ?? 'INTERNAL_ERROR';
-  return c.json({ error: { code, message } }, status as 400 | 401 | 403 | 404 | 409 | 500);
+  return c.json({ error: { code, message } }, status as 400 | 401 | 403 | 404 | 409 | 500 | 502);
 };

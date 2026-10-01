@@ -2,11 +2,12 @@ import jwt from 'jsonwebtoken';
 import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
-import { BadRequestError, NotFoundError } from '../lib/http-error';
+import { BadGatewayError, BadRequestError } from '../lib/http-error';
+import { calendarEventFor, shouldSync, SYNCED_STATUSES } from './calendar-events';
+import { findBusinessRow } from './business';
 
 const API = 'https://www.googleapis.com/calendar/v3';
 const SCOPE = 'https://www.googleapis.com/auth/calendar';
-const SYNCED_STATUSES = ['SENT', 'ACCEPTED'] as const;
 
 interface ServiceAccountKey {
   client_email: string;
@@ -59,7 +60,7 @@ async function accessToken(key: ServiceAccountKey): Promise<string> {
     }),
   });
   if (!res.ok) {
-    throw new BadRequestError(`Google token request failed: ${await res.text()}`);
+    throw new BadGatewayError(`Google token request failed: ${await res.text()}`);
   }
 
   const data = (await res.json()) as { access_token: string; expires_in: number };
@@ -81,15 +82,9 @@ async function googleFetch(
     body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
   });
   if (!res.ok) {
-    throw new BadRequestError(`Google Calendar ${init.method} ${path} failed: ${await res.text()}`);
+    throw new BadGatewayError(`Google Calendar ${init.method} ${path} failed: ${await res.text()}`);
   }
   return res.status === 204 ? {} : ((await res.json()) as Record<string, unknown>);
-}
-
-function nextDay(value: string): string {
-  const d = new Date(`${value.slice(0, 10)}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + 1);
-  return d.toISOString().slice(0, 10);
 }
 
 /**
@@ -103,8 +98,7 @@ export async function connectGoogleCalendar(businessId: string, email: string) {
     throw new BadRequestError('Google Calendar is not configured on this server');
   }
 
-  const business = await db.query.businesses.findFirst({ where: eq(businesses.id, businessId) });
-  if (!business) throw new NotFoundError('Business not found');
+  const business = await findBusinessRow(businessId);
 
   let calendarId = business.googleCalendarId;
   if (!calendarId) {
@@ -143,19 +137,14 @@ type SyncableProposal = typeof proposals.$inferSelect & {
 };
 
 async function pushEvent(key: ServiceAccountKey, calendarId: string, p: SyncableProposal) {
+  const e = calendarEventFor(p);
   const body = {
-    summary: `${p.customer.name} — ${p.status === 'ACCEPTED' ? 'Booked' : 'Open inquiry'}`,
-    location: p.weddingLocation,
-    description: [
-      `Proposal ${p.proposalNumber}`,
-      `Total: ₹${p.total.toLocaleString('en-IN')}`,
-      p.customer.phone ? `Phone: ${p.customer.phone}` : '',
-    ]
-      .filter(Boolean)
-      .join('\n'),
-    start: { date: p.weddingDate.slice(0, 10) },
-    end: { date: nextDay(p.weddingEndDate ?? p.weddingDate) },
-    status: p.status === 'ACCEPTED' ? 'confirmed' : 'tentative',
+    summary: e.summary,
+    location: e.location,
+    description: e.description,
+    start: { date: e.startDate },
+    end: { date: e.endDateExclusive },
+    status: e.confirmed ? 'confirmed' : 'tentative',
   };
 
   const base = `/calendars/${encodeURIComponent(calendarId)}/events`;
@@ -171,40 +160,20 @@ async function pushEvent(key: ServiceAccountKey, calendarId: string, p: Syncable
     .where(eq(proposals.id, p.id));
 }
 
-/**
- * Best-effort: a Google outage or a revoked calendar must never fail the
- * proposal write that triggered the sync.
- */
-export async function syncProposalToGoogle(proposalId: string): Promise<void> {
+type GoogleCalendarTarget = Pick<typeof businesses.$inferSelect, 'googleCalendarId'>;
+
+export async function syncProposalToGoogle(
+  proposal: SyncableProposal,
+  business: GoogleCalendarTarget,
+): Promise<void> {
   const key = serviceAccount();
-  if (!key) return;
+  if (!key || !business.googleCalendarId) return;
 
-  try {
-    const proposal = await db.query.proposals.findFirst({
-      where: eq(proposals.id, proposalId),
-      with: { customer: true },
-    });
-    if (!proposal) return;
-
-    const business = await db.query.businesses.findFirst({
-      where: eq(businesses.id, proposal.businessId),
-    });
-    if (!business?.googleCalendarId) return;
-
-    const shouldExist = SYNCED_STATUSES.includes(
-      proposal.status as (typeof SYNCED_STATUSES)[number],
-    );
-    if (shouldExist) {
-      await pushEvent(key, business.googleCalendarId, proposal);
-    } else if (proposal.googleEventId) {
-      await removeEvent(key, business.googleCalendarId, proposal.googleEventId);
-      await db
-        .update(proposals)
-        .set({ googleEventId: null })
-        .where(eq(proposals.id, proposal.id));
-    }
-  } catch (err) {
-    console.error('Google Calendar sync failed:', err);
+  if (shouldSync(proposal.status)) {
+    await pushEvent(key, business.googleCalendarId, proposal);
+  } else if (proposal.googleEventId) {
+    await removeEvent(key, business.googleCalendarId, proposal.googleEventId);
+    await db.update(proposals).set({ googleEventId: null }).where(eq(proposals.id, proposal.id));
   }
 }
 
@@ -214,14 +183,11 @@ async function removeEvent(key: ServiceAccountKey, calendarId: string, eventId: 
   });
 }
 
-export async function removeGoogleEvent(businessId: string, eventId: string | null): Promise<void> {
+export async function removeGoogleEvent(
+  proposal: Pick<typeof proposals.$inferSelect, 'googleEventId'>,
+  business: GoogleCalendarTarget,
+): Promise<void> {
   const key = serviceAccount();
-  if (!key || !eventId) return;
-  try {
-    const business = await db.query.businesses.findFirst({ where: eq(businesses.id, businessId) });
-    if (!business?.googleCalendarId) return;
-    await removeEvent(key, business.googleCalendarId, eventId);
-  } catch (err) {
-    console.error('Google Calendar delete failed:', err);
-  }
+  if (!key || !proposal.googleEventId || !business.googleCalendarId) return;
+  await removeEvent(key, business.googleCalendarId, proposal.googleEventId);
 }

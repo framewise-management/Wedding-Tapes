@@ -3,13 +3,13 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { NotFoundError } from '../lib/http-error';
+import { calendarEventFor, SYNCED_STATUSES, type CalendarEvent } from './calendar-events';
+import { findBusinessRow } from './business';
 
-// Mirrors the Calendar page: DRAFT hasn't gone out yet, REJECTED frees the date.
-const FEED_STATUSES = ['SENT', 'ACCEPTED'] as const;
+export type { CalendarEvent };
 
 export async function getOrCreateCalendarToken(businessId: string): Promise<string> {
-  const business = await db.query.businesses.findFirst({ where: eq(businesses.id, businessId) });
-  if (!business) throw new NotFoundError('Business not found');
+  const business = await findBusinessRow(businessId);
   if (business.calendarToken) return business.calendarToken;
 
   const token = randomUUID();
@@ -40,50 +40,22 @@ function dateOnly(value: string): string {
   return value.slice(0, 10).replace(/-/g, '');
 }
 
-function nextDay(value: string): string {
-  const d = new Date(`${value.slice(0, 10)}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + 1);
-  return dateOnly(d.toISOString());
-}
-
-export interface CalendarEvent {
-  id: string;
-  proposalNumber: string;
-  status: string;
-  weddingDate: string;
-  weddingEndDate: string | null;
-  weddingLocation: string;
-  total: number;
-  customer: { name: string; phone: string | null };
-}
-
 function stampNow(): string {
   return new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
 
 function eventLines(p: CalendarEvent, stamp: string): string[] {
-  const label = p.status === 'ACCEPTED' ? 'Booked' : 'Open inquiry';
+  const e = calendarEventFor(p);
   return [
     'BEGIN:VEVENT',
     `UID:${p.id}@wedding-tapes`,
     `DTSTAMP:${stamp}`,
-    `DTSTART;VALUE=DATE:${dateOnly(p.weddingDate)}`,
-    `DTEND;VALUE=DATE:${nextDay(p.weddingEndDate ?? p.weddingDate)}`,
-    fold(`SUMMARY:${escapeText(`${p.customer.name} — ${label}`)}`),
-    fold(`LOCATION:${escapeText(p.weddingLocation)}`),
-    fold(
-      `DESCRIPTION:${escapeText(
-        [
-          `Proposal ${p.proposalNumber}`,
-          `Status: ${p.status}`,
-          `Total: ₹${Number(p.total).toLocaleString('en-IN')}`,
-          p.customer.phone ? `Phone: ${p.customer.phone}` : '',
-        ]
-          .filter(Boolean)
-          .join('\n'),
-      )}`,
-    ),
-    p.status === 'ACCEPTED' ? 'STATUS:CONFIRMED' : 'STATUS:TENTATIVE',
+    `DTSTART;VALUE=DATE:${dateOnly(e.startDate)}`,
+    `DTEND;VALUE=DATE:${dateOnly(e.endDateExclusive)}`,
+    fold(`SUMMARY:${escapeText(e.summary)}`),
+    fold(`LOCATION:${escapeText(e.location)}`),
+    fold(`DESCRIPTION:${escapeText(e.description)}`),
+    e.confirmed ? 'STATUS:CONFIRMED' : 'STATUS:TENTATIVE',
     'END:VEVENT',
   ];
 }
@@ -132,7 +104,7 @@ export async function buildCalendarFeed(token: string): Promise<string> {
   if (!business) throw new NotFoundError('Calendar not found');
 
   const rows = await db.query.proposals.findMany({
-    where: and(eq(proposals.businessId, business.id), inArray(proposals.status, [...FEED_STATUSES])),
+    where: and(eq(proposals.businessId, business.id), inArray(proposals.status, [...SYNCED_STATUSES])),
     with: { customer: true },
   });
 

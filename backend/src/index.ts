@@ -6,6 +6,7 @@ import { businesses } from './db/schema';
 import { errorHandler } from './middleware/error';
 import { authRoutes } from './routes/auth';
 import { businessRoutes } from './routes/business';
+import { calendarIntegrationRoutes } from './routes/calendar-integrations';
 import { servicesRoutes } from './routes/services';
 import { packagesRoutes } from './routes/packages';
 import { eventTypesRoutes } from './routes/event-types';
@@ -32,6 +33,7 @@ app.get('/health', async (c) => {
 
 app.route('/api/auth', authRoutes);
 app.route('/api/business', businessRoutes);
+app.route('/api/business', calendarIntegrationRoutes);
 app.route('/api/services', servicesRoutes);
 app.route('/api/packages', packagesRoutes);
 app.route('/api/event-types', eventTypesRoutes);

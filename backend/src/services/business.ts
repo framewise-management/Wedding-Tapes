@@ -5,11 +5,17 @@ import { NotFoundError } from '../lib/http-error';
 import type { UpdateBusinessInput } from '../schemas/business';
 import { findAllTerms } from './terms';
 
-export async function getBusiness(businessId: string) {
+// Raw row, including secrets: server-side callers only. Anything sent to a client goes through getBusiness.
+export async function findBusinessRow(businessId: string) {
   const business = await db.query.businesses.findFirst({
     where: eq(businesses.id, businessId),
   });
   if (!business) throw new NotFoundError('Business not found');
+  return business;
+}
+
+export async function getBusiness(businessId: string) {
+  const business = await findBusinessRow(businessId);
   // The stored iCloud app-specific password never leaves the server, not even
   // encrypted — the client only needs to know whether a connection exists.
   const { applePasswordEnc, calendarToken: _calendarToken, ...safe } = business;
