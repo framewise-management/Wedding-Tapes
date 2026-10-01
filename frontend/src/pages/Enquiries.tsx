@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
 import type { Service } from '../types/catalog';
 import type { Customer } from '../types/customer';
@@ -51,6 +52,7 @@ function calculateServiceTotal(services: string[], allServices: Service[]): numb
 }
 
 export default function Enquiries() {
+  const navigate = useNavigate();
   const [enquiries, setEnquiries] = useState<Enquiry[] | null>(null);
   const [allServices, setAllServices] = useState<Service[] | null>(null);
   const [error, setError] = useState('');
@@ -122,32 +124,47 @@ export default function Enquiries() {
   };
 
   async function convertToProposal(enquiry: Enquiry) {
+    const missing = [
+      !enquiry.phone && 'phone',
+      !enquiry.eventDate && 'event date',
+      !enquiry.location && 'location',
+      !enquiry.services?.length && 'at least one service',
+    ].filter(Boolean);
+    if (missing.length) {
+      setError(`Can't convert yet: this enquiry is missing ${missing.join(', ')}.`);
+      return;
+    }
     if (!confirm(`Convert this enquiry to a proposal? A proposal will be created for ${enquiry.clientName}.`)) return;
+    setError('');
+    let customerId: string | null = null;
     try {
-      const customer = {
+      const customer = await apiPost<Customer>('/api/customers', {
         name: enquiry.clientName,
         phone: enquiry.phone,
-        email: enquiry.email,
-      };
-      const customerResponse = await apiPost<Customer>('/api/customers', customer);
-      const customerId = customerResponse.id;
+        email: enquiry.email || undefined,
+      });
+      customerId = customer.id;
 
-      const proposalData = {
+      const notes = [
+        'Converted from enquiry',
+        enquiry.source && `Source: ${enquiry.source}`,
+        enquiry.budget && `Budget: ${enquiry.budget}`,
+        enquiry.message,
+      ]
+        .filter(Boolean)
+        .join('\n');
+      const proposal = await apiPost<{ id: string }>('/api/proposals', {
         customerId,
-        services: enquiry.services || [],
-        packages: [],
-        eventDate: enquiry.eventDate || null,
-        eventType: enquiry.eventType || null,
-        eventDuration: enquiry.eventDuration || null,
-        location: enquiry.location || null,
-        budget: enquiry.budget || null,
-        message: enquiry.message || null,
-        notes: `Converted from enquiry - ${enquiry.source ? `Source: ${enquiry.source}` : ''}`,
-      };
-      const proposal = await apiPost<{ id: string }>('/api/proposals', proposalData);
+        weddingDate: enquiry.eventDate,
+        weddingLocation: enquiry.location,
+        numberOfDays: enquiry.eventDuration || undefined,
+        items: enquiry.services.map((serviceId) => ({ serviceId, quantity: 1, isOptional: false })),
+        notes,
+      });
       await updateEnquiryStatus(enquiry.id, 'CONVERTED');
-      alert(`Proposal ${proposal.id} created successfully!`);
+      navigate(`/proposals/${proposal.id}/edit`);
     } catch (err) {
+      if (customerId) await apiDelete(`/api/customers/${customerId}`).catch(() => {});
       setError(err instanceof Error ? err.message : 'Failed to convert enquiry to proposal');
     }
   };
