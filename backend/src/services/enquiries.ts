@@ -71,7 +71,7 @@ export async function findAllEnquiries(businessId: string, filters?: { search?: 
   return await db.select().from(enquiries).where(and(...whereClauses)).orderBy(desc(enquiries.createdAt));
 }
 
-export async function findOneEnquiry(id: string, businessId: string) {
+export async function findOneEnquiry(businessId: string, id: string) {
   const [result] = await db
     .select()
     .from(enquiries)
@@ -80,7 +80,7 @@ export async function findOneEnquiry(id: string, businessId: string) {
   return result || null;
 }
 
-export async function updateEnquiry(id: string, businessId: string, updates: { status?: EnquiryStatus }) {
+export async function updateEnquiry(businessId: string, id: string, updates: { status?: EnquiryStatus }) {
   const [result] = await db
     .update(enquiries)
     .set(updates)
@@ -90,7 +90,7 @@ export async function updateEnquiry(id: string, businessId: string, updates: { s
   return result || null;
 }
 
-export async function deleteEnquiry(id: string, businessId: string) {
+export async function deleteEnquiry(businessId: string, id: string) {
   try {
     const [result] = await db
       .delete(enquiries)
