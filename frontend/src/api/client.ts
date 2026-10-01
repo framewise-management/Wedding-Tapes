@@ -1,7 +1,17 @@
-import { getToken } from '../auth/auth';
+import { clearToken, getToken } from '../auth/auth';
 
 const API_URL =
   import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3333' : '');
+
+// Outside /api/auth/, only our own auth middleware returns 401, so it means the session expired.
+async function failure(res: Response, method: string, path: string, token: string | null): Promise<Error> {
+  if (res.status === 401 && token && !path.startsWith('/api/auth/')) {
+    clearToken();
+    window.location.assign('/');
+  }
+  const data = await res.json().catch(() => null);
+  return new Error(data?.error?.message ?? `${method} ${path} failed: ${res.status}`);
+}
 
 async function request<T>(
   method: string,
@@ -17,10 +27,7 @@ async function request<T>(
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error?.message ?? `${method} ${path} failed: ${res.status}`);
-  }
+  if (!res.ok) throw await failure(res, method, path, token);
   return res.json();
 }
 
@@ -39,18 +46,12 @@ export async function apiPostFile(path: string): Promise<Blob> {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error?.message ?? `POST ${path} failed: ${res.status}`);
-  }
+  if (!res.ok) throw await failure(res, 'POST', path, token);
   return res.blob();
 }
 
 export async function apiGetFile(path: string): Promise<Blob> {
   const res = await fetch(`${API_URL}${path}`);
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error?.message ?? `GET ${path} failed: ${res.status}`);
-  }
+  if (!res.ok) throw await failure(res, 'GET', path, null);
   return res.blob();
 }
