@@ -1,0 +1,21 @@
+export type Enquiry = {
+  id: string;
+  clientName: string;
+  brideName?: string;
+  groomName?: string;
+  phone?: string;
+  email?: string;
+  eventDate?: string;
+  eventType?: string;
+  eventDuration?: number;
+  location?: string;
+  services: string[];
+  budget?: string;
+  message?: string;
+  source?: string;
+  status: 'NEW' | 'CONTACTED' | 'CONVERTED' | 'CANCELLED';
+  assignedTo?: string;
+  createdAt: string;
+  updatedAt: string;
+  businessId: string;
+};

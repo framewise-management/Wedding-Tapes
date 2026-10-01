@@ -2,46 +2,20 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiDelete, apiGet, apiPost, apiPut } from '../api/client';
 import type { Service } from '../types/catalog';
-import type { Customer } from '../types/customer';
+import type { Enquiry } from '../types/enquiry';
+import EnquiryForm from '../components/EnquiryForm';
+import { formatDate, money } from '../lib/format';
 import './Enquiries.css';
 
 const STATUS_OPTIONS = ['NEW', 'CONTACTED', 'CONVERTED', 'CANCELLED'] as const;
-const SOURCE_OPTIONS = ['Meta Ad', 'Google', 'Instagram', 'Direct', 'Referral', 'Other'] as const;
+const NOT_SPECIFIED = 'Not specified';
 
-type Enquiry = {
-  id: string;
-  clientName: string;
-  brideName?: string;
-  groomName?: string;
-  phone?: string;
-  email?: string;
-  eventDate?: string;
-  eventType?: string;
-  eventDuration?: number;
-  location?: string;
-  services: string[];
-  budget?: string;
-  message?: string;
-  source?: string;
-  status: 'NEW' | 'CONTACTED' | 'CONVERTED' | 'CANCELLED';
-  assignedTo?: string;
-  createdAt: string;
-  updatedAt: string;
-  businessId: string;
-};
-
-function formatDate(dateString?: string): string {
-  if (!dateString) return 'Not specified';
-  return new Date(dateString).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+function dateOrUnspecified(value?: string): string {
+  return value ? formatDate(value) : NOT_SPECIFIED;
 }
 
-function money(value?: number): string {
-  if (!value) return 'Not specified';
-  return `₹${value.toLocaleString('en-IN')}`;
+function moneyOrUnspecified(value?: number): string {
+  return value ? money(value) : NOT_SPECIFIED;
 }
 
 function calculateServiceTotal(services: string[], allServices: Service[]): number {
@@ -124,47 +98,12 @@ export default function Enquiries() {
   };
 
   async function convertToProposal(enquiry: Enquiry) {
-    const missing = [
-      !enquiry.phone && 'phone',
-      !enquiry.eventDate && 'event date',
-      !enquiry.location && 'location',
-      !enquiry.services?.length && 'at least one service',
-    ].filter(Boolean);
-    if (missing.length) {
-      setError(`Can't convert yet: this enquiry is missing ${missing.join(', ')}.`);
-      return;
-    }
     if (!confirm(`Convert this enquiry to a proposal? A proposal will be created for ${enquiry.clientName}.`)) return;
     setError('');
-    let customerId: string | null = null;
     try {
-      const customer = await apiPost<Customer>('/api/customers', {
-        name: enquiry.clientName,
-        phone: enquiry.phone,
-        email: enquiry.email || undefined,
-      });
-      customerId = customer.id;
-
-      const notes = [
-        'Converted from enquiry',
-        enquiry.source && `Source: ${enquiry.source}`,
-        enquiry.budget && `Budget: ${enquiry.budget}`,
-        enquiry.message,
-      ]
-        .filter(Boolean)
-        .join('\n');
-      const proposal = await apiPost<{ id: string }>('/api/proposals', {
-        customerId,
-        weddingDate: enquiry.eventDate,
-        weddingLocation: enquiry.location,
-        numberOfDays: enquiry.eventDuration || undefined,
-        items: enquiry.services.map((serviceId) => ({ serviceId, quantity: 1, isOptional: false })),
-        notes,
-      });
-      await updateEnquiryStatus(enquiry.id, 'CONVERTED');
+      const proposal = await apiPost<{ id: string }>(`/api/enquiries/${enquiry.id}/convert`, {});
       navigate(`/proposals/${proposal.id}/edit`);
     } catch (err) {
-      if (customerId) await apiDelete(`/api/customers/${customerId}`).catch(() => {});
       setError(err instanceof Error ? err.message : 'Failed to convert enquiry to proposal');
     }
   };
@@ -269,7 +208,7 @@ export default function Enquiries() {
 
               <div className="enq-cell-event">
                 {enquiry.eventDate ? (
-                  <div>{formatDate(enquiry.eventDate)}</div>
+                  <div>{dateOrUnspecified(enquiry.eventDate)}</div>
                 ) : null}
                 {enquiry.eventType && (
                   <div className="enq-event-type">{enquiry.eventType}</div>
@@ -294,7 +233,7 @@ export default function Enquiries() {
                     })}
                     {allServices && (
                       <div className="enq-service-total">
-                        Total: {money(calculateServiceTotal(enquiry.services, allServices || []))}
+                        Total: {moneyOrUnspecified(calculateServiceTotal(enquiry.services, allServices || []))}
                       </div>
                     )}
                   </div>
@@ -351,234 +290,5 @@ export default function Enquiries() {
         )}
       </div>
     </div>
-  );
-}
-
-function EnquiryForm({
-  onSubmit,
-  onCancel,
-  isSubmitting,
-  services,
-}: {
-  onSubmit: (data: Partial<Enquiry>) => void;
-  onCancel: () => void;
-  isSubmitting: boolean;
-  services: Service[];
-}) {
-  const [clientName, setClientName] = useState('');
-  const [brideName, setBrideName] = useState('');
-  const [groomName, setGroomName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventType, setEventType] = useState('');
-  const [eventDuration, setEventDuration] = useState('');
-  const [location, setLocation] = useState('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [budget, setBudget] = useState('');
-  const [message, setMessage] = useState('');
-  const [source, setSource] = useState('Meta Ad');
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formData: Partial<Enquiry> = {
-      clientName,
-      brideName: brideName || undefined,
-      groomName: groomName || undefined,
-      phone: phone || undefined,
-      email: email || undefined,
-      eventDate: eventDate || undefined,
-      eventType: eventType || undefined,
-      eventDuration: eventDuration ? parseInt(eventDuration) : undefined,
-      location,
-      services: selectedServices,
-      budget: budget || undefined,
-      message: message || undefined,
-      source,
-    };
-    await onSubmit(formData);
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="enq-form">
-      <div className="enq-form-grid">
-        <div className="enq-form-section">
-          <h3>Client Information</h3>
-          <div className="enq-form-field">
-            <label htmlFor="clientName">Full Name *</label>
-            <input
-              id="clientName"
-              type="text"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              required
-              placeholder="e.g., John Doe"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="brideName">Bride's Name</label>
-            <input
-              id="brideName"
-              type="text"
-              value={brideName}
-              onChange={(e) => setBrideName(e.target.value)}
-              placeholder="e.g., Jane Smith"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="groomName">Groom's Name</label>
-            <input
-              id="groomName"
-              type="text"
-              value={groomName}
-              onChange={(e) => setGroomName(e.target.value)}
-              placeholder="e.g., Michael Johnson"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="e.g., +91 98765 43210"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="email">Email Address</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g., client@example.com"
-            />
-          </div>
-        </div>
-
-        <div className="enq-form-section">
-          <h3>Event Details</h3>
-          <div className="enq-form-field">
-            <label htmlFor="eventDate">Event Date</label>
-            <input
-              id="eventDate"
-              type="date"
-              value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="eventType">Event Type</label>
-            <input
-              id="eventType"
-              type="text"
-              value={eventType}
-              onChange={(e) => setEventType(e.target.value)}
-              placeholder="e.g., Wedding, Engagement, Reception"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="eventDuration">Duration (days)</label>
-            <input
-              id="eventDuration"
-              type="number"
-              value={eventDuration}
-              onChange={(e) => setEventDuration(e.target.value)}
-              min="1"
-              placeholder="e.g., 2"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="location">Location *</label>
-            <input
-              id="location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              required
-              placeholder="e.g., Mumbai, Maharashtra"
-            />
-          </div>
-        </div>
-
-        <div className="enq-form-section">
-          <h3>Services & Budget</h3>
-          <div className="enq-form-field">
-            <label htmlFor="services">Photography Services</label>
-            <div className="enq-services-grid">
-              {services.map((service) => (
-                <label key={service.id} className="enq-service-option">
-                  <input
-                    type="checkbox"
-                    value={service.id}
-                    checked={selectedServices.includes(service.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedServices((prev) => [...prev, service.id]);
-                      } else {
-                        setSelectedServices((prev) => prev.filter((id) => id !== service.id));
-                      }
-                    }}
-                  />
-                  <span className="enq-service-name">{service.name}</span>
-                  <span className="enq-service-price">{service.flatPrice != null ? `₹${service.flatPrice}` : ""}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="budget">Budget Range</label>
-            <input
-              id="budget"
-              type="text"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder="e.g., ₹50,000 - ₹1,00,000"
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="message">Special Requests/Message</label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Any specific requirements or notes..."
-              rows={3}
-            />
-          </div>
-          <div className="enq-form-field">
-            <label htmlFor="source">How did you hear about us</label>
-            <select
-              id="source"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-            >
-              {SOURCE_OPTIONS.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div className="enq-form-actions">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="enq-cancel-btn"
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="enq-submit-btn"
-          disabled={isSubmitting || !clientName || !location}
-        >
-          {isSubmitting ? 'Saving...' : 'Save Enquiry'}
-        </button>
-      </div>
-    </form>
   );
 }
