@@ -20,12 +20,12 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock('../db/client', () => ({ db: mocks.db }));
-vi.mock('./catalog-services', () => ({ findOneService: mocks.findOneService }));
-vi.mock('./calendar-sync', () => ({ syncProposalToCalendars: vi.fn(), removeProposalFromCalendars: vi.fn() }));
+vi.mock('./catalog-services', () => ({ catalogServiceService: { findOne: mocks.findOneService } }));
+vi.mock('./calendar-sync', () => ({ calendarSyncService: { syncProposal: vi.fn(), removeProposal: vi.fn() } }));
 vi.mock('../lib/discord', () => ({ notifyDiscord: vi.fn() }));
 
 import { NotFoundError } from '../lib/http-error';
-import { updateProposal } from './proposals';
+import { proposalService } from './proposals';
 
 const draft = {
   id: 'p1',
@@ -51,7 +51,7 @@ describe('updateProposal', () => {
     mocks.findOneService.mockRejectedValue(new NotFoundError('Service not found'));
 
     await expect(
-      updateProposal('b1', 'p1', { items: [{ serviceId: 's-new', quantity: 1, isOptional: false }] }),
+      proposalService.update('b1', 'p1', { items: [{ serviceId: 's-new', quantity: 1, isOptional: false }] }),
     ).rejects.toBeInstanceOf(NotFoundError);
 
     expect(mocks.db.delete).not.toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe('updateProposal', () => {
   it('performs every write inside one transaction', async () => {
     mocks.findOneService.mockResolvedValue(service);
 
-    await updateProposal('b1', 'p1', {
+    await proposalService.update('b1', 'p1', {
       items: [{ serviceId: 's-new', quantity: 2, isOptional: false }],
     });
 

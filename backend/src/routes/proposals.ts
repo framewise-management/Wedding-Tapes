@@ -11,18 +11,8 @@ import {
   updateProposalSchema,
   updateProposalStatusSchema,
 } from '../schemas/proposals';
-import {
-  calculateProposal,
-  createProposal,
-  findAllProposals,
-  findOneProposal,
-  removeProposal,
-  setProposalArchived,
-  shareProposal,
-  updateProposal,
-  updateProposalStatus,
-} from '../services/proposals';
-import { getBusiness } from '../services/business';
+import { proposalService } from '../services/proposals';
+import { businessService } from '../services/business';
 import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
 import { filterProposalToEvent } from '../pdf-shared';
 import { NotFoundError } from '../lib/http-error';
@@ -34,32 +24,32 @@ proposalsRoutes.use('*', authMiddleware);
 proposalsRoutes.get('/', async (c) => {
   const user = c.get('user');
   const query = parseQuery(c, listProposalsQuerySchema);
-  return c.json(await findAllProposals(user.businessId, query));
+  return c.json(await proposalService.findAll(user.businessId, query));
 });
 
 proposalsRoutes.post('/', async (c) => {
   const user = c.get('user');
   const input = await parseBody(c, createProposalSchema);
-  return c.json(await createProposal(user.businessId, input), 201);
+  return c.json(await proposalService.create(user.businessId, input), 201);
 });
 
 proposalsRoutes.get('/:id', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
-  return c.json(await findOneProposal(user.businessId, id));
+  return c.json(await proposalService.findOne(user.businessId, id));
 });
 
 proposalsRoutes.put('/:id', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, updateProposalSchema);
-  return c.json(await updateProposal(user.businessId, id, input));
+  return c.json(await proposalService.update(user.businessId, id, input));
 });
 
 proposalsRoutes.delete('/:id', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
-  await removeProposal(user.businessId, id);
+  await proposalService.remove(user.businessId, id);
   return c.json({ success: true });
 });
 
@@ -67,27 +57,27 @@ proposalsRoutes.post('/:id/calculate', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, calculateProposalSchema);
-  return c.json(await calculateProposal(user.businessId, id, input), 201);
+  return c.json(await proposalService.calculate(user.businessId, id, input), 201);
 });
 
 proposalsRoutes.patch('/:id/status', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, updateProposalStatusSchema);
-  return c.json(await updateProposalStatus(user.businessId, id, input.status));
+  return c.json(await proposalService.updateStatus(user.businessId, id, input.status));
 });
 
 proposalsRoutes.patch('/:id/archive', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
   const input = await parseBody(c, archiveProposalSchema);
-  return c.json(await setProposalArchived(user.businessId, id, input.archived));
+  return c.json(await proposalService.setArchived(user.businessId, id, input.archived));
 });
 
 proposalsRoutes.post('/:id/share', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
-  return c.json(await shareProposal(user.businessId, id));
+  return c.json(await proposalService.share(user.businessId, id));
 });
 
 proposalsRoutes.post('/:id/generate-pdf', async (c) => {
@@ -95,8 +85,8 @@ proposalsRoutes.post('/:id/generate-pdf', async (c) => {
   const id = parseUuidParam(c, 'id');
   const { eventId } = parseQuery(c, generatePdfQuerySchema);
   const [proposal, business] = await Promise.all([
-    findOneProposal(user.businessId, id),
-    getBusiness(user.businessId),
+    proposalService.findOne(user.businessId, id),
+    businessService.get(user.businessId),
   ]);
   const scoped = eventId ? filterProposalToEvent(proposal, eventId) : proposal;
   if (!scoped) throw new NotFoundError('Event not found on this proposal');

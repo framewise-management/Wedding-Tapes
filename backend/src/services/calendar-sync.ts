@@ -1,44 +1,48 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db/client';
 import { proposals } from '../db/schema';
-import { findBusinessRow } from './business';
-import { removeAppleEvent, syncProposalToApple } from './apple-calendar';
-import { removeGoogleEvent, syncProposalToGoogle } from './google-calendar';
+import { businessService } from './business';
+import { appleCalendarService } from './apple-calendar';
+import { googleCalendarService } from './google-calendar';
 
-// A calendar outage or a revoked connection must never fail the proposal write that triggered it.
-async function bestEffort(label: string, fn: () => Promise<void>): Promise<void> {
-  try {
-    await fn();
-  } catch (err) {
-    console.error(`${label} failed:`, err);
+export class CalendarSyncService {
+  // A calendar outage or a revoked connection must never fail the proposal write that triggered it.
+  private async bestEffort(label: string, fn: () => Promise<void>): Promise<void> {
+    try {
+      await fn();
+    } catch (err) {
+      console.error(`${label} failed:`, err);
+    }
+  }
+
+  async syncProposal(proposalId: string): Promise<void> {
+    await this.bestEffort('Calendar sync', async () => {
+      const proposal = await db.query.proposals.findFirst({
+        where: eq(proposals.id, proposalId),
+        with: { customer: true },
+      });
+      if (!proposal) return;
+      const business = await businessService.findRow(proposal.businessId);
+
+      await Promise.all([
+        this.bestEffort('Google Calendar sync', () => googleCalendarService.syncProposal(proposal, business)),
+        this.bestEffort('Apple Calendar sync', () => appleCalendarService.syncProposal(proposal, business)),
+      ]);
+    });
+  }
+
+  async removeProposal(
+    proposal: Pick<typeof proposals.$inferSelect, 'id' | 'businessId' | 'googleEventId'>,
+  ): Promise<void> {
+    await this.bestEffort('Calendar delete', async () => {
+      const business = await businessService.findRow(proposal.businessId);
+
+      await Promise.all([
+        this.bestEffort('Google Calendar delete', () => googleCalendarService.removeProposalEvent(proposal, business)),
+        this.bestEffort('Apple Calendar delete', () => appleCalendarService.removeProposalEvent(proposal, business)),
+      ]);
+    });
   }
 }
 
-export async function syncProposalToCalendars(proposalId: string): Promise<void> {
-  await bestEffort('Calendar sync', async () => {
-    const proposal = await db.query.proposals.findFirst({
-      where: eq(proposals.id, proposalId),
-      with: { customer: true },
-    });
-    if (!proposal) return;
-    const business = await findBusinessRow(proposal.businessId);
-
-    await Promise.all([
-      bestEffort('Google Calendar sync', () => syncProposalToGoogle(proposal, business)),
-      bestEffort('Apple Calendar sync', () => syncProposalToApple(proposal, business)),
-    ]);
-  });
-}
-
-export async function removeProposalFromCalendars(
-  proposal: Pick<typeof proposals.$inferSelect, 'id' | 'businessId' | 'googleEventId'>,
-): Promise<void> {
-  await bestEffort('Calendar delete', async () => {
-    const business = await findBusinessRow(proposal.businessId);
-
-    await Promise.all([
-      bestEffort('Google Calendar delete', () => removeGoogleEvent(proposal, business)),
-      bestEffort('Apple Calendar delete', () => removeAppleEvent(proposal, business)),
-    ]);
-  });
-}
+export const calendarSyncService = new CalendarSyncService();

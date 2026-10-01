@@ -15,18 +15,18 @@ const mocks = vi.hoisted(() => {
 vi.mock('../db/client', () => ({ db: mocks.db }));
 
 import { NotFoundError } from '../lib/http-error';
-import { deleteEnquiry, findOneEnquiry, updateEnquiry } from './enquiries';
+import { enquiryService } from './enquiries';
 
 describe('enquiries service', () => {
   it('findOneEnquiry throws NotFoundError when the enquiry is not in the business', async () => {
-    await expect(findOneEnquiry('b1', 'e1')).rejects.toBeInstanceOf(NotFoundError);
+    await expect(enquiryService.findOne('b1', 'e1')).rejects.toBeInstanceOf(NotFoundError);
   });
 
   it('updateEnquiry throws NotFoundError when no row matched', async () => {
-    await expect(updateEnquiry('b1', 'e1', { status: 'CONTACTED' })).rejects.toBeInstanceOf(NotFoundError);
+    await expect(enquiryService.update('b1', 'e1', { status: 'CONTACTED' })).rejects.toBeInstanceOf(NotFoundError);
   });
 
   it('deleteEnquiry throws NotFoundError when no row matched', async () => {
-    await expect(deleteEnquiry('b1', 'e1')).rejects.toBeInstanceOf(NotFoundError);
+    await expect(enquiryService.remove('b1', 'e1')).rejects.toBeInstanceOf(NotFoundError);
   });
 });

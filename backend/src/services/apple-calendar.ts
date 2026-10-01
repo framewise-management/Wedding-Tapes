@@ -4,9 +4,9 @@ import { db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { BadGatewayError, BadRequestError } from '../lib/http-error';
 import { decryptSecret, encryptSecret } from '../lib/crypto';
-import { renderEventDocument } from './calendar';
+import { calendarFeedService } from './calendar';
 import { SYNCED_STATUSES, shouldSync, type CalendarEvent } from './calendar-events';
-import { findBusinessRow } from './business';
+import { businessService } from './business';
 
 const ICLOUD_ROOT = 'https://caldav.icloud.com';
 
@@ -130,7 +130,7 @@ function eventUrl(calendarUrl: string, proposalId: string): string {
 async function putEvent(creds: Credentials, calendarUrl: string, p: CalendarEvent): Promise<void> {
   await dav(creds, eventUrl(calendarUrl, p.id), 'PUT', {
     contentType: 'text/calendar; charset=utf-8',
-    body: renderEventDocument(p),
+    body: calendarFeedService.renderEvent(p),
   });
 }
 
@@ -163,7 +163,7 @@ function credentialsOf(business: AppleConnection): { creds: Credentials; calenda
 }
 
 async function storedCredentials(businessId: string) {
-  return credentialsOf(await findBusinessRow(businessId));
+  return credentialsOf(await businessService.findRow(businessId));
 }
 
 function openProposals(businessId: string) {
@@ -176,93 +176,91 @@ function openProposals(businessId: string) {
   });
 }
 
-/**
- * Reconnecting reuses the saved password when the caller sends none, so the
- * user only ever types an app-specific password once per Apple ID.
- */
-export async function connectAppleCalendar(
-  businessId: string,
-  input: { appleId?: string; appPassword?: string },
-) {
-  const business = await findBusinessRow(businessId);
+export class AppleCalendarService {
+  /**
+   * Reconnecting reuses the saved password when the caller sends none, so the
+   * user only ever types an app-specific password once per Apple ID.
+   */
+  async connect(businessId: string, input: { appleId?: string; appPassword?: string }) {
+    const business = await businessService.findRow(businessId);
 
-  let creds: Credentials;
-  if (input.appPassword) {
-    const appleId = input.appleId ?? business.appleId;
-    if (!appleId) throw new BadRequestError('appleId is required');
-    // Apple prints app-specific passwords in xxxx-xxxx-xxxx-xxxx groups; users
-    // paste them with the hyphens, which iCloud rejects.
-    creds = { appleId, password: input.appPassword.replace(/[\s-]/g, '') };
-  } else {
-    if (!business.appleId || !business.applePasswordEnc) {
-      throw new BadRequestError(
-        'No saved Apple password — enter your Apple ID and an app-specific password',
-      );
+    let creds: Credentials;
+    if (input.appPassword) {
+      const appleId = input.appleId ?? business.appleId;
+      if (!appleId) throw new BadRequestError('appleId is required');
+      // Apple prints app-specific passwords in xxxx-xxxx-xxxx-xxxx groups; users
+      // paste them with the hyphens, which iCloud rejects.
+      creds = { appleId, password: input.appPassword.replace(/[\s-]/g, '') };
+    } else {
+      if (!business.appleId || !business.applePasswordEnc) {
+        throw new BadRequestError(
+          'No saved Apple password — enter your Apple ID and an app-specific password',
+        );
+      }
+      creds = { appleId: business.appleId, password: decryptSecret(business.applePasswordEnc) };
     }
-    creds = { appleId: business.appleId, password: decryptSecret(business.applePasswordEnc) };
+
+    const home = await findCalendarHome(creds);
+    const calendarUrl = await findOrCreateCalendar(creds, home, `${business.name} — Weddings`);
+
+    const open = await openProposals(businessId);
+    for (const proposal of open) await putEvent(creds, calendarUrl, proposal);
+
+    await db
+      .update(businesses)
+      .set({
+        appleId: creds.appleId,
+        applePasswordEnc: encryptSecret(creds.password),
+        appleCalendarUrl: calendarUrl,
+      })
+      .where(eq(businesses.id, businessId));
+
+    return { appleId: creds.appleId, syncedEvents: open.length };
   }
 
-  const home = await findCalendarHome(creds);
-  const calendarUrl = await findOrCreateCalendar(creds, home, `${business.name} — Weddings`);
+  /**
+   * Stops syncing without discarding the saved password, so reconnecting is one
+   * click. Clearing appleCalendarUrl is what storedCredentials() checks, so no
+   * further writes reach iCloud. The calendar itself stays in the user's account
+   * — deleting it would destroy dates they may still be relying on.
+   */
+  async disconnect(businessId: string) {
+    await db
+      .update(businesses)
+      .set({ appleCalendarUrl: null })
+      .where(eq(businesses.id, businessId));
+    return { disconnected: true };
+  }
 
-  const open = await openProposals(businessId);
-  for (const proposal of open) await putEvent(creds, calendarUrl, proposal);
+  async syncProposal(proposal: CalendarEvent, business: AppleConnection): Promise<void> {
+    const stored = credentialsOf(business);
+    if (!stored) return;
 
-  await db
-    .update(businesses)
-    .set({
-      appleId: creds.appleId,
-      applePasswordEnc: encryptSecret(creds.password),
-      appleCalendarUrl: calendarUrl,
-    })
-    .where(eq(businesses.id, businessId));
+    if (shouldSync(proposal.status)) {
+      await putEvent(stored.creds, stored.calendarUrl, proposal);
+    } else {
+      await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
+    }
+  }
 
-  return { appleId: creds.appleId, syncedEvents: open.length };
-}
-
-/**
- * Stops syncing without discarding the saved password, so reconnecting is one
- * click. Clearing appleCalendarUrl is what storedCredentials() checks, so no
- * further writes reach iCloud. The calendar itself stays in the user's account
- * — deleting it would destroy dates they may still be relying on.
- */
-export async function disconnectAppleCalendar(businessId: string) {
-  await db
-    .update(businesses)
-    .set({ appleCalendarUrl: null })
-    .where(eq(businesses.id, businessId));
-  return { disconnected: true };
-}
-
-export async function syncProposalToApple(
-  proposal: CalendarEvent,
-  business: AppleConnection,
-): Promise<void> {
-  const stored = credentialsOf(business);
-  if (!stored) return;
-
-  if (shouldSync(proposal.status)) {
-    await putEvent(stored.creds, stored.calendarUrl, proposal);
-  } else {
+  async removeProposalEvent(
+    proposal: Pick<CalendarEvent, 'id'>,
+    business: AppleConnection,
+  ): Promise<void> {
+    const stored = credentialsOf(business);
+    if (!stored) return;
     await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
   }
+
+  /** Manual re-push of every open/booked date, for the Sync button. */
+  async resync(businessId: string) {
+    const stored = await storedCredentials(businessId);
+    if (!stored) throw new BadRequestError('Apple Calendar is not connected');
+
+    const open = await openProposals(businessId);
+    for (const proposal of open) await putEvent(stored.creds, stored.calendarUrl, proposal);
+    return { syncedEvents: open.length };
+  }
 }
 
-export async function removeAppleEvent(
-  proposal: Pick<CalendarEvent, 'id'>,
-  business: AppleConnection,
-): Promise<void> {
-  const stored = credentialsOf(business);
-  if (!stored) return;
-  await deleteEvent(stored.creds, stored.calendarUrl, proposal.id);
-}
-
-/** Manual re-push of every open/booked date, for the Sync button. */
-export async function resyncAppleCalendar(businessId: string) {
-  const stored = await storedCredentials(businessId);
-  if (!stored) throw new BadRequestError('Apple Calendar is not connected');
-
-  const open = await openProposals(businessId);
-  for (const proposal of open) await putEvent(stored.creds, stored.calendarUrl, proposal);
-  return { syncedEvents: open.length };
-}
+export const appleCalendarService = new AppleCalendarService();

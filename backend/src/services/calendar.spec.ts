@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderCalendar, renderEventDocument, type CalendarEvent } from './calendar';
+import { calendarFeedService, type CalendarEvent } from './calendar';
 
 const event: CalendarEvent = {
   id: 'abc-123',
@@ -13,7 +13,7 @@ const event: CalendarEvent = {
 };
 
 describe('renderCalendar', () => {
-  const ics = renderCalendar('Wedding Tapes', [event]);
+  const ics = calendarFeedService.render('Wedding Tapes', [event]);
 
   it('wraps events in a valid calendar envelope', () => {
     expect(ics.startsWith('BEGIN:VCALENDAR\r\n')).toBe(true);
@@ -27,7 +27,7 @@ describe('renderCalendar', () => {
   });
 
   it('spans a multi-day event through the day after the last one', () => {
-    const ics = renderCalendar('x', [{ ...event, weddingDate: '2026-03-30', weddingEndDate: '2026-04-01' }]);
+    const ics = calendarFeedService.render('x', [{ ...event, weddingDate: '2026-03-30', weddingEndDate: '2026-04-01' }]);
     expect(ics).toContain('DTSTART;VALUE=DATE:20260330');
     expect(ics).toContain('DTEND;VALUE=DATE:20260402');
   });
@@ -39,7 +39,7 @@ describe('renderCalendar', () => {
 
   it('marks accepted as confirmed and sent as tentative', () => {
     expect(ics).toContain('STATUS:CONFIRMED');
-    expect(renderCalendar('x', [{ ...event, status: 'SENT' }])).toContain('STATUS:TENTATIVE');
+    expect(calendarFeedService.render('x', [{ ...event, status: 'SENT' }])).toContain('STATUS:TENTATIVE');
   });
 
   it('keeps every content line within 75 octets', () => {
@@ -49,7 +49,7 @@ describe('renderCalendar', () => {
   });
 
   it('renders a single-event CalDAV resource without METHOD', () => {
-    const doc = renderEventDocument(event);
+    const doc = calendarFeedService.renderEvent(event);
     // RFC 4791 §4.1: a calendar object resource MUST NOT specify METHOD.
     expect(doc).not.toContain('METHOD:');
     expect(doc).not.toContain('X-WR-CALNAME');

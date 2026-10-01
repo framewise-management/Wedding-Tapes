@@ -19,13 +19,12 @@ const mocks = vi.hoisted(() => {
 
 vi.mock('../db/client', () => ({ db: mocks.db }));
 vi.mock('./customers', () => ({
-  createCustomer: mocks.createCustomer,
-  removeCustomer: mocks.removeCustomer,
+  customerService: { create: mocks.createCustomer, remove: mocks.removeCustomer },
 }));
-vi.mock('./proposals', () => ({ createProposal: mocks.createProposal }));
+vi.mock('./proposals', () => ({ proposalService: { create: mocks.createProposal } }));
 
 import { BadRequestError, ConflictError } from '../lib/http-error';
-import { convertEnquiryToProposal } from './enquiries';
+import { enquiryService } from './enquiries';
 
 const enquiry = {
   id: 'e1',
@@ -56,8 +55,8 @@ describe('convertEnquiryToProposal', () => {
   it('rejects an enquiry that lacks required fields without writing anything', async () => {
     mocks.state.selectRows = [{ ...enquiry, phone: null, services: [] }];
 
-    await expect(convertEnquiryToProposal('b1', 'e1')).rejects.toThrow(/phone, at least one service/);
-    await expect(convertEnquiryToProposal('b1', 'e1')).rejects.toBeInstanceOf(BadRequestError);
+    await expect(enquiryService.convertToProposal('b1', 'e1')).rejects.toThrow(/phone, at least one service/);
+    await expect(enquiryService.convertToProposal('b1', 'e1')).rejects.toBeInstanceOf(BadRequestError);
     expect(mocks.db.update).not.toHaveBeenCalled();
     expect(mocks.createCustomer).not.toHaveBeenCalled();
   });
@@ -65,12 +64,12 @@ describe('convertEnquiryToProposal', () => {
   it('refuses a second conversion', async () => {
     mocks.state.updateRows = [[]];
 
-    await expect(convertEnquiryToProposal('b1', 'e1')).rejects.toBeInstanceOf(ConflictError);
+    await expect(enquiryService.convertToProposal('b1', 'e1')).rejects.toBeInstanceOf(ConflictError);
     expect(mocks.createCustomer).not.toHaveBeenCalled();
   });
 
   it('creates the customer and a draft with one item per service', async () => {
-    const proposal = await convertEnquiryToProposal('b1', 'e1');
+    const proposal = await enquiryService.convertToProposal('b1', 'e1');
 
     expect(proposal).toEqual({ id: 'p1' });
     expect(mocks.createCustomer).toHaveBeenCalledWith('b1', { name: 'Priya', phone: '999', email: undefined });
@@ -93,7 +92,7 @@ describe('convertEnquiryToProposal', () => {
     mocks.createProposal.mockRejectedValue(new BadRequestError('Drone has no price set'));
     mocks.state.updateRows = [[{ ...enquiry, status: 'CONVERTED' }], [enquiry]];
 
-    await expect(convertEnquiryToProposal('b1', 'e1')).rejects.toThrow('Drone has no price set');
+    await expect(enquiryService.convertToProposal('b1', 'e1')).rejects.toThrow('Drone has no price set');
 
     expect(mocks.removeCustomer).toHaveBeenCalledWith('b1', 'c1');
     expect(mocks.db.update).toHaveBeenCalledTimes(2);

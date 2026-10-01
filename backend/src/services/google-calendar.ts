@@ -4,7 +4,7 @@ import { db } from '../db/client';
 import { businesses, proposals } from '../db/schema';
 import { BadGatewayError, BadRequestError } from '../lib/http-error';
 import { calendarEventFor, shouldSync, SYNCED_STATUSES } from './calendar-events';
-import { findBusinessRow } from './business';
+import { businessService } from './business';
 
 const API = 'https://www.googleapis.com/calendar/v3';
 const SCOPE = 'https://www.googleapis.com/auth/calendar';
@@ -87,107 +87,108 @@ async function googleFetch(
   return res.status === 204 ? {} : ((await res.json()) as Record<string, unknown>);
 }
 
-/**
- * Creates the business's own Google calendar (owned by the service account) and
- * shares it with the user's email, so it shows up in their Google Calendar
- * without any per-user OAuth. Backfills every already-open/booked date.
- */
-export async function connectGoogleCalendar(businessId: string, email: string) {
-  const key = serviceAccount();
-  if (!key) {
-    throw new BadRequestError('Google Calendar is not configured on this server');
-  }
-
-  const business = await findBusinessRow(businessId);
-
-  let calendarId = business.googleCalendarId;
-  if (!calendarId) {
-    const created = await googleFetch(key, '/calendars', {
-      method: 'POST',
-      body: { summary: `${business.name} — Weddings`, timeZone: 'Asia/Kolkata' },
-    });
-    calendarId = created.id as string;
-    await db
-      .update(businesses)
-      .set({ googleCalendarId: calendarId })
-      .where(eq(businesses.id, businessId));
-  }
-
-  await googleFetch(key, `/calendars/${encodeURIComponent(calendarId)}/acl`, {
-    method: 'POST',
-    body: { role: 'writer', scope: { type: 'user', value: email } },
-  });
-
-  const open = await db.query.proposals.findMany({
-    where: and(
-      eq(proposals.businessId, businessId),
-      inArray(proposals.status, [...SYNCED_STATUSES]),
-    ),
-    with: { customer: true },
-  });
-  for (const proposal of open) {
-    await pushEvent(key, calendarId, proposal);
-  }
-
-  return { calendarId, sharedWith: email, syncedEvents: open.length };
-}
-
 type SyncableProposal = typeof proposals.$inferSelect & {
   customer: { name: string; phone: string | null };
 };
 
-async function pushEvent(key: ServiceAccountKey, calendarId: string, p: SyncableProposal) {
-  const e = calendarEventFor(p);
-  const body = {
-    summary: e.summary,
-    location: e.location,
-    description: e.description,
-    start: { date: e.startDate },
-    end: { date: e.endDateExclusive },
-    status: e.confirmed ? 'confirmed' : 'tentative',
-  };
-
-  const base = `/calendars/${encodeURIComponent(calendarId)}/events`;
-  if (p.googleEventId) {
-    await googleFetch(key, `${base}/${p.googleEventId}`, { method: 'PATCH', body });
-    return;
-  }
-
-  const created = await googleFetch(key, base, { method: 'POST', body });
-  await db
-    .update(proposals)
-    .set({ googleEventId: created.id as string })
-    .where(eq(proposals.id, p.id));
-}
-
 type GoogleCalendarTarget = Pick<typeof businesses.$inferSelect, 'googleCalendarId'>;
 
-export async function syncProposalToGoogle(
-  proposal: SyncableProposal,
-  business: GoogleCalendarTarget,
-): Promise<void> {
-  const key = serviceAccount();
-  if (!key || !business.googleCalendarId) return;
+export class GoogleCalendarService {
+  /**
+   * Creates the business's own Google calendar (owned by the service account) and
+   * shares it with the user's email, so it shows up in their Google Calendar
+   * without any per-user OAuth. Backfills every already-open/booked date.
+   */
+  async connect(businessId: string, email: string) {
+    const key = serviceAccount();
+    if (!key) {
+      throw new BadRequestError('Google Calendar is not configured on this server');
+    }
 
-  if (shouldSync(proposal.status)) {
-    await pushEvent(key, business.googleCalendarId, proposal);
-  } else if (proposal.googleEventId) {
-    await removeEvent(key, business.googleCalendarId, proposal.googleEventId);
-    await db.update(proposals).set({ googleEventId: null }).where(eq(proposals.id, proposal.id));
+    const business = await businessService.findRow(businessId);
+
+    let calendarId = business.googleCalendarId;
+    if (!calendarId) {
+      const created = await googleFetch(key, '/calendars', {
+        method: 'POST',
+        body: { summary: `${business.name} — Weddings`, timeZone: 'Asia/Kolkata' },
+      });
+      calendarId = created.id as string;
+      await db
+        .update(businesses)
+        .set({ googleCalendarId: calendarId })
+        .where(eq(businesses.id, businessId));
+    }
+
+    await googleFetch(key, `/calendars/${encodeURIComponent(calendarId)}/acl`, {
+      method: 'POST',
+      body: { role: 'writer', scope: { type: 'user', value: email } },
+    });
+
+    const open = await db.query.proposals.findMany({
+      where: and(
+        eq(proposals.businessId, businessId),
+        inArray(proposals.status, [...SYNCED_STATUSES]),
+      ),
+      with: { customer: true },
+    });
+    for (const proposal of open) {
+      await this.pushEvent(key, calendarId, proposal);
+    }
+
+    return { calendarId, sharedWith: email, syncedEvents: open.length };
+  }
+
+  async syncProposal(proposal: SyncableProposal, business: GoogleCalendarTarget): Promise<void> {
+    const key = serviceAccount();
+    if (!key || !business.googleCalendarId) return;
+
+    if (shouldSync(proposal.status)) {
+      await this.pushEvent(key, business.googleCalendarId, proposal);
+    } else if (proposal.googleEventId) {
+      await this.removeEvent(key, business.googleCalendarId, proposal.googleEventId);
+      await db.update(proposals).set({ googleEventId: null }).where(eq(proposals.id, proposal.id));
+    }
+  }
+
+  async removeProposalEvent(
+    proposal: Pick<typeof proposals.$inferSelect, 'googleEventId'>,
+    business: GoogleCalendarTarget,
+  ): Promise<void> {
+    const key = serviceAccount();
+    if (!key || !proposal.googleEventId || !business.googleCalendarId) return;
+    await this.removeEvent(key, business.googleCalendarId, proposal.googleEventId);
+  }
+
+  private async pushEvent(key: ServiceAccountKey, calendarId: string, p: SyncableProposal) {
+    const e = calendarEventFor(p);
+    const body = {
+      summary: e.summary,
+      location: e.location,
+      description: e.description,
+      start: { date: e.startDate },
+      end: { date: e.endDateExclusive },
+      status: e.confirmed ? 'confirmed' : 'tentative',
+    };
+
+    const base = `/calendars/${encodeURIComponent(calendarId)}/events`;
+    if (p.googleEventId) {
+      await googleFetch(key, `${base}/${p.googleEventId}`, { method: 'PATCH', body });
+      return;
+    }
+
+    const created = await googleFetch(key, base, { method: 'POST', body });
+    await db
+      .update(proposals)
+      .set({ googleEventId: created.id as string })
+      .where(eq(proposals.id, p.id));
+  }
+
+  private async removeEvent(key: ServiceAccountKey, calendarId: string, eventId: string) {
+    await googleFetch(key, `/calendars/${encodeURIComponent(calendarId)}/events/${eventId}`, {
+      method: 'DELETE',
+    });
   }
 }
 
-async function removeEvent(key: ServiceAccountKey, calendarId: string, eventId: string) {
-  await googleFetch(key, `/calendars/${encodeURIComponent(calendarId)}/events/${eventId}`, {
-    method: 'DELETE',
-  });
-}
-
-export async function removeGoogleEvent(
-  proposal: Pick<typeof proposals.$inferSelect, 'googleEventId'>,
-  business: GoogleCalendarTarget,
-): Promise<void> {
-  const key = serviceAccount();
-  if (!key || !proposal.googleEventId || !business.googleCalendarId) return;
-  await removeEvent(key, business.googleCalendarId, proposal.googleEventId);
-}
+export const googleCalendarService = new GoogleCalendarService();

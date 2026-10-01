@@ -5,48 +5,52 @@ import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
 import type { CreateServiceInput, UpdateServiceInput } from '../schemas/services';
 
-export function findAllServices(businessId: string, active?: boolean) {
-  return db.query.services.findMany({
-    where: and(
-      eq(services.businessId, businessId),
-      active !== undefined ? eq(services.active, active) : undefined,
-    ),
-  });
-}
+export class CatalogServiceService {
+  findAll(businessId: string, active?: boolean) {
+    return db.query.services.findMany({
+      where: and(
+        eq(services.businessId, businessId),
+        active !== undefined ? eq(services.active, active) : undefined,
+      ),
+    });
+  }
 
-export async function findOneService(businessId: string, id: string) {
-  const service = await db.query.services.findFirst({
-    where: and(eq(services.id, id), eq(services.businessId, businessId)),
-  });
-  if (!service) throw new NotFoundError('Service not found');
-  return service;
-}
+  async findOne(businessId: string, id: string) {
+    const service = await db.query.services.findFirst({
+      where: and(eq(services.id, id), eq(services.businessId, businessId)),
+    });
+    if (!service) throw new NotFoundError('Service not found');
+    return service;
+  }
 
-export async function createService(businessId: string, input: CreateServiceInput) {
-  const [service] = await db
-    .insert(services)
-    .values({ ...input, businessId })
-    .returning();
-  return service;
-}
+  async create(businessId: string, input: CreateServiceInput) {
+    const [service] = await db
+      .insert(services)
+      .values({ ...input, businessId })
+      .returning();
+    return service;
+  }
 
-export async function updateService(businessId: string, id: string, input: UpdateServiceInput) {
-  await findOneService(businessId, id);
-  await db
-    .update(services)
-    .set(input)
-    .where(and(eq(services.id, id), eq(services.businessId, businessId)));
-  return findOneService(businessId, id);
-}
+  async update(businessId: string, id: string, input: UpdateServiceInput) {
+    await this.findOne(businessId, id);
+    await db
+      .update(services)
+      .set(input)
+      .where(and(eq(services.id, id), eq(services.businessId, businessId)));
+    return this.findOne(businessId, id);
+  }
 
-export async function removeService(businessId: string, id: string) {
-  await findOneService(businessId, id);
-  try {
-    await db.delete(services).where(and(eq(services.id, id), eq(services.businessId, businessId)));
-  } catch (err) {
-    if (isPgError(err, '23503')) {
-      throw new ConflictError('Cannot delete a service that is part of a package');
+  async remove(businessId: string, id: string) {
+    await this.findOne(businessId, id);
+    try {
+      await db.delete(services).where(and(eq(services.id, id), eq(services.businessId, businessId)));
+    } catch (err) {
+      if (isPgError(err, '23503')) {
+        throw new ConflictError('Cannot delete a service that is part of a package');
+      }
+      throw err;
     }
-    throw err;
   }
 }
+
+export const catalogServiceService = new CatalogServiceService();
