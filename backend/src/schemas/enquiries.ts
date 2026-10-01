@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const enquiryStatusSchema = z.enum(['NEW', 'CONTACTED', 'CONVERTED', 'CANCELLED']);
+export type EnquiryStatus = z.infer<typeof enquiryStatusSchema>;
 
 export const createEnquirySchema = z.object({
   clientName: z.string().min(1, 'Client name is required'),

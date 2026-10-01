@@ -3,6 +3,7 @@ import { businesses, enquiries } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { BadRequestError, ConflictError } from '../lib/http-error';
 import { db } from '../db/client';
+import type { EnquiryStatus } from '../schemas/enquiries';
 
 interface CreateEnquiryInput {
   clientName: string;
@@ -79,10 +80,10 @@ export async function findOneEnquiry(id: string, businessId: string) {
   return result || null;
 }
 
-export async function updateEnquiry(id: string, businessId: string, updates: Partial<CreateEnquiryInput> & { status?: string }) {
+export async function updateEnquiry(id: string, businessId: string, updates: { status?: EnquiryStatus }) {
   const [result] = await db
     .update(enquiries)
-    .set({ ...updates, updatedAt: new Date().toISOString() })
+    .set(updates)
     .where(and(eq(enquiries.id, id), eq(enquiries.businessId, businessId)))
     .returning();
 
