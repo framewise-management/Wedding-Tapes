@@ -36,7 +36,7 @@ const RELATIONS = {
 
 export async function findAllProposals(
   businessId: string,
-  query: { search?: string; status?: ProposalStatus; customerId?: string } = {},
+  query: { search?: string; status?: ProposalStatus; customerId?: string; archived?: boolean } = {},
 ) {
   // The customer.name filter can't be expressed in a relational-query
   // `where`, so find matching ids via a join first, then re-fetch with
@@ -50,6 +50,7 @@ export async function findAllProposals(
         eq(proposals.businessId, businessId),
         query.status ? eq(proposals.status, query.status) : undefined,
         query.customerId ? eq(proposals.customerId, query.customerId) : undefined,
+        query.archived !== undefined ? eq(proposals.isArchived, query.archived) : undefined,
         query.search ? ilike(customers.name, `%${query.search}%`) : undefined,
       ),
     )

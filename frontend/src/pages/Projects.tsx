@@ -15,24 +15,31 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 function matchesTab(p: Proposal, tab: Tab): boolean {
-  if (tab === 'archived') return p.isArchived;
-  if (p.isArchived) return false;
+  if (tab === 'archived') return true;
   if (tab === 'active') return p.status === 'DRAFT' || p.status === 'SENT';
   return p.status === 'ACCEPTED' || p.status === 'REJECTED';
 }
 
 export default function Projects() {
-  const [proposals, setProposals] = useState<Proposal[] | null>(null);
+  const [loaded, setLoaded] = useState<{ archived: boolean; items: Proposal[] } | null>(null);
   const [tab, setTab] = useState<Tab>('active');
   const [error, setError] = useState('');
 
-  function load() {
-    apiGet<Proposal[]>('/api/proposals')
-      .then(setProposals)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load projects'));
-  }
+  const archivedView = tab === 'archived';
 
-  useEffect(load, []);
+  useEffect(() => {
+    let cancelled = false;
+    apiGet<Proposal[]>(`/api/proposals?archived=${archivedView}`)
+      .then((items) => {
+        if (!cancelled) setLoaded({ archived: archivedView, items });
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load projects');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [archivedView]);
 
   async function toggleArchived(p: Proposal) {
     setError('');
@@ -40,13 +47,13 @@ export default function Projects() {
       const updated = await apiPatch<Proposal>(`/api/proposals/${p.id}/archive`, {
         archived: !p.isArchived,
       });
-      setProposals((prev) => prev?.map((x) => (x.id === updated.id ? updated : x)) ?? null);
+      setLoaded((prev) => prev && { ...prev, items: prev.items.filter((x) => x.id !== updated.id) });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update project');
     }
   }
 
-  const filtered = proposals?.filter((p) => matchesTab(p, tab)) ?? null;
+  const filtered = loaded?.archived === archivedView ? loaded.items.filter((p) => matchesTab(p, tab)) : null;
 
   return (
     <div className="proj-container">
@@ -68,8 +75,8 @@ export default function Projects() {
             onClick={() => setTab(t.key)}
           >
             {t.label}
-            {proposals && (
-              <span className="proj-tab-count">{proposals.filter((p) => matchesTab(p, t.key)).length}</span>
+            {loaded && loaded.archived === (t.key === 'archived') && (
+              <span className="proj-tab-count">{loaded.items.filter((p) => matchesTab(p, t.key)).length}</span>
             )}
           </button>
         ))}

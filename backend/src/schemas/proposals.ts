@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { booleanQueryParam } from './common';
 
 export const proposalStatuses = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'] as const;
 export const discountTypes = ['FIXED', 'PERCENTAGE'] as const;
@@ -83,6 +84,7 @@ export const listProposalsQuerySchema = z.object({
   search: z.string().optional(),
   status: z.enum(proposalStatuses).optional(),
   customerId: z.uuid().optional(),
+  archived: booleanQueryParam,
 });
 
 export const generatePdfQuerySchema = z.object({
