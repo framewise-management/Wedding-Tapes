@@ -27,6 +27,12 @@
   gap: 14px;
 }
 
+.pv-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: -12px 0 20px;
+}
+
 .pv-download-btn {
   padding: 9px 18px;
   border: none;

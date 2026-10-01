@@ -9,32 +9,43 @@ import type { Service } from '../types/catalog';
 import type { Profile } from '../types/user';
 import './AppLayout.css';
 
-const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 11h7v9h-7zM4 14h7v6H4z' },
-  { to: '/calendar', label: 'Calendar', icon: 'M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z' },
-  { to: '/clients', label: 'Clients', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
-  {
-    to: '/setup',
-    label: 'Setup',
-    icon: 'M10.3 2.5h3.4l.6 2.4a7.6 7.6 0 0 1 1.9 1.1l2.4-.8 1.7 3-1.9 1.6a7.6 7.6 0 0 1 0 2.2l1.9 1.6-1.7 3-2.4-.8a7.6 7.6 0 0 1-1.9 1.1l-.6 2.4h-3.4l-.6-2.4a7.6 7.6 0 0 1-1.9-1.1l-2.4.8-1.7-3 1.9-1.6a7.6 7.6 0 0 1 0-2.2L2.7 8.2l1.7-3 2.4.8a7.6 7.6 0 0 1 1.9-1.1z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
-    activeMatch: ['/setup', '/business', '/profile', '/services', '/packages'],
-  },
-  {
-    to: '/proposals/new',
-    label: 'Create Proposal',
-    icon: 'M8 3h5l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM13 3v5h5M9 13h6M9 17h6',
-    // /proposals/new and /proposals/:id/edit both share this form -- neither is
-    // a sub-path of the History list, so plain prefix matching can't tell them
-    // apart from "/proposals" and needs an explicit pattern instead.
-    isActive: (pathname: string) => pathname === '/proposals/new' || /^\/proposals\/[^/]+\/edit$/.test(pathname),
-  },
-  {
-    to: '/proposals',
-    label: 'Proposal History',
-    icon: 'M12 8v4l3 2M21 12a9 9 0 1 1-3-6.7M21 4v5h-5',
-    isActive: (pathname: string) => pathname === '/proposals' || /^\/proposals\/[^/]+\/preview$/.test(pathname),
-  },
-];
+  const NAV_ITEMS = [
+    { to: '/dashboard', label: 'Dashboard', icon: 'M4 4h7v7H4zM13 4h7v4h-7zM13 11h7v9h-7zM4 14h7v6H4z' },
+    { to: '/calendar', label: 'Calendar', icon: 'M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z' },
+    { to: '/clients', label: 'Clients', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
+    {
+      to: '/setup',
+      label: 'Setup',
+      icon: 'M10.3 2.5h3.4l.6 2.4a7.6 7.6 0 0 1 1.9 1.1l2.4-.8 1.7 3-1.9 1.6a7.6 7.6 0 0 1 0 2.2l1.9 1.6-1.7 3-2.4-.8a7.6 7.6 0 0 1-1.9 1.1l-.6 2.4h-3.4l-.6-2.4a7.6 7.6 0 0 1-1.9-1.1l-2.4.8-1.7-3 1.9-1.6a7.6 7.6 0 0 1 0-2.2L2.7 8.2l1.7-3 2.4.8a7.6 7.6 0 0 1 1.9-1.1z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+      activeMatch: ['/setup', '/business', '/profile', '/services', '/packages'],
+    },
+    {
+      to: '/proposals/new',
+      label: 'Create Proposal',
+      icon: 'M8 3h5l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM13 3v5h5M9 13h6M9 17h6',
+      // /proposals/new and /proposals/:id/edit both share this form -- neither is
+      // a sub-path of the History list, so plain prefix matching can't tell them
+      // apart from "/proposals" and needs an explicit pattern instead.
+      isActive: (pathname: string) => pathname === '/proposals/new' || /^\/proposals\/[^/]+\/edit$/.test(pathname),
+    },
+    {
+      to: '/proposals',
+      label: 'Proposal History',
+      icon: 'M12 8v4l3 2M21 12a9 9 0 1 1-3-6.7M21 4v5h-5',
+      isActive: (pathname: string) => pathname === '/proposals' || /^\/proposals\/[^/]+\/preview$/.test(pathname),
+    },
+    {
+      to: '/enquiries',
+      label: 'Enquiries',
+      icon: 'M5 8h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2ZM12 14a2 2 0 1 0 0-4 2 2 0 1 0 0 4ZM9 8h6v2H9V8ZM9 12h6v2H9v-2Z',
+      isActive: (pathname: string) => pathname === '/enquiries',
+    },
+    {
+      to: '/projects',
+      label: 'Projects',
+      icon: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z',
+    },
+  ];
 
 function NavIcon({ path }: { path: string }) {
   return (

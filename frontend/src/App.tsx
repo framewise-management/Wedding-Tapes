@@ -18,6 +18,8 @@ import PackageServiceSelection from './pages/PackageServiceSelection';
 import ProposalPreview from './pages/ProposalPreview';
 import ProposalHistory from './pages/ProposalHistory';
 import PublicProposal from './pages/PublicProposal';
+import Enquiries from './pages/Enquiries';
+import Projects from './pages/Projects';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AppLayout from './components/AppLayout';
 
@@ -50,6 +52,8 @@ function App() {
             element={<PackageServiceSelection />}
           />
           <Route path="/proposals/:id/preview" element={<ProposalPreview />} />
+          <Route path="/enquiries" element={<Enquiries />} />
+          <Route path="/projects" element={<Projects />} />
         </Route>
       </Route>
     </Routes>

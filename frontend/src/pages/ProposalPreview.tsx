@@ -4,9 +4,18 @@ import { apiDelete, apiGet, apiPatch, apiPost, apiPostFile } from '../api/client
 import ProposalSheet from '../components/ProposalSheet';
 import type { Proposal, ProposalStatus } from '../types/proposal';
 import type { Business } from '../types/business';
+import { formatDateRange } from '../lib/dates';
 import './ProposalPreview.css';
 
 const STATUSES: ProposalStatus[] = ['DRAFT', 'SENT', 'ACCEPTED', 'REJECTED'];
+
+function shortDate(value: string): string {
+  return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? '' : 's'}`;
+}
 
 export default function ProposalPreview() {
   const { id } = useParams<{ id: string }>();
@@ -86,16 +95,18 @@ export default function ProposalPreview() {
     }
   }
 
-  async function handleDownloadPdf() {
+  async function handleDownloadPdf(eventId?: string) {
     if (!id || !proposal) return;
     setDownloading(true);
     setDownloadError('');
     try {
-      const blob = await apiPostFile(`/api/proposals/${id}/generate-pdf`);
+      const query = eventId ? `?eventId=${eventId}` : '';
+      const blob = await apiPostFile(`/api/proposals/${id}/generate-pdf${query}`);
+      const eventSuffix = eventId ? `-${proposal.events.find((e) => e.id === eventId)?.name ?? 'event'}` : '';
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${proposal.proposalNumber}.pdf`;
+      link.download = `${proposal.proposalNumber}${eventSuffix}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -120,6 +131,13 @@ export default function ProposalPreview() {
 
   if (error) return <p className="pv-error">{error}</p>;
   if (!proposal || !business) return <p>Loading…</p>;
+
+  const summaryParts = [
+    formatDateRange(proposal.weddingDate, proposal.weddingEndDate, shortDate),
+    proposal.events.length > 0 ? plural(proposal.events.length, 'event') : null,
+    proposal.packages.length > 0 ? plural(proposal.packages.length, 'package') : null,
+    proposal.items.length > 0 ? plural(proposal.items.length, 'service') : null,
+  ].filter(Boolean);
 
   return (
     <div className="pv-container">
@@ -172,6 +190,25 @@ export default function ProposalPreview() {
                 >
                   {downloading ? 'Generating…' : 'Download PDF'}
                 </button>
+                {proposal.events.length > 1 && (
+                  <>
+                    <p className="pv-share-label">Download for one event</p>
+                    {proposal.events.map((e) => (
+                      <button
+                        key={e.id}
+                        type="button"
+                        className="pv-share-menu-item"
+                        onClick={() => {
+                          setShareOpen(false);
+                          handleDownloadPdf(e.id);
+                        }}
+                        disabled={downloading}
+                      >
+                        {e.name} — {shortDate(e.date)}
+                      </button>
+                    ))}
+                  </>
+                )}
                 {downloadError && <p className="pv-error pv-share-error">{downloadError}</p>}
                 <div className="pv-share-divider" />
                 <p className="pv-share-label">Mark as</p>
@@ -190,6 +227,8 @@ export default function ProposalPreview() {
           </div>
         </div>
       </div>
+
+      <p className="pv-summary">{summaryParts.join(' · ')}</p>
 
       <ProposalSheet proposal={proposal} business={business} />
     </div>

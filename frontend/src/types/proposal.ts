@@ -55,6 +55,7 @@ export interface Proposal {
   validUntil: string | null;
   notes: string | null;
   shareViewCount: number;
+  isArchived: boolean;
   events: ProposalEvent[];
   packages: ProposalPackage[];
   items: ProposalItem[];

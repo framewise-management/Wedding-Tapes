@@ -108,7 +108,12 @@ export default function ProposalHistory() {
                 {p.proposalNumber}
               </Link>
               <span className="ph-cell-customer">{p.customer.name}</span>
-              <span className="ph-cell-date">{formatDateRange(p.weddingDate, p.weddingEndDate, formatDate)}</span>
+              <span className="ph-cell-date">
+                {formatDateRange(p.weddingDate, p.weddingEndDate, formatDate)}
+                {p.events.length > 1 && (
+                  <span className="ph-event-badge">{p.events.length} events</span>
+                )}
+              </span>
               <span className="ph-cell-total">{money(p.total)}</span>
               <span className={`ph-status ph-status-${p.status.toLowerCase()}`}>{p.status}</span>
               <span className="ph-cell-date">{p.shareViewCount || '—'}</span>
