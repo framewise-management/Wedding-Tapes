@@ -3,13 +3,13 @@ import type { Db } from '../db/client';
 import { packages, packageServices } from '../db/schema';
 import { isPgError } from '../db/pg-error';
 import { ConflictError, NotFoundError } from '../lib/http-error';
-import type { CatalogServiceService } from './catalog-services';
+import type { ServiceCatalog } from './service-catalog';
 import type { AddPackageServiceInput, CreatePackageInput, UpdatePackageInput } from '../schemas/packages';
 
 export class PackageService {
   constructor(
     private readonly db: Db,
-    private readonly catalog: CatalogServiceService,
+    private readonly catalog: ServiceCatalog,
   ) {}
 
   findAll(businessId: string, active?: boolean) {

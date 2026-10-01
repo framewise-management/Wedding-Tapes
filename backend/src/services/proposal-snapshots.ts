@@ -5,7 +5,7 @@ import { proposals } from '../db/schema';
 import { BadRequestError } from '../lib/http-error';
 import type { ProposalEventInput } from '../schemas/proposals';
 import type { BusinessService } from './business';
-import type { CatalogServiceService } from './catalog-services';
+import type { ServiceCatalog } from './service-catalog';
 import type { EventTypeService } from './event-types';
 import type { PackageService } from './packages';
 
@@ -13,7 +13,7 @@ export class ProposalSnapshotService {
   constructor(
     private readonly db: Db,
     private readonly business: BusinessService,
-    private readonly catalog: CatalogServiceService,
+    private readonly catalog: ServiceCatalog,
     private readonly eventTypes: EventTypeService,
     private readonly packages: PackageService,
   ) {}

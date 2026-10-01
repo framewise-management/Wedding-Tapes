@@ -5,7 +5,7 @@ import { BlockedDateService } from './blocked-dates';
 import { BusinessService } from './business';
 import { CalendarFeedService } from './calendar';
 import { CalendarSyncService } from './calendar-sync';
-import { CatalogServiceService } from './catalog-services';
+import { ServiceCatalog } from './service-catalog';
 import { CustomerService } from './customers';
 import { EnquiryService } from './enquiries';
 import { EventTypeService } from './event-types';
@@ -16,8 +16,8 @@ import { ProposalService } from './proposals';
 import { TermService } from './terms';
 
 export const customerService = new CustomerService(db);
-export const catalogServiceService = new CatalogServiceService(db);
-export const packageService = new PackageService(db, catalogServiceService);
+export const serviceCatalog = new ServiceCatalog(db);
+export const packageService = new PackageService(db, serviceCatalog);
 export const termService = new TermService(db);
 export const blockedDateService = new BlockedDateService(db);
 export const eventTypeService = new EventTypeService(db);
@@ -35,7 +35,7 @@ export const calendarSyncService = new CalendarSyncService(db, businessService, 
 export const proposalSnapshotService = new ProposalSnapshotService(
   db,
   businessService,
-  catalogServiceService,
+  serviceCatalog,
   eventTypeService,
   packageService,
 );
