@@ -85,7 +85,15 @@ export const listProposalsQuerySchema = z.object({
   customerId: z.uuid().optional(),
 });
 
+export const generatePdfQuerySchema = z.object({
+  eventId: z.uuid().optional(),
+});
+
 export const updateProposalStatusSchema = z.object({
   status: z.enum(proposalStatuses),
+});
+
+export const archiveProposalSchema = z.object({
+  archived: z.boolean(),
 });
 export type UpdateProposalStatusInput = z.infer<typeof updateProposalStatusSchema>;

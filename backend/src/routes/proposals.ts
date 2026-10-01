@@ -3,8 +3,10 @@ import type { AuthedVariables } from '../middleware/auth';
 import { authMiddleware } from '../middleware/auth';
 import { parseBody, parseQuery, parseUuidParam } from '../lib/validate';
 import {
+  archiveProposalSchema,
   calculateProposalSchema,
   createProposalSchema,
+  generatePdfQuerySchema,
   listProposalsQuerySchema,
   updateProposalSchema,
   updateProposalStatusSchema,
@@ -15,12 +17,14 @@ import {
   findAllProposals,
   findOneProposal,
   removeProposal,
+  setProposalArchived,
   shareProposal,
   updateProposal,
   updateProposalStatus,
 } from '../services/proposals';
 import { getBusiness } from '../services/business';
 import { generateProposalPdf, proposalPdfContentDisposition } from '../pdf';
+import { filterProposalToEvent } from '../pdf-shared';
 
 export const proposalsRoutes = new Hono<{ Variables: AuthedVariables }>();
 
@@ -72,6 +76,13 @@ proposalsRoutes.patch('/:id/status', async (c) => {
   return c.json(await updateProposalStatus(user.businessId, id, input.status));
 });
 
+proposalsRoutes.patch('/:id/archive', async (c) => {
+  const user = c.get('user');
+  const id = parseUuidParam(c, 'id');
+  const input = await parseBody(c, archiveProposalSchema);
+  return c.json(await setProposalArchived(user.businessId, id, input.archived));
+});
+
 proposalsRoutes.post('/:id/share', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
@@ -81,11 +92,12 @@ proposalsRoutes.post('/:id/share', async (c) => {
 proposalsRoutes.post('/:id/generate-pdf', async (c) => {
   const user = c.get('user');
   const id = parseUuidParam(c, 'id');
+  const { eventId } = parseQuery(c, generatePdfQuerySchema);
   const [proposal, business] = await Promise.all([
     findOneProposal(user.businessId, id),
     getBusiness(user.businessId),
   ]);
-  const pdf = await generateProposalPdf(proposal, business);
+  const pdf = await generateProposalPdf(eventId ? filterProposalToEvent(proposal, eventId) : proposal, business);
   return c.body(new Uint8Array(pdf), 200, {
     'Content-Type': 'application/pdf',
     'Content-Disposition': proposalPdfContentDisposition(proposal.proposalNumber),

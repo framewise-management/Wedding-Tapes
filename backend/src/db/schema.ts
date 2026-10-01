@@ -263,6 +263,7 @@ export const proposals = pgTable(
     validUntil: date('valid_until', { mode: 'string' }),
     notes: text(),
     shareViewCount: integer('share_view_count').default(0).notNull(),
+    isArchived: boolean('is_archived').default(false).notNull(),
     googleEventId: varchar('google_event_id'),
     createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string' })
@@ -386,15 +387,6 @@ export const proposalItems = pgTable(
 // (e.g. package.items, proposal.packages, proposal.items) -- not the
 // raw table names drizzle-kit pull would otherwise default to.
 
-export const businessesRelations = relations(businesses, ({ many }) => ({
-  users: many(users),
-  services: many(services),
-  packages: many(packages),
-  eventTypes: many(eventTypes),
-  customers: many(customers),
-  proposals: many(proposals),
-}));
-
 export const usersRelations = relations(users, ({ one }) => ({
   business: one(businesses, {
     fields: [users.businessId],
@@ -498,5 +490,57 @@ export const proposalItemsRelations = relations(proposalItems, ({ one }) => ({
   proposal: one(proposals, {
     fields: [proposalItems.proposalId],
     references: [proposals.id],
+  }),
+}));
+
+export const enquiries = pgTable(
+  'enquiries',
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    businessId: uuid('business_id').notNull(),
+    clientName: varchar('client_name').notNull(),
+    brideName: varchar('bride_name'),
+    groomName: varchar('groom_name'),
+    phone: varchar(),
+    email: varchar(),
+    eventDate: date('event_date', { mode: 'string' }),
+    eventType: varchar('event_type'),
+    eventDuration: integer('event_duration'),
+    location: varchar(),
+    services: jsonb('services'),
+    budget: varchar(),
+    message: text(),
+    source: varchar(),
+    status: varchar().default('NEW').notNull(),
+    assignedTo: varchar('assigned_to'),
+    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'string' })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => sql`now()`),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.businessId],
+      foreignColumns: [businesses.id],
+      name: 'enquiries_business_id_fkey',
+    }).onDelete('cascade'),
+  ],
+).enableRLS();
+
+export const businessesRelations = relations(businesses, ({ many }) => ({
+  users: many(users),
+  services: many(services),
+  packages: many(packages),
+  eventTypes: many(eventTypes),
+  customers: many(customers),
+  proposals: many(proposals),
+  enquiries: many(enquiries),
+}));
+
+export const enquiriesRelations = relations(enquiries, ({ one }) => ({
+  business: one(businesses, {
+    fields: [enquiries.businessId],
+    references: [businesses.id],
   }),
 }));

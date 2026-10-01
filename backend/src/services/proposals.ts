@@ -313,8 +313,7 @@ export async function calculateProposal(
 
   const refreshed = await findOneProposal(businessId, id);
   await persistPricing(refreshed);
-  await syncProposalToGoogle(id);
-  await syncProposalToApple(id);
+  await syncCalendars(id);
   return findOneProposal(businessId, id);
 }
 
@@ -324,8 +323,16 @@ export async function updateProposalStatus(businessId: string, id: string, statu
     .update(proposals)
     .set({ status })
     .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
-  await syncProposalToGoogle(id);
-  await syncProposalToApple(id);
+  await syncCalendars(id);
+  return findOneProposal(businessId, id);
+}
+
+export async function setProposalArchived(businessId: string, id: string, archived: boolean) {
+  await findOneProposal(businessId, id);
+  await db
+    .update(proposals)
+    .set({ isArchived: archived })
+    .where(and(eq(proposals.id, id), eq(proposals.businessId, businessId)));
   return findOneProposal(businessId, id);
 }
 
@@ -340,6 +347,11 @@ export async function shareProposal(businessId: string, id: string) {
     `🔗 **Shareable link generated**\nProposal **${proposal.proposalNumber}** (${proposal.customer.name})\n<${link}>`,
   );
   return proposal;
+}
+
+async function syncCalendars(id: string) {
+  await syncProposalToGoogle(id);
+  await syncProposalToApple(id);
 }
 
 async function persistPricing(proposal: Awaited<ReturnType<typeof findOneProposal>>) {

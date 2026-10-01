@@ -1,4 +1,5 @@
 import type { DiscountType, ProposalTemplate } from './db/schema';
+import { NotFoundError } from './lib/http-error';
 
 export interface PdfBusiness {
   name: string;
@@ -100,4 +101,31 @@ export function groupByEvent<T extends { proposalEventId: string | null }>(
     }))
     .sort((a, b) => a.rank - b.rank)
     .map(({ item, group }) => ({ ...item, group }));
+}
+
+/**
+ * Scopes a PDF's lines to a single event. Discount/tax are proposal-wide with
+ * no defined per-event split, so a scoped export shows the event's own line
+ * total instead of a share of the full proposal total.
+ */
+export function filterProposalToEvent<T extends PdfProposal>(proposal: T, eventId: string): T {
+  const event = proposal.events.find((e) => e.id === eventId);
+  if (!event) throw new NotFoundError('Event not found on this proposal');
+  const packages = proposal.packages.filter((p) => p.proposalEventId === eventId);
+  const items = proposal.items.filter((i) => i.proposalEventId === eventId);
+  const total =
+    packages.reduce((sum, p) => sum + p.total, 0) +
+    items.filter((i) => !i.isOptional).reduce((sum, i) => sum + i.total, 0);
+  return {
+    ...proposal,
+    events: [event],
+    packages,
+    items,
+    subtotal: total,
+    discountAmount: 0,
+    discountType: null,
+    discountValue: null,
+    taxAmount: 0,
+    total,
+  };
 }

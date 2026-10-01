@@ -15,6 +15,7 @@ import { customersRoutes } from './routes/customers';
 import { proposalsRoutes } from './routes/proposals';
 import { publicProposalsRoutes } from './routes/public-proposals';
 import { calendarRoutes } from './routes/calendar';
+import { enquiriesRoutes } from './routes/enquiries';
 
 const app = new Hono();
 
@@ -38,7 +39,9 @@ app.route('/api/terms', termsRoutes);
 app.route('/api/blocked-dates', blockedDatesRoutes);
 app.route('/api/customers', customersRoutes);
 app.route('/api/proposals', proposalsRoutes);
+app.route('/api/enquiries', enquiriesRoutes);
 app.route('/api/public/proposals', publicProposalsRoutes);
 app.route('/api/public/calendar', calendarRoutes);
 
 export default app;
+
